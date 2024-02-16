@@ -16,7 +16,6 @@ describe("User data fetching", () => {
   });
 
   it("returns null on exception for email", async () => {
-    // Simulate an error being thrown on this method call
     (ctx.prisma.user.findUnique as jest.Mock).mockRejectedValue(new Error("Database error"));
   
     const user = await getUserByEmail("error@example.com");
@@ -25,7 +24,6 @@ describe("User data fetching", () => {
   });
   
   it("returns null on exception for id", async () => {
-    // Simulate an error being thrown on this method call
     (ctx.prisma.user.findUnique as jest.Mock).mockRejectedValue(new Error("Database error"));
   
     const user = await getUserById("error-id");
