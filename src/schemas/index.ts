@@ -1,5 +1,5 @@
-import { checkIfEmailExists } from "@/lib/helpers/authHelper";
-import * as z from "zod";
+import { checkIfEmailExists } from '@/lib/helpers/authHelper';
+import * as z from 'zod';
 
 export const SettingsSchema = z
   .object({
@@ -18,8 +18,8 @@ export const SettingsSchema = z
       return true;
     },
     {
-      message: "New password is required!",
-      path: ["newPassword"],
+      message: 'New password is required!',
+      path: ['newPassword'],
     }
   )
   .refine(
@@ -31,53 +31,53 @@ export const SettingsSchema = z
       return true;
     },
     {
-      message: "Password is required!",
-      path: ["password"],
+      message: 'Password is required!',
+      path: ['password'],
     }
   );
 
 export const NewPasswordSchema = z.object({
   password: z.string().min(6, {
-    message: "Minimum of 6 characters required",
+    message: 'Minimum of 6 characters required',
   }),
 });
 
 export const ResetSchema = z.object({
   email: z.string().email({
-    message: "Email is required",
+    message: 'Email is required',
   }),
 });
 
 export const LoginSchema = z.object({
   email: z.string().email({
-    message: "Email is required",
+    message: 'Email is required',
   }),
   password: z.string().min(1, {
-    message: "Password is required",
+    message: 'Password is required',
   }),
   code: z.optional(z.string()),
 });
 
 export const RegisterSchema = z.object({
   email: z.string().email({
-    message: "Email is required",
+    message: 'Email is required',
   }),
   password: z.string().min(6, {
-    message: "Minimum 6 characters required",
+    message: 'Minimum 6 characters required',
   }),
   name: z.string().min(1, {
-    message: "Name is required",
+    message: 'Name is required',
   }),
 });
 
 export const RegisterAdminSchema = z.object({
   email: z
     .string({
-      required_error: "Un email est requis",
+      required_error: 'Un email est requis',
       invalid_type_error: "L'email doit être une chaîne de caractères",
     })
     .email({
-      message: "Adresse e-mail invalide",
+      message: 'Adresse e-mail invalide',
     })
     .refine(
       async (email) => {
@@ -88,8 +88,8 @@ export const RegisterAdminSchema = z.object({
         message: "L'e-mail n'existe pas",
       }
     ),
-  password: z.string({ required_error: "Un mot de passe est requis" }).min(6, {
-    message: "Minimum 6 characters required",
+  password: z.string({ required_error: 'Un mot de passe est requis' }).min(6, {
+    message: 'Minimum 6 characters required',
   }),
   name: z
     .string({
@@ -102,7 +102,7 @@ export const RegisterAdminSchema = z.object({
     })
     .max(50),
   role: z.string({
-    required_error: "Le role est requis",
-    invalid_type_error: "Le role doit être une chaîne de caractères",
+    required_error: 'Le role est requis',
+    invalid_type_error: 'Le role doit être une chaîne de caractères',
   }),
 });

@@ -1,5 +1,5 @@
-import { prisma } from "@/lib/prisma";
-import { User } from "@/schemas/db-schema";
+import { prisma } from '@/lib/prisma';
+import { User } from '@/schemas/db-schema';
 
 export const getUserByEmail = async (email: string) => {
   try {

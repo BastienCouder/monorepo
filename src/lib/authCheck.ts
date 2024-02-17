@@ -1,4 +1,4 @@
-import { auth } from "@/auth";
+import { auth } from '@/auth';
 
 export const currentUser = async () => {
   const session = await auth();
@@ -13,7 +13,7 @@ export const currentRole = async () => {
 };
 
 const roles = {
-  protected: ["ADMIN"],
+  protected: ['ADMIN'],
 };
 
 export function roleCheckMiddleware(

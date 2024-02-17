@@ -1,4 +1,4 @@
-import z from "zod";
+import z from 'zod';
 
 export const envSchema = z.object({
   NAME_WEBSITE: z.string().nonempty(),

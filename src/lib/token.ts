@@ -1,8 +1,8 @@
-import  { randomUUID } from "crypto";
+import { randomUUID } from 'crypto';
 
-import { getPasswordResetTokenByEmail } from "@/lib/data/password-reset-token";
-import { prisma } from "@/lib/prisma";
-import { getVerificationTokenByEmail } from "./data/verification-token";
+import { getPasswordResetTokenByEmail } from '@/lib/data/password-reset-token';
+import { prisma } from '@/lib/prisma';
+import { getVerificationTokenByEmail } from './data/verification-token';
 
 export const generatePasswordResetToken = async (email: string) => {
   const token = randomUUID();

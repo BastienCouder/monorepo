@@ -1,6 +1,6 @@
-import { z } from "zod";
+import { z } from 'zod';
 
-export const UserRoleEnum = z.enum(["ADMIN", "USER"]);
+export const UserRoleEnum = z.enum(['ADMIN', 'USER']);
 
 export const UserSchema: z.ZodSchema<any> = z.lazy(() =>
   z.object({
@@ -14,7 +14,6 @@ export const UserSchema: z.ZodSchema<any> = z.lazy(() =>
     deleteAt: z.date().nullable(),
     purchases: z.array(PurchaseSchema).optional(),
   })
-
 );
 
 const CourseSchema: z.ZodSchema<any> = z.lazy(() =>
@@ -32,8 +31,8 @@ const CourseSchema: z.ZodSchema<any> = z.lazy(() =>
     chapters: z.array(ChapterSchema).optional(),
     attachments: z.array(AttachmentSchema).optional(),
     purchases: z.array(PurchaseSchema).optional(),
-  }))
-
+  })
+);
 
 const PurchaseSchema: z.ZodSchema<any> = z.lazy(() =>
   z.object({
@@ -44,7 +43,8 @@ const PurchaseSchema: z.ZodSchema<any> = z.lazy(() =>
     updatedAt: z.date(),
     user: UserSchema.optional(),
     course: CourseSchema.optional(),
-  }))
+  })
+);
 
 const ChapterSchema: z.ZodSchema<any> = z.lazy(() =>
   z.object({
@@ -55,12 +55,15 @@ const ChapterSchema: z.ZodSchema<any> = z.lazy(() =>
     position: z.number(),
     isPublished: z.boolean(),
     courseId: z.string(),
-  }))
+  })
+);
 
-const CategorySchema: z.ZodSchema<any> = z.lazy(() => z.object({
-  id: z.string(),
-  name: z.string(),
-}))
+const CategorySchema: z.ZodSchema<any> = z.lazy(() =>
+  z.object({
+    id: z.string(),
+    name: z.string(),
+  })
+);
 
 const AttachmentSchema: z.ZodSchema<any> = z.lazy(() =>
   z.object({
@@ -68,6 +71,7 @@ const AttachmentSchema: z.ZodSchema<any> = z.lazy(() =>
     name: z.string(),
     url: z.string().url(),
     courseId: z.string(),
-  }))
+  })
+);
 
 export type User = z.infer<typeof UserSchema>;

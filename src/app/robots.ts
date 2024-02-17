@@ -1,11 +1,11 @@
-import { MetadataRoute } from "next";
-import { env } from "@/lib/env";
+import { MetadataRoute } from 'next';
+import { env } from '@/lib/env';
 
 export default function robots(): MetadataRoute.Robots {
   return {
     rules: {
-      userAgent: "*",
-      allow: "/",
+      userAgent: '*',
+      allow: '/',
     },
     sitemap: `${env.NEXT_URL}/sitemap.xml`,
   };

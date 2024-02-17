@@ -1,11 +1,11 @@
-import NextAuth from "next-auth";
-import { UserRole } from "@prisma/client";
-import { PrismaAdapter } from "@auth/prisma-adapter";
+import NextAuth from 'next-auth';
+import { UserRole } from '@prisma/client';
+import { PrismaAdapter } from '@auth/prisma-adapter';
 
-import authConfig from "@/auth.config";
-import { getUserById } from "@/lib/data/user";
-import { getAccountByUserId } from "@/lib/data/account";
-import { prisma } from "@/lib/prisma";
+import authConfig from '@/auth.config';
+import { getUserById } from '@/lib/data/user';
+import { getAccountByUserId } from '@/lib/data/account';
+import { prisma } from '@/lib/prisma';
 
 export const {
   handlers: { GET, POST },
@@ -14,8 +14,8 @@ export const {
   signOut,
 } = NextAuth({
   pages: {
-    signIn: "/auth/login",
-    error: "/auth/error",
+    signIn: '/auth/login',
+    error: '/auth/error',
   },
   events: {
     async linkAccount({ user }) {
@@ -29,7 +29,7 @@ export const {
   callbacks: {
     async signIn({ user, account }) {
       // Allow OAuth without email verification
-      if (account?.provider !== "credentials") return true;
+      if (account?.provider !== 'credentials') return true;
       // Allow OAuth without email verification
 
       const existingUser = await getUserById(user.id!);
@@ -74,6 +74,6 @@ export const {
     },
   },
   adapter: PrismaAdapter(prisma),
-  session: { strategy: "jwt" },
+  session: { strategy: 'jwt' },
   ...authConfig,
 });

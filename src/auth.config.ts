@@ -1,11 +1,11 @@
-import bcrypt from "bcryptjs";
-import type { NextAuthConfig } from "next-auth";
-import Credentials from "next-auth/providers/credentials";
-import Google from "next-auth/providers/google";
+import bcrypt from 'bcryptjs';
+import type { NextAuthConfig } from 'next-auth';
+import Credentials from 'next-auth/providers/credentials';
+import Google from 'next-auth/providers/google';
 
-import { getUserByEmail } from "@/lib/data/user";
-import { env } from "@/lib/env";
-import { LoginSchema } from "@/schemas";
+import { getUserByEmail } from '@/lib/data/user';
+import { env } from '@/lib/env';
+import { LoginSchema } from '@/schemas';
 
 export default {
   providers: [
@@ -17,10 +17,10 @@ export default {
     Credentials({
       credentials: {
         email: {
-          label: "Email",
-          type: "text",
+          label: 'Email',
+          type: 'text',
         },
-        password: { label: "Password", type: "password" },
+        password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
         const validatedFields = LoginSchema.safeParse(credentials);

@@ -1,6 +1,6 @@
-"use server";
-import { prisma } from "@/lib/prisma";
-import { compare } from "bcryptjs";
+'use server';
+import { prisma } from '@/lib/prisma';
+import { compare } from 'bcryptjs';
 
 // Check Register Email
 export async function checkIfEmailExists(email: string): Promise<boolean> {
@@ -29,7 +29,7 @@ export async function checkPassword(
     }
     return false;
   } catch (error) {
-    console.error("Error checking password:", error);
+    console.error('Error checking password:', error);
     return false;
   }
 }
