@@ -4,8 +4,7 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 
 import authConfig from "@/auth.config";
 import { getUserById } from "@/lib/data/user";
-import { getTwoFactorConfirmationByUserId } from "@/lib/data/two-factor-confirmation";
-import { getAccountByUserId } from "./lib/data/account";
+import { getAccountByUserId } from "@/lib/data/account";
 import { prisma } from "@/lib/prisma";
 
 export const {
@@ -13,7 +12,6 @@ export const {
   auth,
   signIn,
   signOut,
-  update,
 } = NextAuth({
   pages: {
     signIn: "/auth/login",
@@ -34,23 +32,10 @@ export const {
       if (account?.provider !== "credentials") return true;
       // Allow OAuth without email verification
 
-      const existingUser = await getUserById(user.id);
+      const existingUser = await getUserById(user.id!);
 
       // Prevent sign in without email verification
       if (!existingUser?.emailVerified) return false;
-
-      if (existingUser.isTwoFactorEnabled) {
-        const twoFactorConfirmation = await getTwoFactorConfirmationByUserId(
-          existingUser.id
-        );
-
-        if (!twoFactorConfirmation) return false;
-
-        // Delete two factor confirmation for next sign in
-        await prisma.twoFactorConfirmation.delete({
-          where: { id: twoFactorConfirmation.id },
-        });
-      }
 
       return true;
     },
@@ -64,12 +49,8 @@ export const {
       }
 
       if (session.user) {
-        session.user.isTwoFactorEnabled = token.isTwoFactorEnabled as boolean;
-      }
-
-      if (session.user) {
         session.user.name = token.name;
-        session.user.email = token.email;
+        session.user.email = token.email!;
         session.user.isOAuth = token.isOAuth as boolean;
       }
 
@@ -88,7 +69,6 @@ export const {
       token.name = existingUser.name;
       token.email = existingUser.email;
       token.role = existingUser.role;
-      token.isTwoFactorEnabled = existingUser.isTwoFactorEnabled;
 
       return token;
     },

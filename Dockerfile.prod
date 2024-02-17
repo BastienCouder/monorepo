@@ -1,0 +1,19 @@
+FROM node:20.11.0
+
+WORKDIR /app
+
+COPY package*.json ./
+
+COPY . .
+
+RUN npm install
+RUN npx prisma generate
+
+RUN npm run test
+RUN npm run build
+
+ENV PORT=4000
+
+EXPOSE 4000
+
+CMD [ "npm", "run", "start" ]
