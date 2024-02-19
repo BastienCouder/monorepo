@@ -1,10 +1,10 @@
 import NextAuth from 'next-auth';
 import { UserRole } from '@prisma/client';
 import { PrismaAdapter } from '@auth/prisma-adapter';
-
 import authConfig from '@/auth.config';
 import { getUserById } from '@/lib/data/user';
-import { getAccountByUserId } from '@/lib/data/account';
+import { getTwoFactorConfirmationByUserId } from '@/lib/data/two-factor-confirmation';
+import { getAccountByUserId } from './lib/data/account';
 import { prisma } from '@/lib/prisma';
 
 export const {
@@ -14,8 +14,8 @@ export const {
   signOut,
 } = NextAuth({
   pages: {
-    signIn: '/auth/login',
-    error: '/auth/error',
+    signIn: '/login',
+    error: '/error',
   },
   events: {
     async linkAccount({ user }) {
@@ -32,10 +32,23 @@ export const {
       if (account?.provider !== 'credentials') return true;
       // Allow OAuth without email verification
 
-      const existingUser = await getUserById(user.id!);
+      const existingUser = await getUserById(user.id as string);
 
       // Prevent sign in without email verification
       if (!existingUser?.emailVerified) return false;
+
+      if (existingUser.isTwoFactorEnabled) {
+        const twoFactorConfirmation = await getTwoFactorConfirmationByUserId(
+          existingUser.id
+        );
+
+        if (!twoFactorConfirmation) return false;
+
+        // Delete two factor confirmation for next sign in
+        await prisma.twoFactorConfirmation.delete({
+          where: { id: twoFactorConfirmation.id },
+        });
+      }
 
       return true;
     },
@@ -49,8 +62,12 @@ export const {
       }
 
       if (session.user) {
-        session.user.name = token.name;
-        session.user.email = token.email!;
+        session.user.isTwoFactorEnabled = token.isTwoFactorEnabled as boolean;
+      }
+
+      if (session.user) {
+        session.user.name = token.name as string;
+        session.user.email = token.email as string;
         session.user.isOAuth = token.isOAuth as boolean;
       }
 
@@ -69,6 +86,7 @@ export const {
       token.name = existingUser.name;
       token.email = existingUser.email;
       token.role = existingUser.role;
+      token.isTwoFactorEnabled = existingUser.isTwoFactorEnabled;
 
       return token;
     },

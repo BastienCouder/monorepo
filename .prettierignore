@@ -1,5 +1,8 @@
 # Ignore artifacts:
 .next/
+__tests__/
+src/component/ui/
 
 # Ignore specific files:
 package-lock.json
+commitlint.config.cjs

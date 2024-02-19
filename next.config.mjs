@@ -1,17 +1,16 @@
 /** @type {import('next').NextConfig} */
-import withPWAInit from "@ducanh2912/next-pwa";
+import withPWAInit from '@ducanh2912/next-pwa';
 
 const withPWA = withPWAInit({
-  dest: "public",
-  cacheOnFrontEndNav:true,
-  aggresiveFrontEndNavCaching:true,
-  reloadOnOnline:true,
-  swcMinify:true,
-  disable:false,
+  dest: 'public',
+  cacheOnFrontEndNav: true,
+  aggresiveFrontEndNavCaching: true,
+  reloadOnOnline: true,
+  swcMinify: true,
+  disable: false,
   workboxOptions: {
-    disableDevLogs:true
-  }
-
+    disableDevLogs: true,
+  },
 });
 
 export default withPWA({

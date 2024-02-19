@@ -12,6 +12,7 @@ const config = {
   verbose: true,
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
+    '^next-auth/react$': '<rootDir>/__mocks__/next-auth/react.js',
   },
   globals: {
     'ts-jest': {

@@ -1,8 +1,34 @@
-import { randomUUID } from 'crypto';
+import crypto, { randomUUID } from 'crypto';
 
 import { getPasswordResetTokenByEmail } from '@/lib/data/password-reset-token';
+import { getTwoFactorTokenByEmail } from '@/lib/data/two-factor-token';
 import { prisma } from '@/lib/prisma';
-import { getVerificationTokenByEmail } from './data/verification-token';
+import { getVerificationTokenByEmail } from '@/lib/data/verification-token';
+
+export const generateTwoFactorToken = async (email: string) => {
+  const token = crypto.randomInt(100_000, 1_000_000).toString();
+  const expires = new Date(new Date().getTime() + 5 * 60 * 1000);
+
+  const existingToken = await getTwoFactorTokenByEmail(email);
+
+  if (existingToken) {
+    await prisma.twoFactorToken.delete({
+      where: {
+        id: existingToken.id,
+      },
+    });
+  }
+
+  const twoFactorToken = await prisma.twoFactorToken.create({
+    data: {
+      email,
+      token,
+      expires,
+    },
+  });
+
+  return twoFactorToken;
+};
 
 export const generatePasswordResetToken = async (email: string) => {
   const token = randomUUID();

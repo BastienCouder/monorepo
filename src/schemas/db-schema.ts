@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 export const UserRoleEnum = z.enum(['ADMIN', 'USER']);
+export type UserRole = z.infer<typeof UserRoleEnum>;
 
 export const UserSchema: z.ZodSchema<any> = z.lazy(() =>
   z.object({
