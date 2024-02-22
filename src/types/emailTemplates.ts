@@ -3,4 +3,5 @@ export interface EmailTemplateProps {
   token: string;
 }
 
+// eslint-disable-next-line no-unused-vars
 export type EmailTemplateFunc = (props: EmailTemplateProps) => Promise<void>;

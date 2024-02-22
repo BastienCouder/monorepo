@@ -1,10 +1,6 @@
-import RegisterForm from '@/components/auth/form-register';
 import { Metadata } from 'next';
 import { env } from '@/lib/env';
-import { buttonVariants } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
-import routes from '@/lib/routes.json';
-import Link from 'next/link';
+import { RegisterForm } from '@/components/auth/form-register';
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
@@ -13,23 +9,8 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default async function Register() {
-  return (
-    <>
-      <div className="lg:p-8">
-        <Link
-          href={routes.login}
-          className={cn(
-            buttonVariants(),
-            'absolute top-[1.5rem] hover:bg-muted'
-          )}
-        >
-          login
-        </Link>
-        <div className="relative mx-auto flex w-full flex-col justify-center space-y-4 sm:w-[450px]">
-          <RegisterForm />
-        </div>
-      </div>
-    </>
-  );
-}
+const RegisterPage = () => {
+  return <RegisterForm />;
+};
+
+export default RegisterPage;

@@ -5,6 +5,8 @@ import '@/styles/globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import { auth } from '@/auth';
 import { SessionProvider } from 'next-auth/react';
+import { ThemeProvider } from '@/context/theme-provider';
+import ProgressBar from '@/components/progress-bar';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -28,15 +30,16 @@ export default async function RootLayout({
   const session = await auth();
 
   return (
-    <html lang="fr">
-      <body className={inter.className}>
-        <SessionProvider session={session}>
-          <main>
-            {children}
+    <SessionProvider session={session}>
+      <html lang="fr">
+        <body className={inter.className}>
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <Toaster />
-          </main>
-        </SessionProvider>
-      </body>
-    </html>
+            <ProgressBar />
+            {children}
+          </ThemeProvider>
+        </body>
+      </html>
+    </SessionProvider>
   );
 }

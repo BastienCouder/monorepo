@@ -1,74 +1,41 @@
+'use server';
+
 import * as z from 'zod';
 import bcrypt from 'bcryptjs';
 
-import { RegisterAdminSchema, RegisterSchema } from '@/schemas/index';
+import { RegisterSchema } from '@/schemas';
+
+import { generateVerificationToken } from '@/lib/tokens';
 import { getUserByEmail } from '@/lib/data/user';
+import { sendVerificationEmail } from '@/lib/email';
 import { prisma } from '@/lib/prisma';
-import { User, UserRole } from '@/schemas/db-schema';
 
-type CreateUserResponse = {
-  success?: string;
-  user?: User;
-  error?: string;
-};
+export const register = async (values: z.infer<typeof RegisterSchema>) => {
+  const validatedFields = RegisterSchema.safeParse(values);
 
-type CreateUserParams = {
-  email: string;
-  password: string;
-  name: string;
-  role: UserRole;
-};
+  if (!validatedFields.success) {
+    return { error: 'Invalid fields!' };
+  }
 
-async function createUser({
-  email,
-  password,
-  name,
-  role,
-}: CreateUserParams): Promise<CreateUserResponse> {
+  const { email, password, name } = validatedFields.data;
   const hashedPassword = await bcrypt.hash(password, 10);
+
   const existingUser = await getUserByEmail(email);
 
   if (existingUser) {
-    return { error: 'Email déjà utilisé !' };
+    return { error: 'Email already in use!' };
   }
 
-  const user = await prisma.user.create({
+  await prisma.user.create({
     data: {
       name,
       email,
       password: hashedPassword,
-      role,
     },
   });
 
-  // const verificationToken = await generateVerificationToken(to);
-  // await sendEmail(resend, EmailType.Verification, to, verificationToken.token);
+  const verificationToken = await generateVerificationToken(email);
+  await sendVerificationEmail(verificationToken.email, verificationToken.token);
 
-  return { success: 'Confirmation email envoyé !', user };
-}
-export const register = async (
-  values: z.infer<typeof RegisterSchema>
-): Promise<CreateUserResponse> => {
-  const validatedFields = RegisterSchema.safeParse(values);
-
-  if (!validatedFields.success) {
-    return { error: 'Champs invalide !' };
-  }
-
-  return await createUser({ ...validatedFields.data, role: 'USER' });
-};
-
-export const registerDashboard = async (
-  values: z.infer<typeof RegisterAdminSchema>
-): Promise<CreateUserResponse> => {
-  const validatedFields = RegisterAdminSchema.safeParse(values);
-
-  if (!validatedFields.success) {
-    return { error: 'Champs invalide !' };
-  }
-
-  return await createUser({
-    ...validatedFields.data,
-    role: 'ADMIN' as UserRole,
-  });
+  return { success: 'Confirmation email sent!' };
 };

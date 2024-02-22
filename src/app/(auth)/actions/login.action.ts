@@ -10,7 +10,11 @@ import { getTwoFactorTokenByEmail } from '@/lib/data/two-factor-token';
 import { DEFAULT_LOGIN_REDIRECT } from '@/routes';
 import { getTwoFactorConfirmationByUserId } from '@/lib/data/two-factor-confirmation';
 import { prisma } from '@/lib/prisma';
-import NextAuth from 'next-auth';
+import {
+  generateTwoFactorToken,
+  generateVerificationToken,
+} from '@/lib/tokens';
+import { sendTwoFactorTokenEmail, sendVerificationEmail } from '@/lib/email';
 
 export const login = async (
   values: z.infer<typeof LoginSchema>,
@@ -31,14 +35,14 @@ export const login = async (
   }
 
   if (!existingUser.emailVerified) {
-    // const verificationToken = await generateVerificationToken(
-    //   existingUser.email
-    // );
+    const verificationToken = await generateVerificationToken(
+      existingUser.email
+    );
 
-    // await sendVerificationEmail(
-    //   verificationToken.email,
-    //   verificationToken.token
-    // );
+    await sendVerificationEmail(
+      verificationToken.email,
+      verificationToken.token
+    );
 
     return { success: 'Confirmation email sent!' };
   }
@@ -81,8 +85,8 @@ export const login = async (
         },
       });
     } else {
-      //   const twoFactorToken = await generateTwoFactorToken(existingUser.email);
-      //    await sendTwoFactorTokenEmail(twoFactorToken.email, twoFactorToken.token);
+      const twoFactorToken = await generateTwoFactorToken(existingUser.email);
+      await sendTwoFactorTokenEmail(twoFactorToken.email, twoFactorToken.token);
 
       return { twoFactor: true };
     }

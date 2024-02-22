@@ -1,9 +1,8 @@
-import { prisma } from '@/lib/prisma';
-import { User } from '@/schemas/db-schema';
+import { prisma } from '../prisma';
 
 export const getUserByEmail = async (email: string) => {
   try {
-    const user: User = await prisma.user.findUnique({ where: { email } });
+    const user = await prisma.user.findUnique({ where: { email } });
 
     return user;
   } catch {
@@ -13,7 +12,7 @@ export const getUserByEmail = async (email: string) => {
 
 export const getUserById = async (id: string) => {
   try {
-    const user: User = await prisma.user.findUnique({ where: { id } });
+    const user = await prisma.user.findUnique({ where: { id } });
 
     return user;
   } catch {

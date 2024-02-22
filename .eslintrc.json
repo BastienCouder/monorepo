@@ -1,12 +1,6 @@
 {
-  "extends": [
-    "eslint:recommended",
-    "next",
-    "next/core-web-vitals",
-    "prettier",
-    "plugin:jest/recommended"
-  ],
-  "plugins": ["prettier", "jest"],
+  "extends": ["eslint:recommended", "next", "next/core-web-vitals", "prettier"],
+  "plugins": ["prettier"],
   "rules": {
     "prettier/prettier": "error",
     "no-undef": "error",
@@ -29,11 +23,5 @@
         "no-unused-vars": "off"
       }
     }
-  ],
-  "env": {
-    "browser": true,
-    "es2021": true,
-    "node": true,
-    "jest": true
-  }
+  ]
 }

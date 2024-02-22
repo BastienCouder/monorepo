@@ -1,10 +1,6 @@
-import LoginForm from '@/components/auth/form-login';
-import { buttonVariants } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
+import { LoginForm } from '@/components/auth/form-login';
 import { env } from '@/lib/env';
 import { Metadata } from 'next';
-import Link from 'next/link';
-import routes from '@/lib/routes.json';
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
@@ -13,18 +9,8 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default async function Login() {
-  return (
-    <div className="lg:p-8">
-      <Link
-        href={routes.register}
-        className={cn(buttonVariants(), 'absolute top-[1.5rem] hover:bg-muted')}
-      >
-        register
-      </Link>
-      <div className="relative mx-auto flex w-full flex-col justify-center space-y-4 sm:w-[450px]">
-        <LoginForm />
-      </div>
-    </div>
-  );
-}
+const LoginPage = () => {
+  return <LoginForm />;
+};
+
+export default LoginPage;

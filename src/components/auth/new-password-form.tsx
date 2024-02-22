@@ -16,10 +16,11 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
+import { CardWrapper } from '@/components/auth/card-wrapper';
 import { Button } from '@/components/ui/button';
-import { FormError } from '@/components/auth/form-error';
-import { FormSuccess } from '@/components/auth/form-success';
 import { newPassword } from '@/app/(auth)/actions/new-password.action';
+import { FormError } from './form-error';
+import { FormSuccess } from './form-success';
 
 export const NewPasswordForm = () => {
   const searchParams = useSearchParams();
@@ -49,34 +50,40 @@ export const NewPasswordForm = () => {
   };
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        <div className="space-y-4">
-          <FormField
-            control={form.control}
-            name="password"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Password</FormLabel>
-                <FormControl>
-                  <Input
-                    {...field}
-                    disabled={isPending}
-                    placeholder="******"
-                    type="password"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-        <FormError message={error} />
-        <FormSuccess message={success} />
-        <Button disabled={isPending} type="submit" className="w-full">
-          Reset password
-        </Button>
-      </form>
-    </Form>
+    <CardWrapper
+      headerLabel="Enter a new password"
+      backButtonLabel="Back to login"
+      backButtonHref="/auth/login"
+    >
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <div className="space-y-4">
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Password</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      disabled={isPending}
+                      placeholder="******"
+                      type="password"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+          <FormError message={error} />
+          <FormSuccess message={success} />
+          <Button disabled={isPending} type="submit" className="w-full">
+            Reset password
+          </Button>
+        </form>
+      </Form>
+    </CardWrapper>
   );
 };

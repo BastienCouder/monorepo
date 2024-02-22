@@ -1,21 +1,23 @@
 import NextAuth from 'next-auth';
 import { UserRole } from '@prisma/client';
-import { PrismaAdapter } from '@auth/prisma-adapter';
+
 import authConfig from '@/auth.config';
-import { getUserById } from '@/lib/data/user';
-import { getTwoFactorConfirmationByUserId } from '@/lib/data/two-factor-confirmation';
+import { prisma } from './lib/prisma';
+import { getUserById } from './lib/data/user';
+import { getTwoFactorConfirmationByUserId } from './lib/data/two-factor-confirmation';
 import { getAccountByUserId } from './lib/data/account';
-import { prisma } from '@/lib/prisma';
 
 export const {
   handlers: { GET, POST },
   auth,
   signIn,
   signOut,
+  // update,
+  unstable_update: update,
 } = NextAuth({
   pages: {
-    signIn: '/login',
-    error: '/error',
+    signIn: '/auth/login',
+    error: '/auth/error',
   },
   events: {
     async linkAccount({ user }) {
@@ -25,14 +27,13 @@ export const {
       });
     },
   },
-  secret: process.env.AUTH_SECRET,
   callbacks: {
     async signIn({ user, account }) {
       // Allow OAuth without email verification
       if (account?.provider !== 'credentials') return true;
-      // Allow OAuth without email verification
 
-      const existingUser = await getUserById(user.id as string);
+      // @ts-expect-error
+      const existingUser = await getUserById(user.id);
 
       // Prevent sign in without email verification
       if (!existingUser?.emailVerified) return false;
@@ -66,7 +67,7 @@ export const {
       }
 
       if (session.user) {
-        session.user.name = token.name as string;
+        session.user.name = token.name;
         session.user.email = token.email as string;
         session.user.isOAuth = token.isOAuth as boolean;
       }
@@ -91,7 +92,6 @@ export const {
       return token;
     },
   },
-  adapter: PrismaAdapter(prisma),
   session: { strategy: 'jwt' },
   ...authConfig,
 });
