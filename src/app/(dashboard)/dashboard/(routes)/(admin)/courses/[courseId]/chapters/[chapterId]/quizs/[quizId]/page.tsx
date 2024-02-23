@@ -42,7 +42,7 @@ export default async function CourseIdPage({
     },
     include: {
       muxData: true,
-      quiz: { include: { questions: { include: { options: true } } } },
+      quizs: { include: { questions: { include: { options: true } } } },
     },
   });
 

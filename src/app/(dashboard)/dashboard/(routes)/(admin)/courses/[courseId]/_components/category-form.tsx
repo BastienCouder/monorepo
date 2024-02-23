@@ -55,13 +55,14 @@ export const CategoryForm = ({
     try {
       await updateCourse(courseId, values);
       toast({
-        title: 'Course updated',
+        title: 'Cours mis à jour',
       });
       toggleEdit();
       router.refresh();
     } catch {
       toast({
-        title: 'Something went wrong',
+        title: "Une erreur s'est produite",
+        variant: 'destructive',
       });
     }
   };
@@ -71,16 +72,18 @@ export const CategoryForm = ({
   );
 
   return (
-    <div className="mt-6 border bg-slate-100 rounded-md p-4">
+    <div className="mt-6 border bg-card rounded-md p-4">
       <div className="font-medium flex items-center justify-between">
-        Course category
-        <Button onClick={toggleEdit} variant="ghost">
+        <h2 className="border-b-4 border-l-4 px-1 rounded-bl-md border-primary">
+          Catégorie du cours *
+        </h2>
+        <Button onClick={toggleEdit}>
           {isEditing ? (
-            <>Cancel</>
+            <>Annuler</>
           ) : (
             <>
               <Pencil className="h-4 w-4 mr-2" />
-              Edit category
+              Changer de catégorie
             </>
           )}
         </Button>
@@ -92,7 +95,7 @@ export const CategoryForm = ({
             !initialData.categoryId && 'text-slate-500 italic'
           )}
         >
-          {selectedOption?.label || 'No category'}
+          {selectedOption?.label || 'Aucune category'}
         </p>
       )}
       {isEditing && (
@@ -119,7 +122,7 @@ export const CategoryForm = ({
             />
             <div className="flex items-center gap-x-2">
               <Button disabled={!isValid || isSubmitting} type="submit">
-                Save
+                Sauvegarder
               </Button>
             </div>
           </form>

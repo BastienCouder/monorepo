@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 'use client';
 
 import * as z from 'zod';
@@ -19,14 +18,12 @@ import {
 } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { Editor } from '@/components/editor';
-import { Preview } from '@/components/preview';
 import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from '@/components/ui/use-toast';
+import { updateChapter } from '@/app/(dashboard)/action/update-chapter';
 
 interface ChapterAccessFormProps {
   initialData: Chapter;
-  courseId: string;
   chapterId: string;
 }
 
@@ -36,7 +33,6 @@ const formSchema = z.object({
 
 export const ChapterAccessForm = ({
   initialData,
-  courseId,
   chapterId,
 }: ChapterAccessFormProps) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -56,18 +52,16 @@ export const ChapterAccessForm = ({
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      //   await axios.patch(
-      //     `/api/courses/${courseId}/chapters/${chapterId}`,
-      //     values
-      //   );
+      await updateChapter(chapterId, values);
       toast({
-        title: 'Chapter updated',
+        title: 'Chapitre mis à jour',
       });
       toggleEdit();
       router.refresh();
     } catch {
       toast({
-        title: 'Something went wrong',
+        title: "Une erreur s'est produite",
+        variant: 'destructive',
       });
     }
   };

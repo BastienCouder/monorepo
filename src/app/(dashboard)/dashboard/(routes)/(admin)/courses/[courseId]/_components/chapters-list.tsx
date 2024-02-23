@@ -12,6 +12,7 @@ import { Grip, Pencil } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 
 interface ChaptersListProps {
   items: Chapter[];
@@ -96,19 +97,20 @@ export const ChaptersList = ({
                     </div>
                     {chapter.title}
                     <div className="ml-auto pr-2 flex items-center gap-x-2">
-                      {chapter.isFree && <Badge>Free</Badge>}
                       <Badge
                         className={cn(
                           'bg-slate-500',
                           chapter.isPublished && 'bg-sky-700'
                         )}
                       >
-                        {chapter.isPublished ? 'Published' : 'Draft'}
+                        {chapter.isPublished ? 'Publié' : 'Non pulié'}
                       </Badge>
-                      <Pencil
-                        onClick={() => onEdit(chapter.id)}
-                        className="w-4 h-4 cursor-pointer hover:opacity-75 transition"
-                      />
+                      <Button size="sm" variant={'secondary'}>
+                        <Pencil
+                          onClick={() => onEdit(chapter.id)}
+                          className="w-4 h-4 cursor-pointer hover:opacity-75 transition"
+                        />
+                      </Button>
                     </div>
                   </div>
                 )}

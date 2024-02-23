@@ -48,6 +48,7 @@ export const QuizActions = ({
     } catch {
       toast({
         title: 'Something went wrong',
+        variant: 'destructive',
       });
     } finally {
       setIsLoading(false);

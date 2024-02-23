@@ -20,10 +20,10 @@ import { cn } from '@/lib/utils';
 import { Editor } from '@/components/editor';
 import { Preview } from '@/components/preview';
 import { toast } from '@/components/ui/use-toast';
+import { updateChapter } from '@/app/(dashboard)/action/update-chapter';
 
 interface ChapterDescriptionFormProps {
   initialData: Chapter;
-  courseId: string;
   chapterId: string;
 }
 
@@ -33,9 +33,6 @@ const formSchema = z.object({
 
 export const ChapterDescriptionForm = ({
   initialData,
-  // eslint-disable-next-line no-unused-vars
-  courseId,
-  // eslint-disable-next-line no-unused-vars
   chapterId,
 }: ChapterDescriptionFormProps) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -53,36 +50,35 @@ export const ChapterDescriptionForm = ({
 
   const { isSubmitting, isValid } = form.formState;
 
-  // eslint-disable-next-line no-unused-vars
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      //   await axios.patch(
-      //     `/api/courses/${courseId}/chapters/${chapterId}`,
-      //     values
-      //   );
+      await updateChapter(chapterId, values);
       toast({
-        title: 'Chapter updated',
+        title: 'Chapitre mis à jour',
       });
       toggleEdit();
       router.refresh();
     } catch {
       toast({
-        title: 'Something went wrong',
+        title: "Une erreur s'est produite",
+        variant: 'destructive',
       });
     }
   };
 
   return (
-    <div className="mt-6 border bg-slate-100 rounded-md p-4">
+    <div className="mt-6 border bg-card rounded-md p-4">
       <div className="font-medium flex items-center justify-between">
-        Chapter description
-        <Button onClick={toggleEdit} variant="ghost">
+        <h2 className="border-b-4 border-l-4 px-1 rounded-bl-md border-primary">
+          Description du chapitre *
+        </h2>
+        <Button onClick={toggleEdit}>
           {isEditing ? (
-            <>Cancel</>
+            <>Annuler</>
           ) : (
             <>
               <Pencil className="h-4 w-4 mr-2" />
-              Edit description
+              Modifier la description
             </>
           )}
         </Button>
@@ -90,11 +86,11 @@ export const ChapterDescriptionForm = ({
       {!isEditing && (
         <div
           className={cn(
-            'text-sm mt-2',
+            'text-sm mt-4',
             !initialData.description && 'text-slate-500 italic'
           )}
         >
-          {!initialData.description && 'No description'}
+          {!initialData.description && 'Aucune description'}
           {initialData.description && (
             <Preview value={initialData.description} />
           )}
@@ -120,7 +116,7 @@ export const ChapterDescriptionForm = ({
             />
             <div className="flex items-center gap-x-2">
               <Button disabled={!isValid || isSubmitting} type="submit">
-                Save
+                Sauvegarder
               </Button>
             </div>
           </form>

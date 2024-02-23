@@ -2,12 +2,8 @@
 
 import { db } from '@/lib/prisma';
 import { currentUser, roleCheckMiddleware } from '@/lib/authCheck';
-import { Course } from '@prisma/client';
 
-export async function updateCourse<T extends Partial<Course>>(
-  courseId: string,
-  values: T
-): Promise<Course | { error: string }> {
+export async function deleteChapter(chapterId: string) {
   const session = await currentUser();
   const isAuthorized = await roleCheckMiddleware(session);
 
@@ -16,14 +12,11 @@ export async function updateCourse<T extends Partial<Course>>(
   }
 
   try {
-    const updatedCourse = await db.course.update({
-      where: { id: courseId },
-      data: values,
+    await db.chapter.delete({
+      where: { id: chapterId },
     });
-
-    return updatedCourse;
   } catch (error) {
-    console.error('[UPDATE_COURSE]', error);
+    console.error('[DELETE_CHAPTER]', error);
     return { error: 'Internal Error' };
   }
 }

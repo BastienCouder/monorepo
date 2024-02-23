@@ -56,28 +56,31 @@ export const DescriptionForm = ({
     try {
       await updateCourse(courseId, values);
       toast({
-        title: 'Course updated',
+        title: 'Cours mis à jour',
       });
       toggleEdit();
       router.refresh();
     } catch {
       toast({
-        title: 'Something went wrong',
+        title: "Une erreur s'est produite",
+        variant: 'destructive',
       });
     }
   };
 
   return (
-    <div className="mt-6 border bg-slate-100 rounded-md p-4">
+    <div className="mt-6 border bg-card rounded-md p-4">
       <div className="font-medium flex items-center justify-between">
-        Course description
-        <Button onClick={toggleEdit} variant="ghost">
+        <h2 className="border-b-4 border-l-4 px-1 rounded-bl-md border-primary">
+          Description du cours *
+        </h2>
+        <Button onClick={toggleEdit}>
           {isEditing ? (
-            <>Cancel</>
+            <>Annuler</>
           ) : (
             <>
               <Pencil className="h-4 w-4 mr-2" />
-              Edit description
+              Modifier la description
             </>
           )}
         </Button>
@@ -89,7 +92,7 @@ export const DescriptionForm = ({
             !initialData.description && 'text-slate-500 italic'
           )}
         >
-          {initialData.description || 'No description'}
+          {initialData.description || 'Aucune description'}
         </p>
       )}
       {isEditing && (
@@ -106,7 +109,7 @@ export const DescriptionForm = ({
                   <FormControl>
                     <Textarea
                       disabled={isSubmitting}
-                      placeholder="e.g. 'This course is about...'"
+                      placeholder="Description..."
                       {...field}
                     />
                   </FormControl>
@@ -116,7 +119,7 @@ export const DescriptionForm = ({
             />
             <div className="flex items-center gap-x-2">
               <Button disabled={!isValid || isSubmitting} type="submit">
-                Save
+                Sauvegarder
               </Button>
             </div>
           </form>

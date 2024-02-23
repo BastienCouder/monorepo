@@ -11,10 +11,10 @@ import { Chapter, MuxData } from '@prisma/client';
 import { Button } from '@/components/ui/button';
 import { FileUpload } from '@/components/file-upload';
 import { toast } from '@/components/ui/use-toast';
+import { updateChapter } from '@/app/(dashboard)/action/update-chapter';
 
 interface ChapterVideoFormProps {
   initialData: Chapter & { muxData?: MuxData | null };
-  courseId: string;
   chapterId: string;
 }
 
@@ -24,7 +24,6 @@ const formSchema = z.object({
 
 export const ChapterVideoForm = ({
   initialData,
-  courseId,
   chapterId,
 }: ChapterVideoFormProps) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -35,45 +34,45 @@ export const ChapterVideoForm = ({
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      //   await axios.patch(
-      //     `/api/courses/${courseId}/chapters/${chapterId}`,
-      //     values
-      //   );
+      await updateChapter(chapterId, values);
       toast({
-        title: 'Chapter updated',
+        title: 'Chapitre mis à jour',
       });
       toggleEdit();
       router.refresh();
     } catch {
       toast({
-        title: 'Something went wrong',
+        title: "Une erreur s'est produite",
+        variant: 'destructive',
       });
     }
   };
 
   return (
-    <div className="mt-6 border bg-slate-100 rounded-md p-4">
+    <div className="mt-6 border bg-card rounded-md p-4">
       <div className="font-medium flex items-center justify-between">
-        Chapter video
-        <Button onClick={toggleEdit} variant="ghost">
-          {isEditing && <>Cancel</>}
+        <h2 className="border-b-4 border-l-4 px-1 rounded-bl-md border-primary">
+          Video du chapitre
+        </h2>
+        <Button onClick={toggleEdit}>
+          {isEditing && <>Annuler</>}
           {!isEditing && !initialData.videoUrl && (
             <>
               <PlusCircle className="h-4 w-4 mr-2" />
-              Add a video
+              Ajouter une video
             </>
           )}
           {!isEditing && initialData.videoUrl && (
             <>
               <Pencil className="h-4 w-4 mr-2" />
-              Edit video
+              Modifier la video
             </>
           )}
         </Button>
       </div>
       {!isEditing &&
         (!initialData.videoUrl ? (
-          <div className="flex items-center justify-center h-60 bg-slate-200 rounded-md">
+          <div className="flex items-center justify-center h-60 border mt-4 rounded-md">
             <Video className="h-10 w-10 text-slate-500" />
           </div>
         ) : (
@@ -92,14 +91,14 @@ export const ChapterVideoForm = ({
             }}
           />
           <div className="text-xs text-muted-foreground mt-4">
-            Upload this chapter&apos;s video
+            Télécharger la vidéo de ce chapitre
           </div>
         </div>
       )}
       {initialData.videoUrl && !isEditing && (
         <div className="text-xs text-muted-foreground mt-2">
-          Videos can take a few minutes to process. Refresh the page if video
-          does not appear.
+          Le traitement des vidéos peut prendre quelques minutes. Actualisez la
+          page si la vidéo n&apos;apparaît pas.
         </div>
       )}
     </div>

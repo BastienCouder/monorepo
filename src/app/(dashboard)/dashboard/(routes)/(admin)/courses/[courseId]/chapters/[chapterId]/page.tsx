@@ -1,15 +1,14 @@
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, LayoutDashboard, Video } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 
 import { db } from '@/lib/prisma';
-import { IconBadge } from '@/components/icon-badge';
 
 import { ChapterTitleForm } from './_components/chapter-title-form';
 import { ChapterDescriptionForm } from './_components/chapter-description-form';
 import { ChapterVideoForm } from './_components/chapter-video-form';
 import { ChapterActions } from './_components/chapter-actions';
-import { QuizForm } from './_components/quiz-form';
+import { QuizForm } from './_components/chapter-quiz-form';
 
 const ChapterIdPage = async ({
   params,
@@ -23,7 +22,7 @@ const ChapterIdPage = async ({
     },
     include: {
       muxData: true,
-      quiz: { include: { questions: { include: { options: true } } } },
+      quizs: { include: { questions: { include: { options: true } } } },
     },
   });
 
@@ -50,13 +49,13 @@ const ChapterIdPage = async ({
               className="flex items-center text-sm hover:opacity-75 transition mb-6"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to course setup
+              Retour au cours
             </Link>
             <div className="flex items-center justify-between w-full">
               <div className="flex flex-col gap-y-2">
-                <h1 className="text-2xl font-medium">Chapter Creation</h1>
+                <h1 className="text-2xl font-medium">Création du chapitre</h1>
                 <span className="text-sm text-slate-700">
-                  Complete all fields {completionText}
+                  Completez tous les champs {completionText}
                 </span>
               </div>
               <ChapterActions
@@ -68,13 +67,9 @@ const ChapterIdPage = async ({
             </div>
           </div>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-4">
             <div>
-              <div className="flex items-center gap-x-2">
-                <IconBadge icon={LayoutDashboard} />
-                <h2 className="text-xl">Customize your chapter</h2>
-              </div>
               <ChapterTitleForm
                 initialData={chapter}
                 courseId={params.courseId}
@@ -82,7 +77,6 @@ const ChapterIdPage = async ({
               />
               <ChapterDescriptionForm
                 initialData={chapter}
-                courseId={params.courseId}
                 chapterId={params.chapterId}
               />
               <QuizForm
@@ -93,14 +87,9 @@ const ChapterIdPage = async ({
             </div>
           </div>
           <div>
-            <div className="flex items-center gap-x-2">
-              <IconBadge icon={Video} />
-              <h2 className="text-xl">Add a video</h2>
-            </div>
             <ChapterVideoForm
               initialData={chapter}
               chapterId={params.chapterId}
-              courseId={params.courseId}
             />
           </div>
         </div>

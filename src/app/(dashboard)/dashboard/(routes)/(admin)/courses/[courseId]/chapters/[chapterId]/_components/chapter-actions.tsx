@@ -7,6 +7,8 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { ConfirmModal } from '@/components/modal/confirm-modal';
 import { toast } from '@/components/ui/use-toast';
+import { toggleChapterPublication } from '@/app/(dashboard)/action/toggle-publish-chapter';
+import { deleteChapter } from '@/app/(dashboard)/action/delete-chapter';
 
 interface ChapterActionsProps {
   disabled: boolean;
@@ -18,7 +20,6 @@ interface ChapterActionsProps {
 export const ChapterActions = ({
   disabled,
   courseId,
-  // eslint-disable-next-line no-unused-vars
   chapterId,
   isPublished,
 }: ChapterActionsProps) => {
@@ -30,25 +31,22 @@ export const ChapterActions = ({
       setIsLoading(true);
 
       if (isPublished) {
-        // await axios.patch(
-        //   `/api/courses/${courseId}/chapters/${chapterId}/unpublish`
-        // );
+        await toggleChapterPublication(chapterId, false);
         toast({
-          title: 'Chapter unpublished',
+          title: 'Chapitre non publié',
         });
       } else {
-        // await axios.patch(
-        //   `/api/courses/${courseId}/chapters/${chapterId}/publish`
-        // );
+        await toggleChapterPublication(chapterId, true);
         toast({
-          title: 'Chapter published',
+          title: 'Chapitre publié',
         });
       }
 
       router.refresh();
     } catch {
       toast({
-        title: 'Something went wrong',
+        title: "Une erreur s'est produite",
+        variant: 'destructive',
       });
     } finally {
       setIsLoading(false);
@@ -59,16 +57,17 @@ export const ChapterActions = ({
     try {
       setIsLoading(true);
 
-      //   await axios.delete(`/api/courses/${courseId}/chapters/${chapterId}`);
+      await deleteChapter(chapterId);
 
       toast({
-        title: 'Chapter deleted',
+        title: 'Chapitre supprimé',
       });
       router.refresh();
       router.push(`/dashboard/courses/${courseId}`);
     } catch {
       toast({
-        title: 'Something went wrong',
+        title: "Une erreur s'est produite",
+        variant: 'destructive',
       });
     } finally {
       setIsLoading(false);
@@ -83,7 +82,7 @@ export const ChapterActions = ({
         variant="outline"
         size="sm"
       >
-        {isPublished ? 'Unpublish' : 'Publish'}
+        {isPublished ? 'Non publié' : 'Publié'}
       </Button>
       <ConfirmModal onConfirm={onDelete}>
         <Button size="sm" disabled={isLoading}>

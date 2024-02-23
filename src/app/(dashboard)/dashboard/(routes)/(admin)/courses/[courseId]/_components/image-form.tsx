@@ -34,40 +34,43 @@ export const ImageForm = ({ initialData, courseId }: ImageFormProps) => {
     try {
       await updateCourse(courseId, values);
       toast({
-        title: 'Course updated',
+        title: 'Cours mis à jour',
       });
       toggleEdit();
       router.refresh();
     } catch {
       toast({
-        title: 'Something went wrong',
+        title: "Une erreur s'est produite",
+        variant: 'destructive',
       });
     }
   };
 
   return (
-    <div className="mt-6 border bg-slate-100 rounded-md p-4">
+    <div className="mt-6 border bg-card rounded-md p-4">
       <div className="font-medium flex items-center justify-between">
-        Course image
-        <Button onClick={toggleEdit} variant="ghost">
-          {isEditing && <>Cancel</>}
+        <h2 className="border-b-4 border-l-4 px-1 rounded-bl-md border-primary">
+          Image du cours *
+        </h2>
+        <Button onClick={toggleEdit}>
+          {isEditing && <>Annuler</>}
           {!isEditing && !initialData.imageUrl && (
             <>
               <PlusCircle className="h-4 w-4 mr-2" />
-              Add an image
+              Ajouter l&apos;image
             </>
           )}
           {!isEditing && initialData.imageUrl && (
             <>
               <Pencil className="h-4 w-4 mr-2" />
-              Edit image
+              Modifier l&apos;image
             </>
           )}
         </Button>
       </div>
       {!isEditing &&
         (!initialData.imageUrl ? (
-          <div className="flex items-center justify-center h-60 bg-slate-200 rounded-md">
+          <div className="flex items-center justify-center h-60 bg-input mt-2 rounded-md">
             <ImageIcon className="h-10 w-10 text-slate-500" />
           </div>
         ) : (

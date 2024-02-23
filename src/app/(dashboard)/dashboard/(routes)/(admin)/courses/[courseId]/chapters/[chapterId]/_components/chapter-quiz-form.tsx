@@ -19,12 +19,12 @@ import { cn } from '@/lib/utils';
 import { Input } from '@/components/ui/input';
 
 import { toast } from '@/components/ui/use-toast';
-import { QuizList } from './quiz-list';
+import { QuizList } from './chapter-quiz-list';
 import { Chapter, Quiz } from '@prisma/client';
 import { createQuiz } from '@/app/(dashboard)/action/create-quiz';
 
 interface QuizFormProps {
-  initialData: Chapter & { quiz: Quiz[] };
+  initialData: Chapter & { quizs: Quiz[] };
   chapterId: string;
   courseId: string;
 }
@@ -59,13 +59,14 @@ export const QuizForm = ({
     try {
       await createQuiz(chapterId, values.title);
       toast({
-        title: 'Quiz created',
+        title: 'Quiz créé',
       });
       toggleCreating();
       router.refresh();
     } catch {
       toast({
-        title: 'Something went wrong',
+        title: "Une erreur s'est produite",
+        variant: 'destructive',
       });
     }
   };
@@ -77,16 +78,18 @@ export const QuizForm = ({
   };
 
   return (
-    <div className="relative mt-6 border bg-slate-100 rounded-md p-4">
+    <div className="relative mt-6 bg-card border rounded-md p-4">
       <div className="font-medium flex items-center justify-between">
-        Course quiz
-        <Button onClick={toggleCreating} variant="ghost">
+        <h2 className="border-b-4 border-l-4 px-1 rounded-bl-md border-primary">
+          Quiz
+        </h2>
+        <Button onClick={toggleCreating}>
           {isCreating ? (
-            <>Cancel</>
+            <>Annuler</>
           ) : (
             <>
               <PlusCircle className="h-4 w-4 mr-2" />
-              Add a quiz
+              Ajouter un quiz
             </>
           )}
         </Button>
@@ -105,7 +108,7 @@ export const QuizForm = ({
                   <FormControl>
                     <Input
                       disabled={isSubmitting}
-                      placeholder="e.g. 'Introduction to the course'"
+                      placeholder="Quiz..."
                       {...field}
                     />
                   </FormControl>
@@ -115,11 +118,11 @@ export const QuizForm = ({
             />
             <Button
               disabled={
-                !isValid || isSubmitting || initialData.quiz.length >= 1
+                !isValid || isSubmitting || initialData.quizs.length >= 1
               }
               type="submit"
             >
-              Create
+              Créer
             </Button>
           </form>
         </Form>
@@ -128,11 +131,11 @@ export const QuizForm = ({
         <div
           className={cn(
             'text-sm mt-2',
-            !initialData.quiz.length && 'text-slate-500 italic'
+            !initialData.quizs.length && 'text-slate-500 italic'
           )}
         >
-          {!initialData.quiz.length && 'No quiz'}
-          <QuizList onEdit={onEdit} items={initialData.quiz || []} />
+          {!initialData.quizs.length && 'Aucun quiz'}
+          <QuizList onEdit={onEdit} items={initialData.quizs || []} />
         </div>
       )}
     </div>

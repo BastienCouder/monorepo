@@ -10,6 +10,7 @@ import { ConfirmModal } from '@/components/modal/confirm-modal';
 import { toast } from '@/components/ui/use-toast';
 import { admin } from '@/app/(auth)/actions/admin.action';
 import { toggleCoursePublication } from '@/app/(dashboard)/action/toggle-publish-course';
+import { deleteCourse } from '@/app/(dashboard)/action/delete-course';
 
 interface ActionsProps {
   disabled: boolean;
@@ -36,19 +37,20 @@ export const Actions = ({ disabled, courseId, isPublished }: ActionsProps) => {
       if (isPublished) {
         await toggleCoursePublication(courseId, false);
         toast({
-          title: 'Course unpublished',
+          title: 'Cours non publié',
         });
       } else {
         await toggleCoursePublication(courseId, true);
         toast({
-          title: 'Course published',
+          title: 'Cours publié',
         });
       }
 
       router.refresh();
     } catch {
       toast({
-        title: 'Something went wrong',
+        title: "Une erreur s'est produite",
+        variant: 'destructive',
       });
     } finally {
       setIsLoading(false);
@@ -67,15 +69,16 @@ export const Actions = ({ disabled, courseId, isPublished }: ActionsProps) => {
     try {
       setIsLoading(true);
 
-      //   await axios.delete(`/api/courses/${courseId}`);
+      await deleteCourse(courseId);
       toast({
-        title: 'Course deleted',
+        title: 'Cours supprimé',
       });
       router.refresh();
-      router.push(`/teacher/courses`);
+      router.push(`/dashboard/courses`);
     } catch {
       toast({
-        title: 'Something went wrong',
+        title: "Une erreur s'est produite",
+        variant: 'destructive',
       });
     } finally {
       setIsLoading(false);
@@ -90,7 +93,7 @@ export const Actions = ({ disabled, courseId, isPublished }: ActionsProps) => {
         variant="outline"
         size="sm"
       >
-        {isPublished ? 'Unpublish' : 'Publish'}
+        {isPublished ? 'Non publié' : 'Publié'}
       </Button>
       <ConfirmModal onConfirm={onDelete}>
         <Button size="sm" disabled={isLoading}>
