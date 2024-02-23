@@ -5,7 +5,7 @@ import type { z } from 'zod';
 import type { updateUserRoleSchema } from './validations';
 
 import { deleteUserSchema } from '@/schemas/user';
-import { prisma } from '@/lib/prisma';
+import { db } from '@/lib/prisma';
 import { currentUser } from '@/lib/authCheck';
 
 export async function updateUserRole({
@@ -14,7 +14,7 @@ export async function updateUserRole({
 }: z.infer<typeof updateUserRoleSchema>) {
   console.log('updateUserRoleSchemaAction', id, role);
 
-  await prisma.user.update({
+  await db.user.update({
     where: {
       id: id,
     },
@@ -27,7 +27,7 @@ export async function updateUserRole({
 }
 
 // export async function deleteUser(input: { id: string }) {
-//   await prisma.user.delete({
+//   await db.user.delete({
 //     where: {
 //       id: input.id,
 //     },
@@ -53,7 +53,7 @@ export const deleteUser = async (values: z.infer<typeof deleteUserSchema>) => {
     // return { error: 'Unable to remove your own user!' };
   }
 
-  await prisma.user.delete({
+  await db.user.delete({
     where: {
       id,
     },

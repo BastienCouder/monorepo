@@ -1,7 +1,7 @@
 'use server';
 
 import { unstable_noStore as noStore } from 'next/cache';
-import { prisma } from '@/lib/prisma';
+import { db } from '@/lib/prisma';
 import type { SearchParams } from '@/types';
 
 import { filterColumn } from '@/lib/filter-column';
@@ -33,7 +33,7 @@ export async function getUsers(searchParams: SearchParams) {
 
     const roles = (role?.split('.') as User['role'][]) ?? [];
 
-    const getAllUsers = prisma.user.findMany({
+    const getAllUsers = db.user.findMany({
       take: limit,
       skip: offset,
       where:
@@ -71,7 +71,7 @@ export async function getUsers(searchParams: SearchParams) {
         : { id: 'desc' },
     });
 
-    const getAllUsersCount = prisma.user.aggregate({
+    const getAllUsersCount = db.user.aggregate({
       _count: true,
       where:
         !operator || operator === 'and'
@@ -104,7 +104,7 @@ export async function getUsers(searchParams: SearchParams) {
     });
 
     // Transaction is used to ensure both queries are executed in a single transaction
-    const [data, count] = await prisma.$transaction([
+    const [data, count] = await db.$transaction([
       getAllUsers,
       getAllUsersCount,
     ]);

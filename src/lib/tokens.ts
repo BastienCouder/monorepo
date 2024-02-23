@@ -2,7 +2,7 @@ import crypto, { randomUUID } from 'crypto';
 
 import { getPasswordResetTokenByEmail } from '@/lib/data/password-reset-token';
 import { getTwoFactorTokenByEmail } from '@/lib/data/two-factor-token';
-import { prisma } from '@/lib/prisma';
+import { db } from '@/lib/prisma';
 import { getVerificationTokenByEmail } from '@/lib/data/verification-token';
 
 export const generateTwoFactorToken = async (email: string) => {
@@ -12,14 +12,14 @@ export const generateTwoFactorToken = async (email: string) => {
   const existingToken = await getTwoFactorTokenByEmail(email);
 
   if (existingToken) {
-    await prisma.twoFactorToken.delete({
+    await db.twoFactorToken.delete({
       where: {
         id: existingToken.id,
       },
     });
   }
 
-  const twoFactorToken = await prisma.twoFactorToken.create({
+  const twoFactorToken = await db.twoFactorToken.create({
     data: {
       email,
       token,
@@ -37,12 +37,12 @@ export const generatePasswordResetToken = async (email: string) => {
   const existingToken = await getPasswordResetTokenByEmail(email);
 
   if (existingToken) {
-    await prisma.passwordResetToken.delete({
+    await db.passwordResetToken.delete({
       where: { id: existingToken.id },
     });
   }
 
-  const passwordResetToken = await prisma.passwordResetToken.create({
+  const passwordResetToken = await db.passwordResetToken.create({
     data: {
       email,
       token,
@@ -60,14 +60,14 @@ export const generateVerificationToken = async (email: string) => {
   const existingToken = await getVerificationTokenByEmail(email);
 
   if (existingToken) {
-    await prisma.verificationToken.delete({
+    await db.verificationToken.delete({
       where: {
         id: existingToken.id,
       },
     });
   }
 
-  const verficationToken = await prisma.verificationToken.create({
+  const verficationToken = await db.verificationToken.create({
     data: {
       email,
       token,

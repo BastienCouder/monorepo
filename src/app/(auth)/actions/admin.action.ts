@@ -7,7 +7,7 @@ export const admin = async () => {
   const role = await currentRole();
 
   if (role === UserRole.ADMIN) {
-    return { success: 'authorisé !' };
+    return { success: 'Authorisé !' };
   }
 
   return { error: 'Non authorisé !' };

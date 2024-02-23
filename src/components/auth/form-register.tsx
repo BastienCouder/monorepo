@@ -18,8 +18,8 @@ import {
 import { CardWrapper } from '@/components/auth/card-wrapper';
 import { Button } from '@/components/ui/button';
 import { register } from '@/app/(auth)/actions/register.action';
-import { FormError } from './form-error';
-import { FormSuccess } from './form-success';
+import { FormError } from '../modal/form-error';
+import { FormSuccess } from '../modal/form-success';
 
 export const RegisterForm = () => {
   const [error, setError] = useState<string | undefined>('');

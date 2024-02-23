@@ -3,7 +3,7 @@ import * as z from 'zod';
 import bcrypt from 'bcryptjs';
 import * as passwordResetTokenData from '@/lib/data/password-reset-token';
 import * as userData from '@/lib/data/user';
-import { prisma } from '@/lib/prisma';
+import { db } from '@/lib/prisma';
 import { newPassword } from '@/app/(auth)/actions/new-password.action';
 import { User } from '@/schemas/db-schema';
 
@@ -12,7 +12,7 @@ jest.mock('bcryptjs', () => ({
 }));
 jest.mock('@/lib/prisma', () => ({
     __esModule: true,
-    prisma: {
+    db: {
       user: {
         update: jest.fn().mockResolvedValue({ id: 'user-id', password: 'hashedPassword' }),
       },
@@ -91,8 +91,8 @@ describe('newPassword function', () => {
         mockedGetPasswordResetTokenByToken.mockResolvedValueOnce(validToken);
         mockedGetUserByEmail.mockResolvedValueOnce(existingUser);
         ((bcrypt.hash as unknown) as jest.Mock).mockResolvedValue('hashedPassword');
-        (prisma.user.update as jest.Mock).mockResolvedValueOnce({ id: 'user-id', password: 'hashedPassword' });
-        (prisma.passwordResetToken.delete as jest.Mock).mockResolvedValueOnce({ id: 'token-id' });
+        (db.user.update as jest.Mock).mockResolvedValueOnce({ id: 'user-id', password: 'hashedPassword' });
+        (db.passwordResetToken.delete as jest.Mock).mockResolvedValueOnce({ id: 'token-id' });
 
         const result = await newPassword({ password: 'ValidPassword123' }, 'valid-token');
         expect(result).toEqual({ success: 'Password updated!' });

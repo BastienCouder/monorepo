@@ -1,8 +1,8 @@
-import { prisma } from '@/lib/prisma';
+import { db } from '@/lib/prisma';
 
 export const getTwoFactorTokenByToken = async (token: string) => {
   try {
-    const twoFactorToken = await prisma.twoFactorToken.findUnique({
+    const twoFactorToken = await db.twoFactorToken.findUnique({
       where: { token },
     });
 
@@ -14,7 +14,7 @@ export const getTwoFactorTokenByToken = async (token: string) => {
 
 export const getTwoFactorTokenByEmail = async (email: string) => {
   try {
-    const twoFactorToken = await prisma.twoFactorToken.findFirst({
+    const twoFactorToken = await db.twoFactorToken.findFirst({
       where: { email },
     });
 

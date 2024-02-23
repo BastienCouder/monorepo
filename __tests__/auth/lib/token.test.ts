@@ -1,6 +1,6 @@
 import { getPasswordResetTokenByEmail } from '@/lib/data/password-reset-token';
 import { getVerificationTokenByEmail } from '@/lib/data/verification-token';
-import { prisma } from '@/lib/prisma';
+import { db } from '@/lib/prisma';
 import { generatePasswordResetToken, generateVerificationToken } from '@/lib/tokens';
 import { randomUUID } from 'crypto';
 
@@ -9,7 +9,7 @@ jest.mock('crypto', () => ({
   }));
   
   jest.mock('@/lib/prisma', () => ({
-    prisma: {
+    db: {
       passwordResetToken: {
         delete: jest.fn(),
         create: jest.fn(),
@@ -35,7 +35,7 @@ describe('generatePasswordResetToken', () => {
     (getPasswordResetTokenByEmail as jest.Mock).mockResolvedValue(null);
     (randomUUID as jest.Mock).mockReturnValue('unique-token-id');
     const mockExpires = new Date(new Date().getTime() + 3600 * 1000);
-    (prisma.passwordResetToken.create as jest.Mock).mockResolvedValue({
+    (db.passwordResetToken.create as jest.Mock).mockResolvedValue({
       email: 'test@example.com',
       token: 'unique-token-id',
       expires: mockExpires,
@@ -47,8 +47,8 @@ describe('generatePasswordResetToken', () => {
       token: 'unique-token-id',
       expires: mockExpires,
     });
-    expect(prisma.passwordResetToken.delete).not.toHaveBeenCalled();
-    expect(prisma.passwordResetToken.create).toHaveBeenCalledWith({
+    expect(db.passwordResetToken.delete).not.toHaveBeenCalled();
+    expect(db.passwordResetToken.create).toHaveBeenCalledWith({
       data: expect.any(Object),
     });
   });
@@ -59,7 +59,7 @@ describe('generateVerificationToken', () => {
     (getVerificationTokenByEmail as jest.Mock).mockResolvedValue(null);
     (randomUUID as jest.Mock).mockReturnValue('unique-verification-token-id');
     const mockExpires = new Date(new Date().getTime() + 3600 * 1000);
-    (prisma.verificationToken.create as jest.Mock).mockResolvedValue({
+    (db.verificationToken.create as jest.Mock).mockResolvedValue({
       email: 'verify@example.com',
       token: 'unique-verification-token-id',
       expires: mockExpires,
@@ -71,8 +71,8 @@ describe('generateVerificationToken', () => {
       token: 'unique-verification-token-id',
       expires: mockExpires,
     });
-    expect(prisma.verificationToken.delete).not.toHaveBeenCalled();
-    expect(prisma.verificationToken.create).toHaveBeenCalledWith({
+    expect(db.verificationToken.delete).not.toHaveBeenCalled();
+    expect(db.verificationToken.create).toHaveBeenCalledWith({
       data: expect.any(Object),
     });
   });

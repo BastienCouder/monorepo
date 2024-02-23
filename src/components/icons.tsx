@@ -1,6 +1,7 @@
 import {
   AlertTriangle,
   ArrowRight,
+  BookCopy,
   Check,
   ChevronLeft,
   ChevronRight,
@@ -19,12 +20,14 @@ import {
   Pizza,
   Plus,
   Settings,
+  Star,
   SunMedium,
   Trash,
   Twitter,
   User,
   X,
   type LucideIcon,
+  Trophy,
 } from 'lucide-react';
 
 export type Icon = LucideIcon;
@@ -43,6 +46,7 @@ export const Icons = {
   ),
   close: X,
   spinner: Loader2,
+  course: BookCopy,
   chevronLeft: ChevronLeft,
   chevronRight: ChevronRight,
   trash: Trash,
@@ -53,12 +57,14 @@ export const Icons = {
   billing: CreditCard,
   ellipsis: MoreVertical,
   add: Plus,
+  trophy: Trophy,
   warning: AlertTriangle,
   user: User,
   arrowRight: ArrowRight,
   help: HelpCircle,
   pizza: Pizza,
   sun: SunMedium,
+  star: Star,
   moon: Moon,
   laptop: Laptop,
   gitHub: ({ ...props }: LucideProps) => (

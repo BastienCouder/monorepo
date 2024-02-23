@@ -1,7 +1,7 @@
 import { newVerification } from '@/app/(auth)/actions/new-verification';
 import { getUserByEmail } from '@/lib/data/user';
 import { getVerificationTokenByToken } from '@/lib/data/verification-token';
-import { prisma } from '@/lib/prisma';
+import { db } from '@/lib/prisma';
 import { User } from '@/schemas/db-schema';
 
 jest.mock('@/lib/data/user', () => ({
@@ -11,7 +11,7 @@ jest.mock('@/lib/data/verification-token', () => ({
   getVerificationTokenByToken: jest.fn(),
 }));
 jest.mock('@/lib/prisma', () => ({
-  prisma: {
+  db: {
     user: {
       update: jest.fn(),
     },
@@ -64,14 +64,14 @@ it('returns an error if the token does not exist', async () => {
     });
     mockGetUserByEmail.mockResolvedValueOnce(existingUser);
     const result = await newVerification('valid-token');
-    expect(prisma.user.update).toHaveBeenCalledWith({
+    expect(db.user.update).toHaveBeenCalledWith({
       where: { id: 'user-id' },
       data: {
         emailVerified: expect.any(Date),
         email: 'user@example.com',
       },
     });
-    expect(prisma.verificationToken.delete).toHaveBeenCalledWith({
+    expect(db.verificationToken.delete).toHaveBeenCalledWith({
       where: { id: 'token-id' },
     });
     expect(result).toEqual({ success: 'Email verified!' });

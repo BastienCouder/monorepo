@@ -5,7 +5,7 @@ import * as authCheck from '@/lib/authCheck';
 import * as emailLib from '@/lib/email';
 import * as tokensLib from '@/lib/tokens';
 import bcrypt from 'bcryptjs';
-import { prisma } from '@/lib/prisma';
+import { db } from '@/lib/prisma';
 import { settings } from '@/app/(auth)/actions/settings';
 import { User } from '@/schemas/db-schema';
 
@@ -20,7 +20,7 @@ jest.mock('bcryptjs', () => ({
   }));
 jest.mock('@/lib/prisma', () => ({
     __esModule: true,
-    prisma: {
+   db: {
     user: {
         update: jest.fn(),
     },}
@@ -36,7 +36,7 @@ const mockCurrentUser = authCheck.currentUser as jest.MockedFunction<typeof auth
 const mockSendVerificationEmail = emailLib.sendVerificationEmail as jest.MockedFunction<typeof emailLib.sendVerificationEmail>;
 const mockGenerateVerificationToken = tokensLib.generateVerificationToken as jest.MockedFunction<typeof tokensLib.generateVerificationToken>;
 const mockBcryptHash = bcrypt.hash as jest.MockedFunction<typeof bcrypt.hash>;
-const mockPrismaUserUpdate = prisma.user.update as jest.Mock;
+const mockPrismaUserUpdate = db.user.update as jest.Mock;
 
 beforeEach(() => {
     jest.resetAllMocks();

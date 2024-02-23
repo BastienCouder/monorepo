@@ -1,7 +1,7 @@
-export default function Dashboard() {
+export default function Favories() {
   return (
     <section className="flex min-h-screen flex-col items-center justify-between p-24">
-      <h1>dashboard</h1>
+      <h1>favories</h1>
     </section>
   );
 }

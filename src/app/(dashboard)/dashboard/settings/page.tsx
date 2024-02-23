@@ -32,8 +32,8 @@ import { Input } from '@/components/ui/input';
 import { UserRole } from '@prisma/client';
 import { settings } from '@/app/(auth)/actions/settings';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
-import { FormError } from '@/components/auth/form-error';
-import { FormSuccess } from '@/components/auth/form-success';
+import { FormError } from '@/components/modal/form-error';
+import { FormSuccess } from '@/components/modal/form-success';
 
 const SettingsPage = () => {
   const user = useCurrentUser();

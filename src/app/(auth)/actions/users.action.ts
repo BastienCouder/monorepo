@@ -3,7 +3,7 @@
 import * as z from 'zod';
 import bcrypt from 'bcryptjs';
 import { getUserByEmail } from '@/lib/data/user';
-import { prisma } from '@/lib/prisma';
+import { db } from '@/lib/prisma';
 import { currentUser } from '@/lib/authCheck';
 import { createUserSchema, deleteUserSchema } from '@/schemas/user';
 
@@ -23,7 +23,7 @@ export const createUser = async (values: z.infer<typeof createUserSchema>) => {
     return { error: 'Email already in use!' };
   }
 
-  await prisma.user.create({
+  await db.user.create({
     data: {
       name,
       email,
@@ -56,7 +56,7 @@ export const deleteUser = async (values: z.infer<typeof deleteUserSchema>) => {
     return { error: 'Unable to remove your own user!' };
   }
 
-  await prisma.user.delete({
+  await db.user.delete({
     where: {
       id,
     },

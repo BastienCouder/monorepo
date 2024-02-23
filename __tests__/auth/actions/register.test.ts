@@ -1,6 +1,6 @@
 
 import * as bcrypt from 'bcryptjs';
-import { prisma } from '@/lib/prisma';
+import { db } from '@/lib/prisma';
 import * as userData from '@/lib/data/user';
 import * as tokens from '@/lib/tokens';
 import * as email from '@/lib/email';
@@ -12,7 +12,7 @@ jest.mock('bcryptjs', () => ({
 }));
 jest.mock('@/lib/prisma', () => ({
     __esModule: true,
-    prisma: {
+    db: {
     user: {
         create: jest.fn(),
     },
@@ -57,7 +57,7 @@ it('should successfully register a new user and send a verification email', asyn
 
     const result = await register({ email: 'new@example.com', password: 'password123', name: 'New User' });
 
-    expect(prisma.user.create).toHaveBeenCalledWith({
+    expect(db.user.create).toHaveBeenCalledWith({
         data: {
             name: 'New User',
             email: 'new@example.com',

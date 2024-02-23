@@ -1,8 +1,0 @@
-{
-  "home": "",
-  "login": "/login",
-  "register": "/register",
-  "forgot_password": "/new-password",
-  "legal": "/legal",
-  "privacy": "/privacy"
-}

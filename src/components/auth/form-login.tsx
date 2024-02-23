@@ -20,8 +20,8 @@ import {
 import { CardWrapper } from '@/components/auth/card-wrapper';
 import { login } from '@/app/(auth)/actions/login.action';
 import { Button } from '../ui/button';
-import { FormError } from './form-error';
-import { FormSuccess } from './form-success';
+import { FormError } from '../modal/form-error';
+import { FormSuccess } from '../modal/form-success';
 
 export const LoginForm = () => {
   const searchParams = useSearchParams();

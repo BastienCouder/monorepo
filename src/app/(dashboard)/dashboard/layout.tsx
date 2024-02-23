@@ -11,7 +11,6 @@ const DashboardLayout = async ({ children }: DashboardLayoutProps) => {
 
   const layout = cookies().get('react-resizable-panels:layout');
   const collapsed = cookies().get('react-resizable-panels:collapsed');
-  console.log({ collapsed });
   const defaultLayout =
     layout && layout.value !== 'undefined'
       ? JSON.parse(layout.value)
@@ -28,7 +27,7 @@ const DashboardLayout = async ({ children }: DashboardLayoutProps) => {
         defaultCollapsed={defaultCollapsed}
       >
         <main className={`flex min-h-full w-full`}>
-          <div className="w-full bg-background p-4">{children}</div>
+          <div className="w-full bg-background px-4">{children}</div>
         </main>
       </DashboardShell>
     </>

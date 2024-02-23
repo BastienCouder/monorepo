@@ -9,7 +9,7 @@ import { generateVerificationToken } from '@/lib/tokens';
 import { currentUser } from '@/lib/authCheck';
 import { getUserByEmail, getUserById } from '@/lib/data/user';
 import { sendVerificationEmail } from '@/lib/email';
-import { prisma } from '@/lib/prisma';
+import { db } from '@/lib/prisma';
 import { update } from '@/auth';
 
 export const settings = async (values: z.infer<typeof SettingsSchema>) => {
@@ -63,7 +63,7 @@ export const settings = async (values: z.infer<typeof SettingsSchema>) => {
     values.newPassword = undefined;
   }
 
-  const updatedUser = await prisma.user.update({
+  const updatedUser = await db.user.update({
     where: { id: dbUser.id },
     data: {
       ...values,

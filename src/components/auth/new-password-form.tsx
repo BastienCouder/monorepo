@@ -19,8 +19,8 @@ import {
 import { CardWrapper } from '@/components/auth/card-wrapper';
 import { Button } from '@/components/ui/button';
 import { newPassword } from '@/app/(auth)/actions/new-password.action';
-import { FormError } from './form-error';
-import { FormSuccess } from './form-success';
+import { FormError } from '../modal/form-error';
+import { FormSuccess } from '../modal/form-success';
 
 export const NewPasswordForm = () => {
   const searchParams = useSearchParams();

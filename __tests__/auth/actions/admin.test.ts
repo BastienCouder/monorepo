@@ -10,13 +10,13 @@ describe('admin function', () => {
     jest.spyOn(authCheck, 'currentRole').mockResolvedValue(UserRole.ADMIN);
 
     const response = await admin();
-    expect(response).toEqual({ success: 'Allowed Server Action!' });
+    expect(response).toEqual({ success: 'Authorisé !' });
   });
 
   it('returns error for non-admin roles', async () => {
     jest.spyOn(authCheck, 'currentRole').mockResolvedValue(UserRole.USER);
 
     const response = await admin();
-    expect(response).toEqual({ error: 'Forbidden Server Action!' });
+    expect(response).toEqual({ error: 'Non authorisé !' });
   });
 });

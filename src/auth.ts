@@ -2,7 +2,7 @@ import NextAuth from 'next-auth';
 import { UserRole } from '@prisma/client';
 
 import authConfig from '@/auth.config';
-import { prisma } from './lib/prisma';
+import { db } from './lib/prisma';
 import { getUserById } from './lib/data/user';
 import { getTwoFactorConfirmationByUserId } from './lib/data/two-factor-confirmation';
 import { getAccountByUserId } from './lib/data/account';
@@ -21,7 +21,7 @@ export const {
   },
   events: {
     async linkAccount({ user }) {
-      await prisma.user.update({
+      await db.user.update({
         where: { id: user.id },
         data: { emailVerified: new Date() },
       });
@@ -46,7 +46,7 @@ export const {
         if (!twoFactorConfirmation) return false;
 
         // Delete two factor confirmation for next sign in
-        await prisma.twoFactorConfirmation.delete({
+        await db.twoFactorConfirmation.delete({
           where: { id: twoFactorConfirmation.id },
         });
       }

@@ -16,8 +16,8 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
-import { FormError } from '@/components/auth/form-error';
-import { FormSuccess } from '@/components/auth/form-success';
+import { FormError } from '@/components/modal/form-error';
+import { FormSuccess } from '@/components/modal/form-success';
 import { reset } from '@/app/(auth)/actions/reset.action';
 import { CardWrapper } from './card-wrapper';
 
