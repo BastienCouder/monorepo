@@ -2,22 +2,17 @@
 
 import { Icons } from '@/components/icons';
 
-export const primaryLinks = [
+export const adminLinks = [
   {
     title: 'Dashboard',
     route: '/dashboard',
-    label: '2',
+    label: '',
     icon: Icons.gauge,
-  },
-  {
-    title: 'Files',
-    route: '/files',
-    label: '3',
-    icon: Icons.page,
+    isNotAllowed: ['USER'],
   },
 ];
 
-export const administrationLinks = [
+export const dashboardLinks = [
   {
     title: 'Dashboard',
     route: '/dashboard',
@@ -25,26 +20,19 @@ export const administrationLinks = [
     icon: Icons.gauge,
   },
   {
-    title: 'User Management',
+    title: 'Utilisateurs',
     route: '/dashboard/users',
     label: '',
     icon: Icons.user,
-    isNotAllowed: ['USER'],
   },
   {
-    title: 'Courses',
+    title: 'Cours',
     label: '',
     route: '/dashboard/courses',
     icon: Icons.course,
   },
   {
-    title: 'Analytics',
-    route: '/dashboard/analytics',
-    label: '',
-    icon: Icons.page,
-  },
-  {
-    title: 'Settings',
+    title: 'Paramètres',
     route: '/dashboard/settings',
     label: '',
     icon: Icons.settings,
@@ -52,7 +40,7 @@ export const administrationLinks = [
 ];
 export const appLinks = [
   {
-    title: 'Courses',
+    title: 'Cours',
     route: '/course',
     label: '',
     icon: Icons.course,
@@ -64,7 +52,7 @@ export const appLinks = [
     icon: Icons.star,
   },
   {
-    title: 'Trophy',
+    title: 'Trophées',
     route: '/trophy',
     label: '',
     icon: Icons.trophy,

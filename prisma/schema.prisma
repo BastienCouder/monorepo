@@ -107,7 +107,7 @@ model Course {
   price       Float?
   isPublished Boolean @default(false)
 
-  categoryId String?
+  categoryId String[]
   category   Category? @relation(fields: [categoryId], references: [id])
 
   chapters    Chapter[]
@@ -141,14 +141,14 @@ model Attachment {
 }
 
 model Chapter {
-  id          String  @id @default(uuid())
-  title       String
-  description String? @db.Text
-  videoUrl    String? @db.Text
-  quizs       Quiz[]
+  id       String  @id @default(uuid())
+  title    String
+  videoUrl String? @db.Text
+
+  content     Content[]
   position    Int
-  isPublished Boolean @default(false)
-  isFree      Boolean @default(false)
+  isPublished Boolean   @default(false)
+  isFree      Boolean   @default(false)
 
   muxData MuxData?
 
@@ -159,8 +159,22 @@ model Chapter {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  quiz      Quiz[]
 
   @@index([courseId])
+}
+
+model Content {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  code        String?
+  imageUrl    String?
+  position    Int
+  chapter     Chapter? @relation(fields: [chapterId], references: [id])
+  chapterId   String?
+
+  @@unique([chapterId])
 }
 
 model MuxData {
@@ -206,13 +220,12 @@ model Quiz {
   id          String  @id @default(uuid())
   title       String
   isPublished Boolean @default(false)
+  chapterId   String
+  chapter     Chapter @relation(fields: [chapterId], references: [id], onDelete: Cascade)
 
   questions Question[]
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
-
-  chapter   Chapter? @relation(fields: [chapterId], references: [id])
-  chapterId String?
 
   @@unique([chapterId])
 }

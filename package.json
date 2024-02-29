@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "turbo": "next dev --turbo",
     "build": "next build",
     "start": "next start",
     "test": "jest",
@@ -60,6 +61,7 @@
     "react-quill": "^2.0.0",
     "react-resizable-panels": "^2.0.9",
     "react-spinners": "^0.13.8",
+    "recharts": "^2.12.1",
     "resend": "^3.2.0",
     "sonner": "^1.4.0",
     "tailwind-merge": "^2.2.1",

@@ -1,6 +1,7 @@
-import { Category, Course } from '@prisma/client';
 import { db } from '@/lib/prisma';
 import { getProgress } from './get-progress';
+import { Category, Course } from '@/schemas/db-schema';
+import { Prisma } from '@prisma/client';
 
 type CourseWithProgressWithCategory = Course & {
   category: Category | null;
@@ -11,7 +12,7 @@ type CourseWithProgressWithCategory = Course & {
 type GetCourses = {
   userId: string;
   title?: string;
-  categoryId?: string;
+  categoryId?: Prisma.StringNullableListFilter<'Course'> | undefined;
 };
 
 export const getCourses = async ({

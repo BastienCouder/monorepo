@@ -9,7 +9,7 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from '@/components/ui/resizable';
-import { appLinks } from '@/config/links';
+import { appLinks, adminLinks } from '@/config/links';
 import { UserNav } from '@/components/user-nav';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 import { Nav } from './nav';
@@ -70,6 +70,8 @@ export function DashboardShell({
           )}
         >
           <Logo isCollapsed={isCollapsed} />
+          <Separator />
+          <Nav isCollapsed={isCollapsed} links={adminLinks} />
           <Separator />
           <Nav isCollapsed={isCollapsed} links={appLinks} />
         </ResizablePanel>

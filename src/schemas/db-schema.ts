@@ -28,7 +28,7 @@ const CourseSchema: z.ZodSchema<any> = z.lazy(() =>
     isPublished: z.boolean(),
     createdAt: z.date(),
     updatedAt: z.date(),
-    category: CategorySchema.optional(),
+    categoryId: z.array(CategorySchema).optional(),
     chapters: z.array(ChapterSchema).optional(),
     attachments: z.array(AttachmentSchema).optional(),
     purchases: z.array(PurchaseSchema).optional(),
@@ -75,4 +75,19 @@ const AttachmentSchema: z.ZodSchema<any> = z.lazy(() =>
   })
 );
 
+const ContentSchema: z.ZodSchema<any> = z.lazy(() =>
+  z.object({
+    id: z.string(),
+    title: z.string(),
+    description: z.string().optional(),
+    code: z.string().optional(),
+    imageUrl: z.string().optional(),
+  })
+);
+
 export type User = z.infer<typeof UserSchema>;
+export type Course = z.infer<typeof CourseSchema>;
+export type Chapter = z.infer<typeof ChapterSchema>;
+export type Category = z.infer<typeof CategorySchema>;
+export type Attachment = z.infer<typeof AttachmentSchema>;
+export type Content = z.infer<typeof ContentSchema>;

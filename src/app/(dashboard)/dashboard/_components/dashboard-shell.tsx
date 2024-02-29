@@ -9,7 +9,7 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from '@/components/ui/resizable';
-import { administrationLinks } from '@/config/links';
+import { dashboardLinks } from '@/config/links';
 import { Nav } from './nav';
 import { ModeToggle } from '@/components/mode-toggle';
 import { UserNav } from '@/components/user-nav';
@@ -70,7 +70,7 @@ export function DashboardShell({
         >
           <Logo isCollapsed={isCollapsed} />
           <Separator />
-          <Nav isCollapsed={isCollapsed} links={administrationLinks} />
+          <Nav isCollapsed={isCollapsed} links={dashboardLinks} />
         </ResizablePanel>
         <ResizableHandle withHandle />
         <ResizablePanel defaultSize={defaultLayout[1]} minSize={30}>

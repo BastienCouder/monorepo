@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Menu } from 'lucide-react';
 
-import { appLinks } from '@/config/links';
+import { adminLinks, appLinks } from '@/config/links';
 import { siteConfig } from '@/config/site';
 import { cn } from '@/lib/utils';
 import { Button, buttonVariants } from '@/components/ui/button';
@@ -48,7 +48,7 @@ export const MobileNav = ({ userRole }: IMobileNav) => {
         <div className="w-full">
           <div className={cn('pt-4')}>
             <div className="grid gap-2 grid-flow-row auto-rows-max text-sm">
-              {appLinks.map((item, index) => (
+              {adminLinks.map((item, index) => (
                 <Link
                   key={index}
                   href={item.route}
@@ -68,6 +68,25 @@ export const MobileNav = ({ userRole }: IMobileNav) => {
                 </Link>
               ))}
               <Separator />
+              {appLinks.map((item, index) => (
+                <Link
+                  key={index}
+                  href={item.route}
+                  className={cn(
+                    buttonVariants({
+                      variant: 'ghost',
+                      size: 'default',
+                    }),
+                    'px-2 py-2 flex justify-start font-medium transition-colors hover:text-primary',
+                    'transition-colors hover:text-foreground/80',
+                    pathname === item.route &&
+                      'dark:bg-muted dark:text-white dark:hover:bg-muted dark:hover:text-white border-r-4 text-primary border-primary rounded-r-none',
+                    'justify-start hover:text-primary'
+                  )}
+                >
+                  {item.title}
+                </Link>
+              ))}
             </div>
           </div>
         </div>

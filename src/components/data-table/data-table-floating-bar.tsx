@@ -36,7 +36,7 @@ export function DataTableFloatingBar<TData>({
       >
         <Cross2Icon className="size-4" aria-hidden="true" />
       </Button>
-      {table.getFilteredSelectedRowModel().rows.length} row(s) selected
+      {table.getFilteredSelectedRowModel().rows.length} ligne(s) sélectionné
       {children}
     </div>
   );

@@ -42,7 +42,7 @@ export function DataTableToolbar<TData>({
               table.getColumn(column.id ? String(column.id) : '') && (
                 <Input
                   key={String(column.id)}
-                  placeholder={`Filter ${column.title}...`}
+                  placeholder={`Filtrer...`}
                   value={
                     (table
                       .getColumn(String(column.id))
@@ -71,12 +71,12 @@ export function DataTableToolbar<TData>({
           )}
         {isFiltered && (
           <Button
-            aria-label="Reset filters"
+            aria-label="Réinitialiser les filtres"
             variant="ghost"
             className="h-8 px-2 lg:px-3"
             onClick={() => table.resetColumnFilters()}
           >
-            Reset
+            Réinitialiser
             <Cross2Icon className="ml-2 size-4" aria-hidden="true" />
           </Button>
         )}
@@ -84,7 +84,7 @@ export function DataTableToolbar<TData>({
       <div className="flex items-center space-x-2">
         {deleteRowsAction && table.getSelectedRowModel().rows.length > 0 ? (
           <Button
-            aria-label="Delete selected rows"
+            aria-label="Supprimer les lignes sélectionnées"
             variant="outline"
             size="sm"
             className="h-8"
@@ -100,7 +100,7 @@ export function DataTableToolbar<TData>({
             Delete
           </Button>
         ) : newRowLink ? (
-          <Link aria-label="Create new row" href={newRowLink}>
+          <Link aria-label="Créer une nouvelle ligne" href={newRowLink}>
             <div
               className={cn(
                 buttonVariants({
@@ -111,7 +111,7 @@ export function DataTableToolbar<TData>({
               )}
             >
               <PlusCircledIcon className="mr-2 size-4" aria-hidden="true" />
-              New
+              Nouveau
             </div>
           </Link>
         ) : null}

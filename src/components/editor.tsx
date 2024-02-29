@@ -8,7 +8,7 @@ import 'react-quill/dist/quill.snow.css';
 interface EditorProps {
   // eslint-disable-next-line no-unused-vars
   onChange: (value: string) => void;
-  value: string;
+  value: string | undefined;
 }
 
 export const Editor = ({ onChange, value }: EditorProps) => {
