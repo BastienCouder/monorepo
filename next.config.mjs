@@ -14,11 +14,20 @@ const withPWA = withPWAInit({
 });
 
 export default withPWA({
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'utfs.io',
+      },
+    ],
+  },
   webpackDevMiddleware: (config) => {
     config.watchOptions = {
       poll: 1000,
       aggregateTimeout: 300,
     };
+
     return config;
   },
 });

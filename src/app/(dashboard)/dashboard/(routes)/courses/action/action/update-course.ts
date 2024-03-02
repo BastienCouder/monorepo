@@ -20,6 +20,7 @@ export async function updateCourse<T extends Partial<Course>>(
       where: { id: courseId },
       data: values,
     });
+    console.log(updatedCourse);
 
     return updatedCourse;
   } catch (error) {

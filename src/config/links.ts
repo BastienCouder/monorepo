@@ -41,7 +41,7 @@ export const dashboardLinks = [
 export const appLinks = [
   {
     title: 'Cours',
-    route: '/course',
+    route: '/courses',
     label: '',
     icon: Icons.course,
   },

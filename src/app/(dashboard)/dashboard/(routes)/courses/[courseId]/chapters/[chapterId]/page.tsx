@@ -72,7 +72,6 @@ const ChapterIdPage = async ({
           <div className="space-y-8">
             <ChapterTitleForm
               initialData={chapter}
-              courseId={params.courseId}
               chapterId={params.chapterId}
             />
             <ChaptersForm initialData={chapter} chapterId={params.chapterId} />

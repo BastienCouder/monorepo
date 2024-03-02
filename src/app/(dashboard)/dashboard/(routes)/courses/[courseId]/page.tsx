@@ -28,6 +28,11 @@ export default async function CourseIdPage({
           position: 'asc',
         },
       },
+      categories: {
+        include: {
+          category: true,
+        },
+      },
       attachments: {
         orderBy: {
           createdAt: 'desc',
@@ -50,7 +55,7 @@ export default async function CourseIdPage({
     course.title,
     course.description,
     course.imageUrl,
-    course.categoryId,
+    course.categories.length > 0,
     course.chapters.some((chapter) => chapter.isPublished),
   ];
 

@@ -80,16 +80,16 @@ export const ChaptersList = ({
                     className={cn(
                       'flex items-center gap-x-2 bg-input border text-foreground rounded-md mb-4 text-sm',
                       chapter.isPublished &&
-                        'bg-sky-100 border-sky-200 text-sky-700'
+                        'bg-primary border-primary text-background'
                     )}
                     ref={provided.innerRef}
                     {...provided.draggableProps}
                   >
                     <div
                       className={cn(
-                        'px-2 py-3 border-r border-r-slate-200 rounded-l-md transition',
+                        'px-2 py-3 border-r border-r-primary rounded-l-md transition',
                         chapter.isPublished &&
-                          'border-r-sky-200 hover:bg-sky-200'
+                          'border-r-primary hover:bg-primary'
                       )}
                       {...provided.dragHandleProps}
                     >
@@ -100,15 +100,16 @@ export const ChaptersList = ({
                       <Badge
                         className={cn(
                           'bg-slate-500',
-                          chapter.isPublished && 'bg-sky-700'
+                          chapter.isPublished &&
+                            'bg-background text-primary hover:bg-background'
                         )}
                       >
-                        {chapter.isPublished ? 'Publié' : 'Non pulié'}
+                        {chapter.isPublished ? 'Publié' : 'Non publié'}
                       </Badge>
                       <Button
                         aria-label="Modifier le chapitre"
                         size="sm"
-                        variant={'secondary'}
+                        variant={'ghost'}
                       >
                         <Pencil
                           aria-label="icon stylo"

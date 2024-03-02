@@ -28,10 +28,17 @@ const CourseSchema: z.ZodSchema<any> = z.lazy(() =>
     isPublished: z.boolean(),
     createdAt: z.date(),
     updatedAt: z.date(),
-    categoryId: z.array(CategorySchema).optional(),
+    categories: z.array(CategoryOnCourseSchema).optional(),
     chapters: z.array(ChapterSchema).optional(),
     attachments: z.array(AttachmentSchema).optional(),
     purchases: z.array(PurchaseSchema).optional(),
+  })
+);
+
+const CategoryOnCourseSchema: z.ZodSchema<any> = z.lazy(() =>
+  z.object({
+    courseId: z.string(),
+    categoryId: z.string(),
   })
 );
 
@@ -85,9 +92,39 @@ const ContentSchema: z.ZodSchema<any> = z.lazy(() =>
   })
 );
 
+const OptionSchema = z.object({
+  id: z.string().uuid().optional(),
+  questionId: z.string().uuid(),
+  text: z.string(),
+  isCorrect: z.boolean(),
+});
+
+const QuestionSchema = z.object({
+  id: z.string().uuid().optional(),
+  quizId: z.string().uuid(),
+  label: z.string(),
+  options: z.array(OptionSchema),
+  createdAt: z.date().optional(),
+  updatedAt: z.date().optional(),
+});
+
+const QuizSchema = z.object({
+  id: z.string().uuid().optional(),
+  title: z.string(),
+  isPublished: z.boolean().default(false),
+  chapterId: z.string().uuid(),
+  questions: z.array(QuestionSchema),
+  createdAt: z.date().optional(),
+  updatedAt: z.date().optional(),
+});
+
 export type User = z.infer<typeof UserSchema>;
 export type Course = z.infer<typeof CourseSchema>;
 export type Chapter = z.infer<typeof ChapterSchema>;
 export type Category = z.infer<typeof CategorySchema>;
+export type CategoryOnCourse = z.infer<typeof CategoryOnCourseSchema>;
 export type Attachment = z.infer<typeof AttachmentSchema>;
 export type Content = z.infer<typeof ContentSchema>;
+export type Quiz = z.infer<typeof QuizSchema>;
+export type Questions = z.infer<typeof QuestionSchema>;
+export type Option = z.infer<typeof OptionSchema>;

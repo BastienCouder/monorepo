@@ -74,3 +74,37 @@ export const getCategoryByName = async (name: string) => {
     return null;
   }
 };
+export async function updateCategoryCourse(
+  courseId: string,
+  categoryIds: string[]
+): Promise<{ success: boolean } | { error: string }> {
+  const session = await currentUser();
+  const isAuthorized = await roleCheckMiddleware(session);
+
+  if (!isAuthorized) {
+    return { error: 'Unauthorized' };
+  }
+
+  try {
+    await db.categoryOnCourse.deleteMany({
+      where: { courseId: courseId },
+    });
+
+    const associationResults = await Promise.all(
+      categoryIds.map((categoryId) =>
+        db.categoryOnCourse.create({
+          data: {
+            courseId: courseId,
+            categoryId: categoryId,
+          },
+        })
+      )
+    );
+
+    console.log(associationResults);
+    return { success: true };
+  } catch (error) {
+    console.error('[UPDATE_CATEGORY_COURSE]', error);
+    return { error: 'Internal Error' };
+  }
+}

@@ -1,6 +1,5 @@
-import { Category, Course } from '@prisma/client';
-
-import { CourseCard } from '@/components/course-card';
+import { Category, Course } from '@/schemas/db-schema';
+import CourseCard from './course-card';
 
 type CourseWithProgressWithCategory = Course & {
   category: Category | null;
@@ -25,13 +24,13 @@ export const CoursesList = ({ items }: CoursesListProps) => {
             chaptersLength={item.chapters.length}
             price={item.price!}
             progress={item.progress}
-            category={item?.category?.name!}
+            categories={item?.categories}
           />
         ))}
       </div>
       {items.length === 0 && (
         <div className="text-center text-sm text-muted-foreground mt-10">
-          No courses found
+          Aucun cours trouvé
         </div>
       )}
     </div>

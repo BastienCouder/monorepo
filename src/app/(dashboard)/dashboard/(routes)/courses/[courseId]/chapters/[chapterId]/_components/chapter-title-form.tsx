@@ -24,7 +24,6 @@ interface ChapterTitleFormProps {
   initialData: {
     title: string;
   };
-  courseId: string;
   chapterId: string;
 }
 
@@ -34,7 +33,6 @@ const formSchema = z.object({
 
 export const ChapterTitleForm = ({
   initialData,
-  courseId,
   chapterId,
 }: ChapterTitleFormProps) => {
   const [isEditing, setIsEditing] = useState(false);

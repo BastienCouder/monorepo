@@ -1,7 +1,6 @@
 import { db } from '@/lib/prisma';
 import { getProgress } from './get-progress';
 import { Category, Course } from '@/schemas/db-schema';
-import { Prisma } from '@prisma/client';
 
 type CourseWithProgressWithCategory = Course & {
   category: Category | null;
@@ -12,13 +11,11 @@ type CourseWithProgressWithCategory = Course & {
 type GetCourses = {
   userId: string;
   title?: string;
-  categoryId?: Prisma.StringNullableListFilter<'Course'> | undefined;
 };
 
 export const getCourses = async ({
   userId,
   title,
-  categoryId,
 }: GetCourses): Promise<CourseWithProgressWithCategory[]> => {
   try {
     const courses = await db.course.findMany({
@@ -27,10 +24,13 @@ export const getCourses = async ({
         title: {
           contains: title,
         },
-        categoryId,
       },
       include: {
-        category: true,
+        categories: {
+          include: {
+            category: true,
+          },
+        },
         chapters: {
           where: {
             isPublished: true,

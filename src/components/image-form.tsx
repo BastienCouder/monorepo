@@ -43,7 +43,7 @@ export const ImageForm = () => {
   return (
     <div className="mt-6 border bg-slate-100 rounded-md p-4">
       <div className="font-medium flex items-center justify-between">
-        Course image
+        Image
         <div>
           <FileUpload
             endpoint="courseImage"
@@ -54,7 +54,7 @@ export const ImageForm = () => {
             }}
           />
           <div className="text-xs text-muted-foreground mt-4">
-            16:9 aspect ratio recommended
+            Format 16:9 recommandé
           </div>
         </div>
       </div>

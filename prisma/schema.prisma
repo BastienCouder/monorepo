@@ -96,34 +96,52 @@ model User {
   Session               Session[]
   TwoFactorConfirmation TwoFactorConfirmation?
   UserProgress          UserProgress[]
+  Favorite              Favorite[]
 }
 
 model Course {
-  id          String  @id @default(uuid())
+  id          String             @id @default(uuid())
   userId      String
-  title       String  @db.Text
-  description String? @db.Text
-  imageUrl    String? @db.Text
+  title       String             @db.Text
+  description String?            @db.Text
+  imageUrl    String?            @db.Text
   price       Float?
-  isPublished Boolean @default(false)
-
-  categoryId String[]
-  category   Category? @relation(fields: [categoryId], references: [id])
-
+  isPublished Boolean            @default(false)
   chapters    Chapter[]
   attachments Attachment[]
   purchases   Purchase[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([categoryId])
+  categories  CategoryOnCourse[]
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+  Favorite    Favorite[]
 }
 
 model Category {
-  id      String   @id @default(uuid())
-  name    String   @unique
-  courses Course[]
+  id      String             @id @default(uuid())
+  name    String             @unique
+  courses CategoryOnCourse[]
+}
+
+model Favorite {
+  id        String   @id @default(uuid())
+  userId    String
+  courseId  String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, courseId])
+  @@index([courseId])
+}
+
+model CategoryOnCourse {
+  courseId   String
+  categoryId String
+  course     Course   @relation(fields: [courseId], references: [id])
+  category   Category @relation(fields: [categoryId], references: [id])
+
+  @@unique([courseId, categoryId])
+  @@index([categoryId])
 }
 
 model Attachment {
@@ -174,7 +192,7 @@ model Content {
   chapter     Chapter? @relation(fields: [chapterId], references: [id])
   chapterId   String?
 
-  @@unique([chapterId])
+  @@index([chapterId])
 }
 
 model MuxData {

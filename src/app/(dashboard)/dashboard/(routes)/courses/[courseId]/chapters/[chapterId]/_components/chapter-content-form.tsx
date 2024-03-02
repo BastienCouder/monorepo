@@ -31,6 +31,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { createContent } from '../../../../action/action/create-content';
 import { ContentsList } from './chapter-content-list';
 import { Input } from '@/components/ui/input';
+import { FileUpload } from '@/components/file-upload';
 
 interface ChaptersContentFormProps {
   initialData: Chapter & { content: Content[] };
@@ -133,6 +134,33 @@ export const ChaptersForm = ({
     }
   };
 
+  // Ajustement de la fonction onImageSubmit pour inclure le titre du formulaire
+  const onImageSubmit = async (imageUrl: string) => {
+    // Récupération du titre actuel du formulaire
+    const { title } = form.getValues();
+
+    // Utilisation du titre du formulaire comme titre de l'image
+    const valuesWithImageTitle = {
+      title, // Utilise le titre récupéré du formulaire
+      imageUrl,
+      description: '', // Vous pouvez ajuster cette partie selon vos besoins
+    };
+
+    try {
+      await createContent(chapterId, valuesWithImageTitle, title); // Utilisation du titre du formulaire pour le contenu de l'image
+      toast({
+        title: 'Contenu créé',
+      });
+      toggleCreating();
+      router.refresh();
+    } catch {
+      toast({
+        title: "Une erreur s'est produite",
+        variant: 'destructive',
+      });
+    }
+  };
+
   return (
     <div className="relative mt-6 border bg-card rounded-md p-4">
       {isUpdating && (
@@ -224,13 +252,14 @@ export const ChaptersForm = ({
               />
             )}
             {contentType === 'image' && (
-              //   <FileUpload
-              //     endpoint="courseImage"
-              //     onChange={(url) => {
-              //       url;
-              //     }}
-              //   />
-              <p>image</p>
+              <FileUpload
+                endpoint="courseImage"
+                onChange={(url) => {
+                  if (url) {
+                    onImageSubmit(url);
+                  }
+                }}
+              />
             )}
             {contentType === 'description' && (
               <FormField

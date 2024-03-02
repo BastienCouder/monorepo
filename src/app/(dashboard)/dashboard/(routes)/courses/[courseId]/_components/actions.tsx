@@ -35,12 +35,15 @@ export const Actions = ({ disabled, courseId, isPublished }: ActionsProps) => {
       setIsLoading(true);
 
       if (isPublished) {
-        await toggleCoursePublication(courseId, false);
+        const res = await toggleCoursePublication(courseId, false);
+        console.log(res);
         toast({
           title: 'Cours non publié',
         });
       } else {
-        await toggleCoursePublication(courseId, true);
+        const res = await toggleCoursePublication(courseId, true);
+        console.log(res);
+
         toast({
           title: 'Cours publié',
         });

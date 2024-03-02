@@ -79,16 +79,16 @@ export const ContentsList = ({
                     className={cn(
                       'flex items-center gap-x-2 bg-input border text-foreground rounded-md mb-4 text-sm',
                       content.isPublished &&
-                        'bg-sky-100 border-sky-200 text-sky-700'
+                        'bg-primary border-primary text-foreground'
                     )}
                     ref={provided.innerRef}
                     {...provided.draggableProps}
                   >
                     <div
                       className={cn(
-                        'px-2 py-3 border-r border-r-slate-200 rounded-l-md transition',
+                        'px-2 py-3 border-r border-r-primary rounded-l-md transition',
                         content.isPublished &&
-                          'border-r-sky-200 hover:bg-sky-200'
+                          'border-r-primary hover:bg-primary'
                       )}
                       {...provided.dragHandleProps}
                     >
@@ -99,7 +99,7 @@ export const ContentsList = ({
                       <Button
                         aria-label="Modifier le code"
                         size="sm"
-                        variant={'secondary'}
+                        variant={'ghost'}
                       >
                         <Pencil
                           aria-label="icon stylo"

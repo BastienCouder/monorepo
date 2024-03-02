@@ -10,6 +10,7 @@ import { ConfirmModal } from '@/components/modal/confirm-modal';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
 import { deleteQuiz } from '../../../../action/action/delete-quiz';
+import { Badge } from '@/components/ui/badge';
 
 interface QuizListProps {
   items: Quiz[];
@@ -68,6 +69,11 @@ export const QuizList = ({ items, onEdit }: QuizListProps) => {
             </div>
             {quiz.title}
             <div className="ml-auto pr-2 flex items-center gap-x-2">
+              <Badge
+                className={cn('bg-primary', quiz.isPublished && 'bg-primary')}
+              >
+                {quiz.isPublished ? 'Publié' : 'Non pulié'}
+              </Badge>
               <ConfirmModal onConfirm={() => onDelete(quiz.id)}>
                 <Button size="sm" disabled={isLoading} variant={'secondary'}>
                   <Trash className="h-4 w-4" />

@@ -17,9 +17,10 @@ import {
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { toast } from '@/components/ui/use-toast';
-import { updateCourse } from '@/app/(dashboard)/dashboard/(routes)/courses/action/action/update-course';
 import { Category, Course } from '@/schemas/db-schema';
 import { Checkbox } from '@/components/ui/checkbox';
+import { updateCategoryCourse } from '../../action/action/category';
+import { Badge } from '@/components/ui/badge';
 
 interface CategoryFormProps {
   initialData: Course;
@@ -47,12 +48,11 @@ export const CategoryForm = ({
       categoryId: initialData?.categoryId || [],
     },
   });
-
   const { isSubmitting, isValid } = form.formState;
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      await updateCourse(courseId, values.categoryId);
+      await updateCategoryCourse(courseId, values.categoryId);
       toast({
         title: 'Cours mis à jour',
       });
@@ -65,10 +65,6 @@ export const CategoryForm = ({
       });
     }
   };
-
-  const selectedOption = options.find(
-    (option) => option.value === initialData.categoryId
-  );
 
   return (
     <div className="mt-6 border bg-card rounded-md p-4">
@@ -91,14 +87,24 @@ export const CategoryForm = ({
         </Button>
       </div>
       {!isEditing && (
-        <p
+        <div
           className={cn(
-            'text-sm mt-2',
-            !initialData.category && 'text-slate-500 italic'
+            'text-sm mt-2 space-y-2',
+            !initialData.categories && 'text-slate-500 italic'
           )}
         >
-          {selectedOption?.label || 'Aucune categories'}
-        </p>
+          {initialData.categories
+            ? initialData.categories.map((cat: Category) => {
+                return (
+                  <div key={cat.id} className="flex flex-col">
+                    <div>
+                      <Badge>{cat.category.name}</Badge>
+                    </div>
+                  </div>
+                );
+              })
+            : 'Aucune catégories'}
+        </div>
       )}
       {isEditing && (
         <Form {...form}>

@@ -2,7 +2,7 @@
 
 import { currentUser, roleCheckMiddleware } from '@/lib/authCheck';
 import { db } from '@/lib/prisma';
-import { Course } from '@prisma/client';
+import { Course } from '@/schemas/db-schema';
 
 interface PublishCourseResult {
   course: Course | null;
@@ -26,6 +26,11 @@ export async function toggleCoursePublication(
         id: courseId,
       },
       include: {
+        categories: {
+          include: {
+            category: true,
+          },
+        },
         chapters: {
           include: {
             muxData: true,
@@ -46,7 +51,7 @@ export async function toggleCoursePublication(
         !course.title ||
         !course.description ||
         !course.imageUrl ||
-        !course.categoryId ||
+        !course.categories ||
         !hasPublishedChapter
       ) {
         return {

@@ -17,6 +17,7 @@ import { MobileNav } from './mobile-nav';
 import Logo from './logo';
 import { SearchInput } from '@/components/search-input';
 import { ModeToggle } from '@/components/mode-toggle';
+import { useCurrentRole } from '@/hooks/useCurrentRole';
 
 interface IDashboardShell {
   defaultLayout: number[] | undefined;
@@ -33,6 +34,7 @@ export function DashboardShell({
 }: IDashboardShell) {
   const [isCollapsed, setIsCollapsed] = React.useState(defaultCollapsed);
   const user = useCurrentUser();
+  const role = useCurrentRole();
 
   return (
     <TooltipProvider delayDuration={0}>
@@ -70,8 +72,12 @@ export function DashboardShell({
           )}
         >
           <Logo isCollapsed={isCollapsed} />
-          <Separator />
-          <Nav isCollapsed={isCollapsed} links={adminLinks} />
+          {role === 'ADMIN' && (
+            <>
+              <Separator />
+              <Nav isCollapsed={isCollapsed} links={adminLinks} />
+            </>
+          )}
           <Separator />
           <Nav isCollapsed={isCollapsed} links={appLinks} />
         </ResizablePanel>
