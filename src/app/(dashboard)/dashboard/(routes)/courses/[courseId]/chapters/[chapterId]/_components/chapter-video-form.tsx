@@ -10,7 +10,7 @@ import { Chapter, MuxData } from '@prisma/client';
 import { Button } from '@/components/ui/button';
 import { FileUpload } from '@/components/file-upload';
 import { toast } from '@/components/ui/use-toast';
-import { updateChapter } from '@/app/(dashboard)/dashboard/(routes)/courses/action/action/update-chapter';
+import { updateChapter } from '@/app/(dashboard)/dashboard/action/update-chapter';
 
 interface ChapterVideoFormProps {
   initialData: Chapter & { muxData?: MuxData | null };

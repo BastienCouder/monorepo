@@ -97,6 +97,7 @@ model User {
   TwoFactorConfirmation TwoFactorConfirmation?
   UserProgress          UserProgress[]
   Favorite              Favorite[]
+  QuizAttempt           QuizAttempt[]
 }
 
 model Course {
@@ -241,9 +242,10 @@ model Quiz {
   chapterId   String
   chapter     Chapter @relation(fields: [chapterId], references: [id], onDelete: Cascade)
 
-  questions Question[]
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
+  questions   Question[]
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  QuizAttempt QuizAttempt[]
 
   @@unique([chapterId])
 }
@@ -253,11 +255,13 @@ model Question {
   quizId    String
   quiz      Quiz     @relation(fields: [quizId], references: [id])
   label     String
+  position  Int
   options   Option[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  Answer    Answer[]
 
-  @@unique([quizId])
+  @@index([quizId])
 }
 
 model Option {
@@ -268,6 +272,32 @@ model Option {
   isCorrect  Boolean
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+  Answer     Answer[]
 
-  @@unique([questionId])
+  @@index([questionId])
+}
+
+model QuizAttempt {
+  id        String   @id @default(uuid())
+  userId    String
+  quizId    String
+  user      User     @relation(fields: [userId], references: [id])
+  quiz      Quiz     @relation(fields: [quizId], references: [id])
+  createdAt DateTime @default(now())
+  answers   Answer[]
+
+  @@index([userId, quizId])
+}
+
+model Answer {
+  id            String      @id @default(uuid())
+  quizAttemptId String
+  questionId    String
+  optionId      String?
+  isCorrect     Boolean
+  question      Question    @relation(fields: [questionId], references: [id])
+  option        Option?     @relation(fields: [optionId], references: [id])
+  quizAttempt   QuizAttempt @relation(fields: [quizAttemptId], references: [id])
+
+  @@index([quizAttemptId, questionId, optionId])
 }

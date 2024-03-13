@@ -7,8 +7,8 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { ConfirmModal } from '@/components/modal/confirm-modal';
 import { toast } from '@/components/ui/use-toast';
-import { toggleChapterPublication } from '@/app/(dashboard)/dashboard/(routes)/courses/action/action/toggle-publish-chapter';
-import { deleteChapter } from '@/app/(dashboard)/dashboard/(routes)/courses/action/action/delete-chapter';
+import { toggleChapterPublication } from '@/app/(dashboard)/dashboard/action/toggle-publish-chapter';
+import { deleteChapter } from '@/app/(dashboard)/dashboard/action/delete-chapter';
 
 interface ChapterActionsProps {
   disabled: boolean;

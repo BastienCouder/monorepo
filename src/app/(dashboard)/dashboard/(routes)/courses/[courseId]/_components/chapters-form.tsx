@@ -21,7 +21,8 @@ import { Input } from '@/components/ui/input';
 
 import { ChaptersList } from './chapters-list';
 import { toast } from '@/components/ui/use-toast';
-import { createChapter } from '@/app/(dashboard)/dashboard/(routes)/courses/action/action/create-chapter';
+import { createChapter } from '@/app/(dashboard)/dashboard/action/create-chapter';
+import { reorderChapters } from '@/app/(dashboard)/dashboard/action/reorder-chapter';
 
 interface ChaptersFormProps {
   initialData: Course & { chapters: Chapter[] };
@@ -72,9 +73,8 @@ export const ChaptersForm = ({ initialData, courseId }: ChaptersFormProps) => {
     try {
       setIsUpdating(true);
 
-      //   await axios.put(`/api/courses/${courseId}/chapters/reorder`, {
-      //     list: updateData,
-      //   });
+      await reorderChapters(courseId, updateData);
+
       toast({
         title: 'Chapitres réorganisés',
       });

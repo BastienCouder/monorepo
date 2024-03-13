@@ -20,7 +20,7 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from '@/components/ui/use-toast';
-import { updateCourse } from '@/app/(dashboard)/dashboard/(routes)/courses/action/action/update-course';
+import { updateCourse } from '@/app/(dashboard)/dashboard/action/update-course';
 
 interface DescriptionFormProps {
   initialData: Course;

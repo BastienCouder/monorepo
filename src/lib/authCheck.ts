@@ -21,8 +21,6 @@ export function roleCheckMiddleware(
   specificRoles = roles.protected
 ) {
   if (!session || !session.role) {
-    console.log(session.role);
-
     return false;
   }
 

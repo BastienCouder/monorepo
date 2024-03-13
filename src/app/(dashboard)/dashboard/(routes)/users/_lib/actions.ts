@@ -12,8 +12,6 @@ export async function updateUserRole({
   id,
   role,
 }: z.infer<typeof updateUserRoleSchema>) {
-  console.log('updateUserRoleSchemaAction', id, role);
-
   await db.user.update({
     where: {
       id: id,

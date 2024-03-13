@@ -4,13 +4,13 @@ import { NextResponse } from 'next/server';
 import { db } from '@/lib/prisma';
 import { currentUser, roleCheckMiddleware } from '@/lib/authCheck';
 
-interface ChapterUpdate {
+interface QuestionUpdate {
   id: string;
   position: number;
 }
 
-export async function reorderChapters(
-  courseId: string,
+export async function reorderQuestions(
+  questionId: string,
   list: { id: string; position: number }[]
 ) {
   try {
@@ -21,27 +21,26 @@ export async function reorderChapters(
       throw new Error('Unauthorized');
     }
 
-    const ownCourse = await db.course.findUnique({
+    const ownQuestion = await db.question.findUnique({
       where: {
-        id: courseId,
-        userId: session?.id,
+        id: questionId,
       },
     });
 
-    if (!ownCourse) {
+    if (!ownQuestion) {
       return new NextResponse('Unauthorized', { status: 401 });
     }
 
-    const updates = list.map((item: ChapterUpdate) => {
-      return db.chapter.update({
+    const updates = list.map((item: QuestionUpdate) => {
+      return db.question.update({
         where: { id: item.id },
         data: { position: item.position },
       });
     });
 
-    await Promise.all(updates);
+    await db.$transaction(updates);
   } catch (error) {
-    console.error('[REORDER_CHAPTERS]', error);
+    console.error('[REORDER_QUESTIONS]', error);
     throw error;
   }
 }

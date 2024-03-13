@@ -27,7 +27,7 @@ const AppLayout = async ({ children }: DashboardLayoutProps) => {
         defaultCollapsed={defaultCollapsed}
       >
         <main className={`flex min-h-full w-full`}>
-          <div className="w-full bg-background p-4">{children}</div>
+          <div className="w-full bg-background">{children}</div>
         </main>
       </DashboardShell>
     </>

@@ -19,7 +19,7 @@ export const SettingsSchema = z
       return true;
     },
     {
-      message: 'New password is required!',
+      message: 'Un nouveau mot de passe est nécessaire !',
       path: ['newPassword'],
     }
   )
@@ -32,41 +32,47 @@ export const SettingsSchema = z
       return true;
     },
     {
-      message: 'Password is required!',
+      message: 'Le mot de passe est obligatoire !',
       path: ['password'],
     }
   );
 
 export const NewPasswordSchema = z.object({
   password: z.string().min(6, {
-    message: 'Minimum of 6 characters required',
+    message: 'Minimum de 6 caractères requis',
   }),
 });
 
 export const ResetSchema = z.object({
   email: z.string().email({
-    message: 'Email is required',
+    message: "L'email est requis",
   }),
 });
 
 export const LoginSchema = z.object({
   email: z.string().email({
-    message: 'Email is required',
+    message: "L'email est requis",
   }),
   password: z.string().min(1, {
-    message: 'Password is required',
+    message: 'Le mot de passe est requis',
   }),
   code: z.optional(z.string()),
 });
 
-export const RegisterSchema = z.object({
-  email: z.string().email({
-    message: 'Email is required',
-  }),
-  password: z.string().min(6, {
-    message: 'Minimum 6 characters required',
-  }),
-  name: z.string().min(1, {
-    message: 'Name is required',
-  }),
-});
+export const RegisterSchema = z
+  .object({
+    email: z.string().email({
+      message: "L'email est requis",
+    }),
+    password: z.string().min(6, {
+      message: 'Minimum 6 caractères requis',
+    }),
+    name: z.string().min(1, {
+      message: 'Le nom est requis',
+    }),
+    rgpdConsent: z.boolean().default(false),
+  })
+  .refine((data) => data.rgpdConsent === true, {
+    message: 'Le consentement au RGPD est requis',
+    path: ['rgpdConsent'],
+  });

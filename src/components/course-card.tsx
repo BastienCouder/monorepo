@@ -1,15 +1,14 @@
 'use client';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState } from 'react';
 import { BookOpen, Star, StarIcon } from 'lucide-react';
 
 import { IconBadge } from '@/components/icon-badge';
 import { CourseProgress } from '@/components/course-progress';
 import { Category } from '@/schemas/db-schema';
 import { Badge } from './ui/badge';
-import { toggleFavorite } from '@/app/(dashboard)/dashboard/(routes)/courses/action/action/toggle-favorites';
 import { toast } from './ui/use-toast';
+import { toggleFavorite } from '@/app/(dashboard)/dashboard/action/toggle-favorites';
 
 interface CourseCardProps {
   id: string;
@@ -19,7 +18,7 @@ interface CourseCardProps {
   price: number;
   progress: number | null;
   categories: Category[];
-  isFavorited?: boolean; // Optional prop to indicate initial favorite state
+  favorite?: boolean;
 }
 
 export default function CourseCard({
@@ -29,17 +28,14 @@ export default function CourseCard({
   chaptersLength,
   progress,
   categories,
-  isFavorited = false,
+  favorite,
 }: CourseCardProps) {
-  const [favorited, setFavorited] = useState(isFavorited);
-
   const handleToggleFavorite = async (courseId: string) => {
     try {
       const res = await toggleFavorite(courseId);
       toast({
         title: res.success,
       });
-      setFavorited((prev) => !prev);
     } catch (error) {
       toast({
         title: "une erreur s'est produite",
@@ -52,7 +48,12 @@ export default function CourseCard({
     <div className="group hover:shadow-sm transition overflow-hidden border rounded-lg p-3 h-full  relative">
       <Link href={`/courses/${id}`}>
         <div className="cursor-pointer relative w-full aspect-video rounded-md overflow-hidden">
-          <Image fill className="object-cover" alt={title} src={imageUrl} />
+          <Image
+            fill
+            className="object-cover border"
+            alt={title}
+            src={imageUrl}
+          />
         </div>
       </Link>
       <div className="flex flex-col pt-4 gap-2">
@@ -61,11 +62,9 @@ export default function CourseCard({
           <button
             type="button"
             onClick={() => handleToggleFavorite(id)}
-            aria-label={
-              favorited ? 'Remove from favorites' : 'Add to favorites'
-            }
+            aria-label={favorite ? 'Remove from favorites' : 'Add to favorites'}
           >
-            {favorited ? (
+            {favorite ? (
               <StarIcon className="text-yellow-400 h-5 w-5" />
             ) : (
               <Star className="text-gray-400 hover:text-yellow-400 h-5 w-5" />
@@ -75,7 +74,7 @@ export default function CourseCard({
         <ul className="flex gap-2">
           {categories.map((cat, index) => (
             <li key={index} className="text-xs text-muted-foreground">
-              <Badge>{cat.category.name}</Badge>
+              <Badge>{cat.name}</Badge>
             </li>
           ))}
         </ul>
@@ -93,9 +92,7 @@ export default function CourseCard({
             size="sm"
             value={progress}
           />
-        ) : (
-          <></>
-        )}
+        ) : null}
       </div>
     </div>
   );

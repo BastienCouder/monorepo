@@ -10,7 +10,7 @@ import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { FileUpload } from '@/components/file-upload';
 import { toast } from '@/components/ui/use-toast';
-import { updateCourse } from '@/app/(dashboard)/dashboard/(routes)/courses/action/action/update-course';
+import { updateCourse } from '@/app/(dashboard)/dashboard/action/update-course';
 
 interface ImageFormProps {
   initialData: Course;
@@ -47,7 +47,7 @@ export const ImageForm = ({ initialData, courseId }: ImageFormProps) => {
   };
 
   return (
-    <div className="mt-6 border bg-card rounded-md p-4">
+    <div className="mt-6 border bg-card rounded-md p-4 max-h-96">
       <div className="font-medium flex items-center justify-between gap-x-4">
         <h2 className="border-b-4 border-l-4 px-1 rounded-bl-md border-primary">
           Image *

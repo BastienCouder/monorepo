@@ -8,7 +8,6 @@ import { useSession } from 'next-auth/react';
 import { SettingsSchema } from '@/schemas';
 import { Card, CardHeader, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-
 import {
   Form,
   FormField,
@@ -22,6 +21,9 @@ import { settings } from '@/app/(auth)/actions/settings';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 import { FormError } from '@/components/modal/form-error';
 import { FormSuccess } from '@/components/modal/form-success';
+import { deleteUser } from '@/app/(auth)/actions/users.action';
+import { toast } from '@/components/ui/use-toast';
+import { useRouter } from 'next/navigation';
 
 const SettingsPage = () => {
   const user = useCurrentUser();
@@ -30,6 +32,7 @@ const SettingsPage = () => {
   const [success, setSuccess] = useState<string | undefined>();
   const { update } = useSession();
   const [isPending, startTransition] = useTransition();
+  const router = useRouter();
 
   const form = useForm<z.infer<typeof SettingsSchema>>({
     resolver: zodResolver(SettingsSchema),
@@ -56,104 +59,130 @@ const SettingsPage = () => {
             setSuccess(data.success);
           }
         })
-        .catch(() => setError('Something went wrong!'));
+        .catch(() => setError("Une erreur s'est produite !"));
     });
   };
 
+  const onDelete = async (userId: string) => {
+    try {
+      await deleteUser({ id: userId });
+      toast({
+        title: 'Compte supprimé',
+      });
+      router.push('/');
+    } catch {
+      toast({
+        title: "Une erreur s'est produite",
+      });
+    }
+  };
+
   return (
-    <Card className="max-w-[600px]">
-      <CardHeader>
-        <p className="text-2xl font-semibold text-center">Settings</p>
-      </CardHeader>
-      <CardContent>
-        <Form {...form}>
-          <form className="space-y-6" onSubmit={form.handleSubmit(onSubmit)}>
-            <div className="space-y-4">
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Name</FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        placeholder="John Doe"
-                        disabled={isPending}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
+    <div className="p-4">
+      <Card className="max-w-[600px]">
+        <CardHeader>
+          <p className="text-2xl font-semibold text-center">Paramètres</p>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <Form {...form}>
+            <form className="space-y-6" onSubmit={form.handleSubmit(onSubmit)}>
+              <div className="space-y-4">
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Nom</FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          placeholder="Nom..."
+                          disabled={isPending}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                {user?.isOAuth === false && (
+                  <>
+                    <FormField
+                      control={form.control}
+                      name="email"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Email</FormLabel>
+                          <FormControl>
+                            <Input
+                              {...field}
+                              placeholder="nom@exemple.com"
+                              type="email"
+                              disabled={isPending}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="password"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Mot de passe</FormLabel>
+                          <FormControl>
+                            <Input
+                              {...field}
+                              placeholder="******"
+                              type="password"
+                              disabled={isPending}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="newPassword"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Nouveau mot de passe</FormLabel>
+                          <FormControl>
+                            <Input
+                              {...field}
+                              placeholder="******"
+                              type="password"
+                              disabled={isPending}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </>
                 )}
-              />
-              {user?.isOAuth === false && (
-                <>
-                  <FormField
-                    control={form.control}
-                    name="email"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Email</FormLabel>
-                        <FormControl>
-                          <Input
-                            {...field}
-                            placeholder="john.doe@example.com"
-                            type="email"
-                            disabled={isPending}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="password"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Password</FormLabel>
-                        <FormControl>
-                          <Input
-                            {...field}
-                            placeholder="******"
-                            type="password"
-                            disabled={isPending}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="newPassword"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>New Password</FormLabel>
-                        <FormControl>
-                          <Input
-                            {...field}
-                            placeholder="******"
-                            type="password"
-                            disabled={isPending}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </>
-              )}
-            </div>
-            <FormError message={error} />
-            <FormSuccess message={success} />
-            <Button disabled={isPending} type="submit">
-              Save
+              </div>
+              <FormError message={error} />
+              <FormSuccess message={success} />
+              <Button disabled={isPending} type="submit">
+                Sauvegarder
+              </Button>
+            </form>
+          </Form>
+          {user && (
+            <Button
+              onClick={() => onDelete(user.id)}
+              disabled={isPending}
+              type="submit"
+              variant={'destructive'}
+            >
+              Supprimer le compte
             </Button>
-          </form>
-        </Form>
-      </CardContent>
-    </Card>
+          )}
+        </CardContent>
+      </Card>
+    </div>
   );
 };
 

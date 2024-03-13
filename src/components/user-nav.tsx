@@ -30,7 +30,6 @@ export function UserNav({ user }: UserNavType) {
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-8 w-8 rounded-full">
           <Avatar className="h-8 w-8">
-            {/* <AvatarImage src="/avatars/01.png" alt="@zuupee" /> */}
             <AvatarFallback>
               <span className="sr-only">{user.name}</span>
               <Icons.user className="h-4 w-4" />
@@ -49,33 +48,17 @@ export function UserNav({ user }: UserNavType) {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          {/* <DropdownMenuItem asChild>
-            <Link href={'/dashboard/profile'}>
-              <User className='mr-2 h-4 w-4' />
-              <span>Profile</span>
-              <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
-            </Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            <CreditCard className="mr-2 h-4 w-4" />
-            <span>Billing</span>
-            <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
-          </DropdownMenuItem> */}
           <DropdownMenuItem asChild>
-            <Link href={`/settings` || '/settings'}>
+            <Link href="/settings">
               <Settings className="mr-2 h-4 w-4" />
-              <span>Settings</span>
+              <span>Paramètres</span>
             </Link>
           </DropdownMenuItem>
-          {/* <DropdownMenuItem>
-            <PlusCircle className="mr-2 h-4 w-4" />
-            <span>New Team</span>
-          </DropdownMenuItem> */}
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={() => signOut()}>
           <LogOut className="mr-2 h-4 w-4" />
-          <span>Log out</span>
+          <span>Déconnexion</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

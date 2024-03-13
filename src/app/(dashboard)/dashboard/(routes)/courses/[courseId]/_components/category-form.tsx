@@ -19,8 +19,8 @@ import { cn } from '@/lib/utils';
 import { toast } from '@/components/ui/use-toast';
 import { Category, Course } from '@/schemas/db-schema';
 import { Checkbox } from '@/components/ui/checkbox';
-import { updateCategoryCourse } from '../../action/action/category';
 import { Badge } from '@/components/ui/badge';
+import { updateCategoryCourse } from '@/app/(dashboard)/dashboard/action/category';
 
 interface CategoryFormProps {
   initialData: Course;

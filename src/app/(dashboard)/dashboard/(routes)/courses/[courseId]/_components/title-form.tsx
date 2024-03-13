@@ -17,7 +17,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/use-toast';
-import { updateCourse } from '@/app/(dashboard)/dashboard/(routes)/courses/action/action/update-course';
+import { updateCourse } from '@/app/(dashboard)/dashboard/action/update-course';
 
 interface TitleFormProps {
   initialData: {

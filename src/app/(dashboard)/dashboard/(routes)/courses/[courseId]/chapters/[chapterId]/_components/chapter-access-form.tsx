@@ -20,7 +20,7 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from '@/components/ui/use-toast';
-import { updateChapter } from '@/app/(dashboard)/dashboard/(routes)/courses/action/action/update-chapter';
+import { updateChapter } from '@/app/(dashboard)/dashboard/action/update-chapter';
 
 interface ChapterAccessFormProps {
   initialData: Chapter;

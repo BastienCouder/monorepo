@@ -18,7 +18,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/use-toast';
-import { updateChapter } from '@/app/(dashboard)/dashboard/(routes)/courses/action/action/update-chapter';
+import { updateChapter } from '@/app/(dashboard)/dashboard/action/update-chapter';
 
 interface ChapterTitleFormProps {
   initialData: {

@@ -74,7 +74,7 @@ export default withUt({
         },
       },
       backgroundImage: {
-        'nav-pattern': "url('/images/watch3.jpg')",
+        radial: 'radial-gradient(circle, var(--tw-gradient-stops))',
       },
       keyframes: {
         'accordion-down': {

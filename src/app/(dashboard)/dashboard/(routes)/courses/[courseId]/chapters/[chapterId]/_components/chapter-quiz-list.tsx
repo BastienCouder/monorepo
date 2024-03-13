@@ -9,8 +9,8 @@ import { toast } from '@/components/ui/use-toast';
 import { ConfirmModal } from '@/components/modal/confirm-modal';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
-import { deleteQuiz } from '../../../../action/action/delete-quiz';
 import { Badge } from '@/components/ui/badge';
+import { deleteQuiz } from '@/app/(dashboard)/dashboard/action/delete-quiz';
 
 interface QuizListProps {
   items: Quiz[];
@@ -75,12 +75,17 @@ export const QuizList = ({ items, onEdit }: QuizListProps) => {
                 {quiz.isPublished ? 'Publié' : 'Non pulié'}
               </Badge>
               <ConfirmModal onConfirm={() => onDelete(quiz.id)}>
-                <Button size="sm" disabled={isLoading} variant={'secondary'}>
+                <Button size="sm" disabled={isLoading} variant={'ghost'}>
                   <Trash className="h-4 w-4" />
                 </Button>
               </ConfirmModal>
-              <Button size="sm" disabled={isLoading} variant={'secondary'}>
-                <Pencil onClick={() => onEdit(quiz.id)} className="w-4 h-4" />
+              <Button
+                onClick={() => onEdit(quiz.id)}
+                size="sm"
+                disabled={isLoading}
+                variant={'ghost'}
+              >
+                <Pencil className="w-4 h-4" />
               </Button>
             </div>
           </div>

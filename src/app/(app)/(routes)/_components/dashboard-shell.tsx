@@ -18,6 +18,9 @@ import Logo from './logo';
 import { SearchInput } from '@/components/search-input';
 import { ModeToggle } from '@/components/mode-toggle';
 import { useCurrentRole } from '@/hooks/useCurrentRole';
+import { usePathname } from 'next/navigation';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 interface IDashboardShell {
   defaultLayout: number[] | undefined;
@@ -35,7 +38,7 @@ export function DashboardShell({
   const [isCollapsed, setIsCollapsed] = React.useState(defaultCollapsed);
   const user = useCurrentUser();
   const role = useCurrentRole();
-
+  const pathname = usePathname();
   return (
     <TooltipProvider delayDuration={0}>
       <ResizablePanelGroup
@@ -98,18 +101,26 @@ export function DashboardShell({
               <div className="block lg:hidden">
                 <Logo isCollapsed={true} />
               </div>
-              <div className="w-full flex items-center justify-end lg:justify-between space-x-4">
-                <div className="hidden lg:block">
-                  <SearchInput />
-                </div>
+              <div className="w-full flex items-center justify-end lg:justify-end space-x-4">
+                {pathname === '/courses' && (
+                  <div className="hidden lg:block">
+                    <SearchInput />
+                  </div>
+                )}
                 <div className="flex items-center space-x-4">
                   <ModeToggle />
-                  <UserNav
-                    user={{
-                      name: user?.name ?? 'N/A',
-                      email: user?.email ?? 'N/A',
-                    }}
-                  />
+                  {user ? (
+                    <UserNav
+                      user={{
+                        name: user?.name ?? 'N/A',
+                        email: user?.email ?? 'N/A',
+                      }}
+                    />
+                  ) : (
+                    <Link href={'/login'}>
+                      <Button>Connexion</Button>
+                    </Link>
+                  )}
                 </div>
               </div>
             </div>

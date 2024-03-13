@@ -7,18 +7,22 @@ import {
   Draggable,
   DropResult,
 } from '@hello-pangea/dnd';
-import { Grip, Pencil } from 'lucide-react';
+import { Grip, Pencil, Trash } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Content } from '@/schemas/db-schema';
+import { ConfirmModal } from '@/components/modal/confirm-modal';
+import { toast } from '@/components/ui/use-toast';
+import { useRouter } from 'next/navigation';
+import { deleteContent } from '@/app/(dashboard)/dashboard/action/delete-content';
 
 interface ContentsListProps {
   items: Content[];
   // eslint-disable-next-line no-unused-vars
   onReorder: (updateData: { id: string; position: number }[]) => void;
   // eslint-disable-next-line no-unused-vars
-  onEdit: (id: string) => void;
+  onEdit: (id: string, type: string) => void;
 }
 
 export const ContentsList = ({
@@ -28,6 +32,8 @@ export const ContentsList = ({
 }: ContentsListProps) => {
   const [isMounted, setIsMounted] = useState(false);
   const [contents, setContents] = useState(items);
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     setIsMounted(true);
@@ -44,16 +50,10 @@ export const ContentsList = ({
     const [reorderedItem] = items.splice(result.source.index, 1);
     items.splice(result.destination.index, 0, reorderedItem);
 
-    const startIndex = Math.min(result.source.index, result.destination.index);
-    const endIndex = Math.max(result.source.index, result.destination.index);
-
-    const updatedContents = items.slice(startIndex, endIndex + 1);
-
     setContents(items);
-
-    const bulkUpdateData = updatedContents.map((content) => ({
-      id: content.id,
-      position: items.findIndex((item) => item.id === content.id),
+    const bulkUpdateData = items.map((item, index) => ({
+      id: item.id,
+      position: index + 1,
     }));
 
     onReorder(bulkUpdateData);
@@ -62,6 +62,25 @@ export const ContentsList = ({
   if (!isMounted) {
     return null;
   }
+
+  const onDelete = async (quizId: string) => {
+    try {
+      setIsLoading(true);
+
+      await deleteContent(quizId);
+      toast({
+        title: 'Quiz supprimé',
+      });
+      router.refresh();
+    } catch {
+      toast({
+        title: "Une erreur s'est produite",
+        variant: 'destructive',
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
@@ -96,14 +115,32 @@ export const ContentsList = ({
                     </div>
                     {content.title}
                     <div className="ml-auto pr-2 flex items-center gap-x-2">
+                      <ConfirmModal onConfirm={() => onDelete(content.id)}>
+                        <Button
+                          size="sm"
+                          disabled={isLoading}
+                          variant={'ghost'}
+                        >
+                          <Trash className="h-4 w-4" />
+                        </Button>
+                      </ConfirmModal>
                       <Button
                         aria-label="Modifier le code"
                         size="sm"
                         variant={'ghost'}
+                        onClick={() =>
+                          onEdit(
+                            content.id,
+                            content.code !== ''
+                              ? 'code'
+                              : content.description !== ''
+                                ? 'description'
+                                : 'image'
+                          )
+                        }
                       >
                         <Pencil
                           aria-label="icon stylo"
-                          onClick={() => onEdit(content.id)}
                           className="w-4 h-4 cursor-pointer hover:opacity-75 transition"
                         />
                       </Button>

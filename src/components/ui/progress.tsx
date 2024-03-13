@@ -9,7 +9,7 @@ import { cn } from '@/lib/utils';
 const progressVariants = cva('h-full w-full flex-1 bg-primary transition-all', {
   variants: {
     variant: {
-      default: 'bg-sky-600',
+      default: 'bg-primary',
       success: 'bg-emerald-700',
     },
   },
@@ -32,7 +32,7 @@ const Progress = React.forwardRef<
   <ProgressPrimitive.Root
     ref={ref}
     className={cn(
-      'relative h-4 w-full overflow-hidden rounded-full bg-secondary',
+      'relative h-4 w-full border overflow-hidden rounded-full bg-background',
       className
     )}
     {...props}

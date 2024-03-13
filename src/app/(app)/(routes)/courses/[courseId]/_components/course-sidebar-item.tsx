@@ -1,7 +1,13 @@
 'use client';
 
-import { CheckCircle, Lock, PlayCircle } from 'lucide-react';
+import { BookOpen, CheckCircle, Lock } from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 import { cn } from '@/lib/utils';
 
@@ -23,43 +29,59 @@ export const CourseSidebarItem = ({
   const pathname = usePathname();
   const router = useRouter();
 
-  const Icon = isLocked ? Lock : isCompleted ? CheckCircle : PlayCircle;
+  const Icon = isLocked ? Lock : isCompleted ? CheckCircle : BookOpen;
   const isActive = pathname?.includes(id);
 
   const onClick = () => {
-    router.push(`/courses/${courseId}/chapters/${id}`);
+    if (!isLocked) {
+      router.push(`/courses/${courseId}/chapters/${id}`);
+    }
   };
 
   return (
-    <button
-      onClick={onClick}
-      type="button"
-      className={cn(
-        'flex items-center gap-x-2 text-slate-500 text-sm font-[500] pl-6 transition-all hover:text-slate-600 hover:bg-slate-300/20',
-        isActive &&
-          'text-slate-700 bg-slate-200/20 hover:bg-slate-200/20 hover:text-slate-700',
-        isCompleted && 'text-emerald-700 hover:text-emerald-700',
-        isCompleted && isActive && 'bg-emerald-200/20'
-      )}
-    >
-      <div className="flex items-center gap-x-2 py-4">
-        <Icon
-          size={22}
+    <>
+      <div className="max-w-full hidden xl:block">
+        <button
+          onClick={onClick}
+          type="button"
           className={cn(
-            'text-slate-500',
-            isActive && 'text-slate-700',
-            isCompleted && 'text-emerald-700'
+            'w-full group border-[1px] flex items-center gap-x-2 text-primary text-sm pl-4 transition-all bg-background hover:text-background hover:bg-secondary',
+            isActive &&
+              ' text-background bg-primary hover:text-background hover:bg-secondary',
+            isCompleted &&
+              'bg-emerald-500/70 text-background hover:text-background hover:bg-green-700',
+            isCompleted && isActive && 'bg-emerald-500/70'
           )}
-        />
-        {label}
+        >
+          <Icon
+            size={22}
+            className={cn(
+              'text-primary group-hover:text-background',
+              isActive && 'text-background group-hover:text-background',
+              isCompleted && 'text-background'
+            )}
+          />
+          <div className="w-full px-4 justify-start gap-x-2 py-4">{label}</div>
+        </button>
       </div>
-      <div
-        className={cn(
-          'ml-auto opacity-0 border-2 border-slate-700 h-full transition-all',
-          isActive && 'opacity-100',
-          isCompleted && 'border-emerald-700'
-        )}
-      />
-    </button>
+      <div className="block xl:hidden">
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger
+              onClick={onClick}
+              className={cn(
+                'h-6 w-6 border',
+                isActive && ' bg-primary hover:bg-secondary',
+                isCompleted && 'bg-emerald-500/70 hover:bg-green-700',
+                isCompleted && isActive && 'bg-emerald-500/70'
+              )}
+            ></TooltipTrigger>
+            <TooltipContent>
+              <p className="px-2 py-1 font-bold">{label}</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </div>
+    </>
   );
 };

@@ -20,9 +20,9 @@ import { useRouter } from 'next/navigation';
 
 import { admin } from '@/app/(auth)/actions/admin.action';
 import { toast } from '@/components/ui/use-toast';
-import { createCourse } from '@/app/(dashboard)/dashboard/(routes)/courses/action/action/create-course';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 import { createCourseSchema } from '@/schemas/course';
+import { createCourse } from '../../../action/create-course';
 
 type CourseFormValues = z.infer<typeof createCourseSchema>;
 

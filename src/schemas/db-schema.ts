@@ -63,6 +63,7 @@ const ChapterSchema: z.ZodSchema<any> = z.lazy(() =>
     position: z.number(),
     isPublished: z.boolean(),
     courseId: z.string(),
+    userProgress: z.array(UserProgressSchema).optional(),
   })
 );
 
@@ -92,9 +93,8 @@ const ContentSchema: z.ZodSchema<any> = z.lazy(() =>
   })
 );
 
-const OptionSchema = z.object({
+export const OptionSchema = z.object({
   id: z.string().uuid().optional(),
-  questionId: z.string().uuid(),
   text: z.string(),
   isCorrect: z.boolean(),
 });
@@ -113,9 +113,27 @@ const QuizSchema = z.object({
   title: z.string(),
   isPublished: z.boolean().default(false),
   chapterId: z.string().uuid(),
-  questions: z.array(QuestionSchema),
+  questions: z.array(QuestionSchema).optional(),
   createdAt: z.date().optional(),
   updatedAt: z.date().optional(),
+});
+
+const UserProgressSchema = z.object({
+  id: z.string().uuid(),
+  userId: z.string().uuid(),
+  chapterId: z.string().uuid(),
+  isCompleted: z.boolean(),
+  createdAt: z.date(),
+  updatedAt: z.date(),
+});
+
+export const AnswerSchema = z.object({
+  questionId: z.string(),
+  optionId: z.string(),
+});
+
+export const QuizAttemptSchema = z.object({
+  answers: z.array(AnswerSchema),
 });
 
 export type User = z.infer<typeof UserSchema>;
@@ -128,3 +146,5 @@ export type Content = z.infer<typeof ContentSchema>;
 export type Quiz = z.infer<typeof QuizSchema>;
 export type Questions = z.infer<typeof QuestionSchema>;
 export type Option = z.infer<typeof OptionSchema>;
+export type Answer = z.infer<typeof AnswerSchema>;
+export type QuizAttempt = z.infer<typeof QuizAttemptSchema>;

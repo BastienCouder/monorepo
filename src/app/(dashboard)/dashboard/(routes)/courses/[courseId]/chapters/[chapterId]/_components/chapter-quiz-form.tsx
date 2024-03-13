@@ -20,8 +20,8 @@ import { Input } from '@/components/ui/input';
 
 import { toast } from '@/components/ui/use-toast';
 import { QuizList } from './chapter-quiz-list';
-import { createQuiz } from '@/app/(dashboard)/dashboard/(routes)/courses/action/action/create-quiz';
 import { Chapter } from '@/schemas/db-schema';
+import { createQuiz } from '@/app/(dashboard)/dashboard/action/create-quiz';
 
 interface QuizFormProps {
   initialData: Chapter;

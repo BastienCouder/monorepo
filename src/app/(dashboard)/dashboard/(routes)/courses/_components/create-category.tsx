@@ -20,8 +20,8 @@ import { useRouter } from 'next/navigation';
 
 import { admin } from '@/app/(auth)/actions/admin.action';
 import { toast } from '@/components/ui/use-toast';
-import { createCategory } from '@/app/(dashboard)/dashboard/(routes)/courses/action/action/category';
 import { createCategorySchema } from '@/schemas/category';
+import { createCategory } from '../../../action/category';
 
 type CategoryFormValues = z.infer<typeof createCategorySchema>;
 

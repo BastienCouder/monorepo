@@ -1,6 +1,7 @@
 'use server';
 import { currentUser, roleCheckMiddleware } from '@/lib/authCheck';
 import { db } from '@/lib/prisma';
+import { revalidatePath } from 'next/cache';
 
 export const toggleFavorite = async (courseId: string) => {
   const session = await currentUser();
@@ -26,6 +27,8 @@ export const toggleFavorite = async (courseId: string) => {
         id: existingFavorite.id,
       },
     });
+    revalidatePath('/courses');
+
     return { success: 'Cours supprimé des favoris avec succès !' };
   } else {
     // If the course is not in favorites, add it
@@ -35,6 +38,7 @@ export const toggleFavorite = async (courseId: string) => {
         courseId,
       },
     });
+    revalidatePath('/courses');
     return { success: 'Cours ajouté aux favoris avec succès !' };
   }
 };

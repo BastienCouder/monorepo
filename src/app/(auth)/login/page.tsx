@@ -4,8 +4,9 @@ import { Metadata } from 'next';
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
-    title: `login - ${env.NAME_WEBSITE}`,
-    description: `login`,
+    title: `Connexion - ${env.NAME_WEBSITE}`,
+    description: `Connexion`,
+    robots: { index: false, follow: false, nocache: false },
   };
 }
 

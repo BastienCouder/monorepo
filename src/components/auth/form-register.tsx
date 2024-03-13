@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input';
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -20,6 +21,7 @@ import { Button } from '@/components/ui/button';
 import { register } from '@/app/(auth)/actions/register.action';
 import { FormError } from '../modal/form-error';
 import { FormSuccess } from '../modal/form-success';
+import { Checkbox } from '../ui/checkbox';
 
 export const RegisterForm = () => {
   const [error, setError] = useState<string | undefined>('');
@@ -49,8 +51,8 @@ export const RegisterForm = () => {
 
   return (
     <CardWrapper
-      headerLabel="Create an account"
-      backButtonLabel="Already have an account?"
+      headerLabel="Créer un compte"
+      backButtonLabel="Vous avez déjà un compte ?"
       backButtonHref="/login"
       showSocial
     >
@@ -62,12 +64,12 @@ export const RegisterForm = () => {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Name</FormLabel>
+                  <FormLabel>Nom</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
                       disabled={isPending}
-                      placeholder="John Doe"
+                      placeholder="Nom..."
                     />
                   </FormControl>
                   <FormMessage />
@@ -84,7 +86,7 @@ export const RegisterForm = () => {
                     <Input
                       {...field}
                       disabled={isPending}
-                      placeholder="john.doe@example.com"
+                      placeholder="nom@exemple.com"
                       type="email"
                     />
                   </FormControl>
@@ -97,7 +99,7 @@ export const RegisterForm = () => {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Password</FormLabel>
+                  <FormLabel>Mot de passe</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
@@ -110,11 +112,32 @@ export const RegisterForm = () => {
                 </FormItem>
               )}
             />
+            <FormField
+              control={form.control}
+              name="rgpdConsent"
+              render={({ field }) => (
+                <FormItem>
+                  <div className="flex items-center gap-4">
+                    <FormControl>
+                      <Checkbox
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Je consens au traitement de mes données conformément au
+                      RGPD.
+                    </FormDescription>
+                  </div>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </div>
           <FormError message={error} />
           <FormSuccess message={success} />
           <Button disabled={isPending} type="submit" className="w-full">
-            Create an account
+            Créer un compte
           </Button>
         </form>
       </Form>

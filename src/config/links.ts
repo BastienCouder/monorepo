@@ -5,7 +5,7 @@ import { Icons } from '@/components/icons';
 export const adminLinks = [
   {
     title: 'Dashboard',
-    route: '/dashboard',
+    route: '/dashboard/courses',
     label: '',
     icon: Icons.gauge,
     isNotAllowed: ['USER'],
@@ -13,12 +13,6 @@ export const adminLinks = [
 ];
 
 export const dashboardLinks = [
-  {
-    title: 'Dashboard',
-    route: '/dashboard',
-    label: '',
-    icon: Icons.gauge,
-  },
   {
     title: 'Utilisateurs',
     route: '/dashboard/users',
@@ -46,15 +40,9 @@ export const appLinks = [
     icon: Icons.course,
   },
   {
-    title: 'Favories',
-    route: '/favories',
+    title: 'Progression',
+    route: '/profile',
     label: '',
-    icon: Icons.star,
-  },
-  {
-    title: 'Trophées',
-    route: '/trophy',
-    label: '',
-    icon: Icons.trophy,
+    icon: Icons.user,
   },
 ];

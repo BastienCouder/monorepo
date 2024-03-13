@@ -4,8 +4,9 @@ import { RegisterForm } from '@/components/auth/form-register';
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
-    title: `Register - ${env.NAME_WEBSITE}`,
-    description: `Register`,
+    title: `Inscription - ${env.NAME_WEBSITE}`,
+    description: `Inscription`,
+    robots: { index: false, follow: false, nocache: false },
   };
 }
 

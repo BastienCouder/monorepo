@@ -1,5 +1,5 @@
-import { Attachment, Chapter } from '@prisma/client';
 import { db } from '@/lib/prisma';
+import { Attachment, Chapter } from '@/schemas/db-schema';
 
 interface GetChapterProps {
   userId: string;
@@ -16,7 +16,7 @@ export const getChapter = async ({
     const purchase = await db.purchase.findUnique({
       where: {
         userId_courseId: {
-          userId,
+          userId: userId || '',
           courseId,
         },
       },
@@ -28,6 +28,7 @@ export const getChapter = async ({
         id: courseId,
       },
       select: {
+        title: true,
         price: true,
       },
     });
@@ -36,6 +37,14 @@ export const getChapter = async ({
       where: {
         id: chapterId,
         isPublished: true,
+      },
+      include: {
+        content: {
+          orderBy: {
+            position: 'asc',
+          },
+        },
+        quiz: { include: { questions: { include: { options: true } } } },
       },
     });
 
@@ -47,7 +56,7 @@ export const getChapter = async ({
     let attachments: Attachment[] = [];
     let nextChapter: Chapter | null = null;
 
-    if (purchase) {
+    if (userId) {
       attachments = await db.attachment.findMany({
         where: {
           courseId: courseId,
@@ -55,10 +64,10 @@ export const getChapter = async ({
       });
     }
 
-    if (chapter.isFree || purchase) {
+    if (chapter.isFree || userId) {
       muxData = await db.muxData.findUnique({
         where: {
-          chapterId: chapterId,
+          chapterId,
         },
       });
 
@@ -79,7 +88,7 @@ export const getChapter = async ({
     const userProgress = await db.userProgress.findUnique({
       where: {
         userId_chapterId: {
-          userId,
+          userId: userId || '',
           chapterId,
         },
       },

@@ -162,7 +162,7 @@ const SettingsPage = () => {
                         >
                           <FormControl>
                             <SelectTrigger>
-                              <SelectValue placeholder="Select a role" />
+                              <SelectValue placeholder="Séléctioner un rôle" />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
@@ -182,7 +182,7 @@ const SettingsPage = () => {
             <FormError message={error} />
             <FormSuccess message={success} />
             <Button disabled={isPending} type="submit">
-              Save
+              Sauvegarder
             </Button>
           </form>
         </Form>

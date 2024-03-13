@@ -90,7 +90,7 @@ export async function updateCategoryCourse(
       where: { courseId: courseId },
     });
 
-    const associationResults = await Promise.all(
+    await Promise.all(
       categoryIds.map((categoryId) =>
         db.categoryOnCourse.create({
           data: {
@@ -101,7 +101,6 @@ export async function updateCategoryCourse(
       )
     );
 
-    console.log(associationResults);
     return { success: true };
   } catch (error) {
     console.error('[UPDATE_CATEGORY_COURSE]', error);

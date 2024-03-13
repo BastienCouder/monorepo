@@ -9,6 +9,31 @@ import { ChapterVideoForm } from './_components/chapter-video-form';
 import { ChapterActions } from './_components/chapter-actions';
 import { QuizForm } from './_components/chapter-quiz-form';
 import { ChaptersForm } from './_components/chapter-content-form';
+import { Metadata } from 'next';
+import { siteConfig } from '@/config/site';
+
+export async function generateMetadata({
+  params,
+}: {
+  params: { courseId: string; chapterId: string };
+}): Promise<Metadata> {
+  const course = await db.course.findUnique({
+    where: {
+      id: params.courseId,
+    },
+  });
+  const chapter = await db.chapter.findUnique({
+    where: {
+      id: params.chapterId,
+    },
+  });
+
+  return {
+    title: `Gérer "${chapter?.title}" - ${course?.title} | ${siteConfig.name}`,
+    description: `Modifiez et enrichissez le chapitre "${chapter?.title}" du cours "${course?.title}" sur ${siteConfig.name}. Assurez-vous que votre contenu est engageant, à jour et pédagogiquement riche pour vos apprenants.`,
+    robots: { index: false, follow: false, nocache: false },
+  };
+}
 
 const ChapterIdPage = async ({
   params,
@@ -20,9 +45,14 @@ const ChapterIdPage = async ({
       id: params.chapterId,
       courseId: params.courseId,
     },
+
     include: {
       muxData: true,
-      content: true,
+      content: {
+        orderBy: {
+          position: 'asc',
+        },
+      },
       quiz: { include: { questions: { include: { options: true } } } },
     },
   });
@@ -68,22 +98,22 @@ const ChapterIdPage = async ({
             </div>
           </div>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-          <div className="space-y-8">
+        <div className="lg:space-x-4 grid grid-cols-1 md:grid-cols-2 gap-2">
+          <div className="flex flex-col gap-2">
             <ChapterTitleForm
               initialData={chapter}
               chapterId={params.chapterId}
             />
             <ChaptersForm initialData={chapter} chapterId={params.chapterId} />
-            <QuizForm
-              initialData={chapter}
-              courseId={params.courseId}
-              chapterId={params.chapterId}
-            />
           </div>
           <div>
             <ChapterVideoForm
               initialData={chapter}
+              chapterId={params.chapterId}
+            />
+            <QuizForm
+              initialData={chapter}
+              courseId={params.courseId}
               chapterId={params.chapterId}
             />
           </div>

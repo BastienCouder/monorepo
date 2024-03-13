@@ -28,10 +28,13 @@ import { toast } from '@/components/ui/use-toast';
 import { Chapter, Content } from '@/schemas/db-schema';
 import { Editor } from '@/components/editor';
 import { Textarea } from '@/components/ui/textarea';
-import { createContent } from '../../../../action/action/create-content';
+
 import { ContentsList } from './chapter-content-list';
 import { Input } from '@/components/ui/input';
 import { FileUpload } from '@/components/file-upload';
+import { createContent } from '@/app/(dashboard)/dashboard/action/create-content';
+import { reorderContents } from '@/app/(dashboard)/dashboard/action/reorder-content';
+import { updateContent } from '@/app/(dashboard)/dashboard/action/update-content';
 
 interface ChaptersContentFormProps {
   initialData: Chapter & { content: Content[] };
@@ -71,24 +74,48 @@ export const ChaptersForm = ({
   const [isCreating, setIsCreating] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const [contentType, setContentType] = useState('');
+  const [isEditing, setIsEditing] = useState(false);
+  const [editingContentId, setEditingContentId] = useState<string | null>(null);
+
+  const toggleEdit = () => setIsEditing((current) => !current);
 
   const toggleCreating = () => {
     setIsCreating((current) => !current);
+    if (!isCreating) {
+      // Si vous allez activer le mode création
+      form.reset({
+        title: '',
+        code: '',
+        imageUrl: '',
+        description: '',
+      });
+    }
   };
-
   const router = useRouter();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      title: '',
-      code: '',
-      imageUrl: '',
-      description: '',
-    },
+    defaultValues: initialData,
   });
 
-  const handleContentTypeChange = (type: any) => {
+  const handleContentTypeEditing = (id: string, type: string) => {
+    const contentToEdit = initialData.content.find(
+      (content: Content) => content.id === id
+    );
+    if (contentToEdit) {
+      form.reset({
+        title: contentToEdit.title,
+        code: contentToEdit.code,
+        imageUrl: contentToEdit.imageUrl,
+        description: contentToEdit.description,
+      });
+      setEditingContentId(id);
+    }
+    setContentType(type);
+    setIsEditing(true);
+  };
+
+  const handleContentTypeChange = (type: string) => {
     setContentType(type);
     toggleCreating();
   };
@@ -117,9 +144,7 @@ export const ChaptersForm = ({
     try {
       setIsUpdating(true);
 
-      //   await axios.put(`/api/courses/${courseId}/chapters/reorder`, {
-      //     list: updateData,
-      //   });
+      await reorderContents(chapterId, updateData);
       toast({
         title: 'Contenus réorganisés',
       });
@@ -134,24 +159,40 @@ export const ChaptersForm = ({
     }
   };
 
-  // Ajustement de la fonction onImageSubmit pour inclure le titre du formulaire
   const onImageSubmit = async (imageUrl: string) => {
-    // Récupération du titre actuel du formulaire
     const { title } = form.getValues();
 
-    // Utilisation du titre du formulaire comme titre de l'image
     const valuesWithImageTitle = {
-      title, // Utilise le titre récupéré du formulaire
+      title: title || 'image',
       imageUrl,
-      description: '', // Vous pouvez ajuster cette partie selon vos besoins
+      description: '',
     };
 
     try {
-      await createContent(chapterId, valuesWithImageTitle, title); // Utilisation du titre du formulaire pour le contenu de l'image
+      await createContent(chapterId, valuesWithImageTitle, title);
       toast({
         title: 'Contenu créé',
       });
       toggleCreating();
+      router.refresh();
+    } catch {
+      toast({
+        title: "Une erreur s'est produite",
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const onEdintingSubmit = async (values: z.infer<typeof formSchema>) => {
+    if (!editingContentId) return;
+
+    try {
+      await updateContent(editingContentId, values);
+      toast({
+        title: 'Contenu mis à jour',
+      });
+      setEditingContentId(null);
+      toggleEdit();
       router.refresh();
     } catch {
       toast({
@@ -172,8 +213,11 @@ export const ChaptersForm = ({
         <h2 className="border-b-4 border-l-4 px-1 rounded-bl-md border-primary">
           Contenu *
         </h2>
-        {isCreating ? (
-          <Button onClick={toggleCreating} aria-label="Annuler">
+        {isCreating || isEditing ? (
+          <Button
+            onClick={isCreating ? toggleCreating : toggleEdit}
+            aria-label="Annuler"
+          >
             Annuler
           </Button>
         ) : (
@@ -215,6 +259,81 @@ export const ChaptersForm = ({
           </Popover>
         )}
       </div>
+
+      {isEditing && (
+        <>
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit(onEdintingSubmit)}
+              className="space-y-4 mt-4"
+            >
+              <FormField
+                control={form.control}
+                name="title"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Input
+                        disabled={isSubmitting}
+                        placeholder="Titre..."
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              {contentType === 'code' && (
+                <FormField
+                  control={form.control}
+                  name="code"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Textarea {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
+              {contentType === 'description' && (
+                <FormField
+                  control={form.control}
+                  name="description"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Editor {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
+              {contentType === 'image' && (
+                <FileUpload
+                  endpoint="courseImage"
+                  onChange={(url) => {
+                    if (url) {
+                      onImageSubmit(url);
+                    }
+                  }}
+                />
+              )}
+              <div className="flex items-center gap-x-2">
+                <Button
+                  aria-label="Sauvegarder"
+                  disabled={!isValid || isSubmitting}
+                  type="submit"
+                >
+                  Sauvegarder
+                </Button>
+              </div>
+            </form>
+          </Form>
+        </>
+      )}
       {isCreating && (
         <Form {...form}>
           <form
@@ -285,17 +404,17 @@ export const ChaptersForm = ({
           </form>
         </Form>
       )}
-      {!isCreating && (
+      {!isCreating && !isEditing && (
         <div className={cn('text-sm mt-2', !initialData.content && 'italic')}>
           {!initialData.content && 'Aucun contenus'}
           <ContentsList
-            onEdit={handleContentTypeChange}
+            onEdit={handleContentTypeEditing}
             onReorder={onReorder}
             items={initialData.content || []}
           />
         </div>
       )}
-      {!isCreating && (
+      {!isCreating && !isEditing && (
         <p className="text-xs text-muted-foreground mt-4">
           Glisser-déposer pour réorganiser les contenus
         </p>

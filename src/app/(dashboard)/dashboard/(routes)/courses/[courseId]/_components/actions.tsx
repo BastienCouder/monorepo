@@ -9,8 +9,8 @@ import { Button } from '@/components/ui/button';
 import { ConfirmModal } from '@/components/modal/confirm-modal';
 import { toast } from '@/components/ui/use-toast';
 import { admin } from '@/app/(auth)/actions/admin.action';
-import { toggleCoursePublication } from '@/app/(dashboard)/dashboard/(routes)/courses/action/action/toggle-publish-course';
-import { deleteCourse } from '@/app/(dashboard)/dashboard/(routes)/courses/action/action/delete-course';
+import { toggleCoursePublication } from '@/app/(dashboard)/dashboard/action/toggle-publish-course';
+import { deleteCourse } from '@/app/(dashboard)/dashboard/action/delete-course';
 
 interface ActionsProps {
   disabled: boolean;
@@ -35,14 +35,13 @@ export const Actions = ({ disabled, courseId, isPublished }: ActionsProps) => {
       setIsLoading(true);
 
       if (isPublished) {
-        const res = await toggleCoursePublication(courseId, false);
-        console.log(res);
+        await toggleCoursePublication(courseId, false);
+
         toast({
           title: 'Cours non publié',
         });
       } else {
-        const res = await toggleCoursePublication(courseId, true);
-        console.log(res);
+        await toggleCoursePublication(courseId, true);
 
         toast({
           title: 'Cours publié',

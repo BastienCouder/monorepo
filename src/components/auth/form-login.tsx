@@ -28,7 +28,7 @@ export const LoginForm = () => {
   const callbackUrl = searchParams.get('callbackUrl');
   const urlError =
     searchParams.get('error') === 'OAuthAccountNotLinked'
-      ? 'Email already in use with different provider!'
+      ? 'Email déjà utilisé avec un autre fournisseur !'
       : '';
 
   const [showTwoFactor, setShowTwoFactor] = useState(false);
@@ -71,8 +71,8 @@ export const LoginForm = () => {
 
   return (
     <CardWrapper
-      headerLabel="Welcome back"
-      backButtonLabel="Don't have an account?"
+      headerLabel="Connexion"
+      backButtonLabel="Vous n'avez pas de compte ?"
       backButtonHref="/register"
       showSocial
     >
@@ -85,7 +85,7 @@ export const LoginForm = () => {
                 name="code"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Two Factor Code</FormLabel>
+                    <FormLabel>Code à deux facteurs</FormLabel>
                     <FormControl>
                       <Input
                         {...field}
@@ -110,7 +110,7 @@ export const LoginForm = () => {
                         <Input
                           {...field}
                           disabled={isPending}
-                          placeholder="name@example.com"
+                          placeholder="nom@exemple.com"
                           type="email"
                         />
                       </FormControl>
@@ -123,7 +123,7 @@ export const LoginForm = () => {
                   name="password"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Password</FormLabel>
+                      <FormLabel>Mot de passe</FormLabel>
                       <FormControl>
                         <Input
                           {...field}
@@ -138,7 +138,7 @@ export const LoginForm = () => {
                         asChild
                         className="px-0 font-normal"
                       >
-                        <Link href="/reset">Forgot password?</Link>
+                        <Link href="/reset">Mot de passe oublié ?</Link>
                       </Button>
                       <FormMessage />
                     </FormItem>
@@ -155,7 +155,7 @@ export const LoginForm = () => {
             type="submit"
             className="w-full"
           >
-            {showTwoFactor ? 'Confirm' : 'Login'}
+            {showTwoFactor ? 'Confirmer' : 'Connexion'}
           </Button>
         </form>
       </Form>

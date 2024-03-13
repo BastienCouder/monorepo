@@ -1,9 +1,9 @@
 /* eslint-disable no-unused-vars */
 'use client';
 
-import { ourFileRouter } from '@/lib/uploadthing';
+import { UploadDropzone } from '@/lib/uploadthing';
+import { ourFileRouter } from '@/app/api/uploadthing/core';
 import { toast } from './ui/use-toast';
-import { UploadDropzone } from '@/lib/helpers/uploadthing';
 
 interface FileUploadProps {
   onChange: (url?: string) => void;

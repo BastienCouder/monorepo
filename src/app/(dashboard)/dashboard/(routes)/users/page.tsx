@@ -6,9 +6,19 @@ import { DataTableSkeleton } from '@/components/data-table/data-table-skeleton';
 import { UsersTable } from './_components/users-table';
 import { getUsers } from './_lib/queries';
 import CreateModal from './_components/create-modal';
+import { Metadata } from 'next';
+import { siteConfig } from '@/config/site';
 
 export interface UsersPageProps {
   searchParams: SearchParams;
+}
+
+export async function generateMetadata(): Promise<Metadata> {
+  return {
+    title: `Gestion des Utilisateurs - ${siteConfig.name}`,
+    description: `Administrez efficacement les utilisateurs de votre plateforme avec notre outil de gestion. Ajoutez, supprimez, ou modifiez les informations des membres pour maintenir votre communauté active et sécurisée.`,
+    robots: { index: false, follow: false, nocache: false },
+  };
 }
 
 export default function UsersPage({ searchParams }: UsersPageProps) {

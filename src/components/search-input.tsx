@@ -16,14 +16,14 @@ export const SearchInput = () => {
   const router = useRouter();
   const pathname = usePathname();
 
-  const currentCategoryId = searchParams.get('categoryId');
+  const currentCategoryId = searchParams.get('categories');
 
   useEffect(() => {
     const url = qs.stringifyUrl(
       {
         url: pathname,
         query: {
-          categoryId: currentCategoryId,
+          categories: currentCategoryId,
           title: debouncedValue,
         },
       },
@@ -40,7 +40,7 @@ export const SearchInput = () => {
         onChange={(e) => setValue(e.target.value)}
         value={value}
         className="w-full md:w-[300px] pl-9 rounded-lg bg-muted"
-        placeholder="Search for a course"
+        placeholder="Rechercher un cours"
       />
     </div>
   );

@@ -7,11 +7,13 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { ConfirmModal } from '@/components/modal/confirm-modal';
 import { toast } from '@/components/ui/use-toast';
+import { toggleQuizPublication } from '@/app/(dashboard)/dashboard/action/toggle-publish-quiz';
 
 interface QuizActionsProps {
   disabled: boolean;
   courseId: string;
   chapterId: string;
+  quizId: string;
   isPublished: boolean;
 }
 
@@ -19,6 +21,7 @@ export const QuizActions = ({
   disabled,
   courseId,
   chapterId,
+  quizId,
   isPublished,
 }: QuizActionsProps) => {
   const router = useRouter();
@@ -29,25 +32,23 @@ export const QuizActions = ({
       setIsLoading(true);
 
       if (isPublished) {
-        // await axios.patch(
-        //   `/api/courses/${courseId}/chapters/${chapterId}/unpublish`
-        // );
+        await toggleQuizPublication(quizId, false);
+
         toast({
-          title: 'Chapter unpublished',
+          title: 'Quiz non publié',
         });
       } else {
-        // await axios.patch(
-        //   `/api/courses/${courseId}/chapters/${chapterId}/publish`
-        // );
+        await toggleQuizPublication(quizId, true);
+
         toast({
-          title: 'Chapter published',
+          title: 'Quiz publié',
         });
       }
 
       router.refresh();
     } catch {
       toast({
-        title: 'Something went wrong',
+        title: 'Une erreur est survenu',
         variant: 'destructive',
       });
     } finally {
@@ -62,13 +63,14 @@ export const QuizActions = ({
       //   await axios.delete(`/api/courses/${courseId}/chapters/${chapterId}`);
 
       toast({
-        title: 'Quiz deleted',
+        title: 'Quiz supprimé',
       });
       router.refresh();
       router.push(`/dashboard/courses/${courseId}/chapters/${chapterId}`);
     } catch {
       toast({
-        title: 'Something went wrong',
+        title: 'Une erreur est survenu',
+        variant: 'destructive',
       });
     } finally {
       setIsLoading(false);
@@ -83,7 +85,7 @@ export const QuizActions = ({
         variant="outline"
         size="sm"
       >
-        {isPublished ? 'Unpublish' : 'Publish'}
+        {isPublished ? 'Non publié' : 'Publié'}
       </Button>
       <ConfirmModal onConfirm={onDelete}>
         <Button size="sm" disabled={isLoading}>

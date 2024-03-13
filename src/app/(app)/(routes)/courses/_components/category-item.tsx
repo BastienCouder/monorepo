@@ -22,7 +22,7 @@ export const CategoryItem = ({
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const currentCategoryId = searchParams.get('categoryId');
+  const currentCategoryId = searchParams.get('categories');
   const currentTitle = searchParams.get('title');
 
   const isSelected = currentCategoryId === value;
@@ -33,7 +33,7 @@ export const CategoryItem = ({
         url: pathname,
         query: {
           title: currentTitle,
-          categoryId: isSelected ? null : value,
+          categories: isSelected ? null : value,
         },
       },
       { skipNull: true, skipEmptyString: true }
@@ -46,7 +46,7 @@ export const CategoryItem = ({
     <button onClick={onClick} type="button">
       <Badge
         className={cn(
-          'text-sm rounded-full flex items-center gap-x-1 transition',
+          'text-sm flex items-center gap-x-1 transition',
           isSelected && 'bg-secondary'
         )}
       >

@@ -7,6 +7,32 @@ import { currentUser } from '@/lib/authCheck';
 import { QuizActions } from './_components/quiz-action';
 import Link from 'next/link';
 import { QuestionOptionsForm } from './_components/quiz-question-option-form';
+import { Metadata } from 'next';
+import { siteConfig } from '@/config/site';
+
+export async function generateMetadata({
+  params,
+}: {
+  params: { courseId: string; chapterId: string; quizId: string };
+}): Promise<Metadata> {
+  const course = await db.course.findUnique({
+    where: {
+      id: params.courseId,
+    },
+  });
+  const quiz = await db.quiz.findUnique({
+    where: {
+      id: params.quizId,
+      chapterId: params.chapterId,
+    },
+  });
+
+  return {
+    title: `Gestion du Quiz : "${quiz?.title}" - ${course?.title} | ${siteConfig.name}`,
+    description: `Personnalisez et mettez à jour le quiz "${quiz?.title}" dans le cours "${course?.title}" sur ${siteConfig.name}. Assurez-vous que chaque question challenge et engage vos étudiants, tout en renforçant leur compréhension du sujet.`,
+    robots: { index: false, follow: false, nocache: false },
+  };
+}
 
 export default async function CourseIdPage({
   params,
@@ -70,31 +96,30 @@ export default async function CourseIdPage({
   const isComplete = requiredFields.every(Boolean);
 
   return (
-    <>
-      <div className="px-6 py-2">
-        <Link
-          href={`/dashboard/courses/${params.courseId}/chapters/${params.chapterId}`}
-          className="flex items-center text-sm hover:opacity-75 transition mb-6"
-        >
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          Retour au chapitre
-        </Link>
-        <div className="flex items-center justify-between">
-          <div className="flex flex-col gap-y-2">
-            <h1 className="text-2xl font-medium">Création du quiz</h1>
-            <span className="text-sm text-slate-700">
-              Complete tout les champs {completionText}
-            </span>
-          </div>
-          <QuizActions
-            disabled={!isComplete}
-            courseId={params.courseId}
-            chapterId={params.chapterId}
-            isPublished={chapter.isPublished}
-          />
+    <div className="px-6 py-2">
+      <Link
+        href={`/dashboard/courses/${params.courseId}/chapters/${params.chapterId}`}
+        className="flex items-center text-sm hover:opacity-75 transition mb-6"
+      >
+        <ArrowLeft className="h-4 w-4 mr-2" />
+        Retour au chapitre
+      </Link>
+      <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-y-2">
+          <h1 className="text-2xl font-medium">Création du quiz</h1>
+          <span className="text-sm text-slate-700">
+            Complete tout les champs {completionText}
+          </span>
         </div>
-        <QuestionOptionsForm initialData={quiz} chapterId={params.chapterId} />
+        <QuizActions
+          disabled={!isComplete}
+          courseId={params.courseId}
+          chapterId={params.chapterId}
+          quizId={params.quizId}
+          isPublished={quiz.isPublished}
+        />
       </div>
-    </>
+      <QuestionOptionsForm initialData={quiz} quizId={params.quizId} />
+    </div>
   );
 }
