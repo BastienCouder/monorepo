@@ -1,70 +1,40 @@
 'use server';
-import { PrismaClient, UserRole } from '@prisma/client';
+import { sendTeamInvitationEmail } from '@/lib/email';
+import { db } from '@/lib/prisma';
 import { v4 as uuidv4 } from 'uuid';
 
-const prisma = new PrismaClient();
-
-interface CreateTeamAndGenerateInviteParams {
-  teamName: string;
-  userEmail: string;
-  defaultRole: UserRole;
-  invitedByUserId: string;
-  domain: string;
-  slug: string;
+enum UserRole {
+  MEMBER = 'MEMBER',
+  ADMIN = 'ADMIN',
 }
 
-async function createTeamAndGenerateInvite({
-  teamName,
-  userEmail,
-  defaultRole,
-  invitedByUserId,
-  domain,
-  slug,
-}: CreateTeamAndGenerateInviteParams) {
-  try {
-    const result = await prisma.$transaction(async (prisma) => {
-      const newTeam = await prisma.team.create({
-        data: {
-          name: teamName,
-          domain,
-          slug,
-          defaultRole,
+export const createTeam = async (
+  creatorUserId: string,
+  name: string,
+  memberEmails: string[]
+) => {
+  const key = uuidv4();
+  const slug = name.toLowerCase().replace(/\s+/g, '-');
+
+  const team = await db.team.create({
+    data: {
+      name,
+      slug,
+      key,
+      creatorId: creatorUserId,
+
+      members: {
+        create: {
+          userId: creatorUserId,
+          role: UserRole.ADMIN,
         },
-      });
+      },
+    },
+  });
 
-      const invitationToken = uuidv4();
-      const expirationDate = new Date();
-      expirationDate.setDate(expirationDate.getDate() + 7);
+  memberEmails.forEach((email) => {
+    sendTeamInvitationEmail(email, team.slug, team.key);
+  });
 
-      const newInvitation = await prisma.invitation.create({
-        data: {
-          teamId: newTeam.id,
-          email: userEmail,
-          role: defaultRole,
-          token: invitationToken,
-          expires: expirationDate,
-          invitedBy: invitedByUserId,
-        },
-      });
-
-      return { newTeam, newInvitation };
-    });
-
-    console.log('Équipe créée avec succès:', result.newTeam);
-    console.log('Invitation générée:', result.newInvitation);
-  } catch (error) {
-    console.error(
-      'Erreur lors de la création de l’équipe et de l’invitation:',
-      error
-    );
-  }
-}
-
-// createTeamAndGenerateInvite({
-//     teamName: 'Example Team',
-//     userEmail: 'user@example.com',
-//     defaultRole: UserRole.MEMBER, // Assurez-vous que cela correspond à une valeur de l'énumération UserRole
-//     invitedByUserId: 'someUserId',
-//     domain: 'example.com',
-//     slug: 'example-team',
-//   });
+  return team;
+};

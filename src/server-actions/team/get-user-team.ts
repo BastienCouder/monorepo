@@ -5,10 +5,10 @@ export async function getUserTeams(userId: string) {
   try {
     const userTeams = await db.teamMember.findMany({
       where: {
-        userId: userId,
+        userId,
       },
       include: {
-        team: true,
+        team: { include: { members: true } },
       },
     });
 

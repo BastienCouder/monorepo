@@ -22,6 +22,7 @@ import { admin } from '@/server-actions/auth/admin.action';
 import { toast } from '@/components/ui/use-toast';
 import { createFolderSchema } from '@/schemas/validations/folder';
 import { createFolder } from '@/server-actions/user/create-folder-user';
+import { capitalize } from '@/lib/utils';
 
 type FolderFormValues = z.infer<typeof createFolderSchema>;
 
@@ -55,9 +56,9 @@ export function CreateFolderForm({
 
       if (userId) {
         if (basePath !== '') {
-          await createFolder(userId, data.name, basePath);
+          await createFolder(userId, capitalize(data.name), basePath);
         } else {
-          await createFolder(userId, data.name, null);
+          await createFolder(userId, capitalize(data.name), null);
         }
         toast({
           title: 'Folder created',

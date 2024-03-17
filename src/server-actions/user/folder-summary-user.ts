@@ -1,7 +1,7 @@
 'use server';
 import { db } from '@/lib/prisma';
 import { currentUser } from '@/lib/authCheck';
-import { calculateTotalSizeAndFiles } from './folder-files-user';
+import { calculateTotalSizeAndFiles } from './get-folder-files-user';
 
 interface ExtendedFolderSummary {
   name: string;
@@ -15,7 +15,13 @@ interface FolderSummaryResponse {
   totalFiles: number; // Nombre total de fichiers
 }
 
-const defaultFolders = ['Documents', 'Downloads', 'Pictures', 'Videos'];
+const defaultFolders = [
+  'Documents',
+  'Downloads',
+  'Pictures',
+  'Videos',
+  'Musics',
+];
 
 export async function calculateFolderSummary(): Promise<FolderSummaryResponse> {
   const user = await currentUser();

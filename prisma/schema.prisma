@@ -95,7 +95,7 @@ model User {
   accounts              Account[]
   Session               Session[]
   TwoFactorConfirmation TwoFactorConfirmation?
-  OrgLimit              OrgLimit?
+  TeamLimit             TeamLimit?
 
   stripeCustomerId       String?      @unique @map(name: "stripe_customer_id")
   stripeSubscriptionId   String?      @unique @map(name: "stripe_subscription_id")
@@ -105,9 +105,10 @@ model User {
   Invitation             Invitation[]
   Folder                 Folder[]
   File                   File[]
+  Team                   Team[]
 }
 
-model OrgLimit {
+model TeamLimit {
   id     String @id @default(uuid())
   userId String @unique
   user   User   @relation(fields: [userId], references: [id])
@@ -118,21 +119,20 @@ model OrgLimit {
 }
 
 model Team {
-  id              String       @id @default(uuid())
-  name            String
-  slug            String       @unique
-  domain          String?      @unique
-  defaultRole     UserRole     @default(MEMBER)
-  billingId       String?
-  billingProvider String?
-  createdAt       DateTime     @default(now())
-  updatedAt       DateTime     @default(now())
-  storageLimit    Int          @default(1000000000)
-  storageUsed     Int          @default(0)
-  members         TeamMember[]
-  invitations     Invitation[]
-  Folder          Folder[]
-  File            File[]
+  id           String       @id @default(uuid())
+  name         String
+  slug         String       @unique
+  key          String       @unique
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @default(now())
+  storageLimit Int          @default(1000000000)
+  storageUsed  Int          @default(0)
+  creatorId    String
+  creator      User         @relation(fields: [creatorId], references: [id])
+  members      TeamMember[]
+  invitations  Invitation[]
+  Folder       Folder[]
+  File         File[]
 }
 
 model TeamMember {
@@ -188,21 +188,22 @@ model Folder {
 }
 
 model File {
-  id        String   @id @default(cuid())
-  name      String
-  mimeType  String?
-  size      Int
-  type      String
-  path      String?
-  folderId  String?  @map("folder_id")
-  folder    Folder?  @relation(fields: [folderId], references: [id])
-  teamId    String?  @map("team_id")
-  team      Team?    @relation(fields: [teamId], references: [id])
-  content   Bytes?
-  User      User?    @relation(fields: [userId], references: [id])
-  userId    String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          String   @id @default(cuid())
+  name        String
+  mimeType    String?
+  size        Int
+  type        String?
+  path        String?
+  firebaseUrl String?
+  folderId    String?  @map("folder_id")
+  folder      Folder?  @relation(fields: [folderId], references: [id])
+  teamId      String?  @map("team_id")
+  team        Team?    @relation(fields: [teamId], references: [id])
+  content     Bytes?
+  User        User?    @relation(fields: [userId], references: [id])
+  userId      String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   @@index([folderId])
   @@index([teamId])

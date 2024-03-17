@@ -1,14 +1,18 @@
 'use server';
+
 import { storage } from '@/lib/firebase';
 import { db } from '@/lib/prisma';
 import { deleteObject, ref } from 'firebase/storage';
 
-async function deleteFile(fileId: string, teamId: string): Promise<void> {
+export async function deleteFile(
+  fileId: string,
+  teamId: string
+): Promise<void> {
   try {
-    // Trouver le fichier dans la base de données pour obtenir son chemin d'accès dans Firebase Storage
+    // Trouver le fichier dans la base de données pour obtenir son chemin d'accès et sa taille
     const file = await db.file.findUnique({
       where: { id: fileId },
-      include: { team: true }, // Inclure les détails de l'équipe pour vérifier l'appartenance
+      include: { team: true }, // Inclure les détails de l'équipe pour accéder à l'utilisation du stockage
     });
 
     if (!file) {
@@ -25,7 +29,14 @@ async function deleteFile(fileId: string, teamId: string): Promise<void> {
     // Supprimer le fichier de Firebase Storage
     await deleteObject(fileRef);
 
-    console.log(`Fichier supprimé de Firebase Storage : ${file.path}`);
+    // Mettre à jour l'utilisation du stockage de l'équipe dans la base de données
+    if (file.team) {
+      const newStorageUsed = file.team.storageUsed - file.size;
+      await db.team.update({
+        where: { id: teamId },
+        data: { storageUsed: newStorageUsed >= 0 ? newStorageUsed : 0 },
+      });
+    }
 
     // Supprimer la référence du fichier de la base de données
     await db.file.delete({
@@ -33,7 +44,7 @@ async function deleteFile(fileId: string, teamId: string): Promise<void> {
     });
 
     console.log(
-      `Référence du fichier supprimée de la base de données : ${fileId}`
+      `Fichier supprimé de Firebase Storage et de la base de données: ${file.path}`
     );
   } catch (error) {
     console.error('Erreur lors de la suppression du fichier:', error);

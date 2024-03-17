@@ -103,7 +103,13 @@ export const truncate = (str: string, length: number) => {
   return `${str.slice(0, length)}...`;
 };
 
-const defaultFolders = ['Documents', 'Downloads', 'Pictures', 'Videos'];
+const defaultFolders = [
+  'Documents',
+  'Downloads',
+  'Pictures',
+  'Videos',
+  'Musics',
+];
 
 export function isNotDefaultFolder(folderName: string) {
   return !defaultFolders.includes(folderName);

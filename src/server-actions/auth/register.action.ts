@@ -33,7 +33,13 @@ export const register = async (values: z.infer<typeof RegisterSchema>) => {
     },
   });
 
-  const defaultFolders = ['Documents', 'Downloads', 'Pictures', 'Videos'];
+  const defaultFolders = [
+    'Documents',
+    'Downloads',
+    'Pictures',
+    'Videos',
+    'Musics',
+  ];
 
   await Promise.all(
     defaultFolders.map((folderName) =>

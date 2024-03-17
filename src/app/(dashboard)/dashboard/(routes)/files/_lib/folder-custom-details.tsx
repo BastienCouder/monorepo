@@ -1,5 +1,6 @@
 import DocumentsIcon from '@/assets/images/documents';
 import DownloadIcon from '@/assets/images/download';
+import MusicIcon from '@/assets/images/music';
 import OneDriveIcon from '@/assets/images/onedrive';
 import OthersIcon from '@/assets/images/other';
 import PicturesIcon from '@/assets/images/pictures';
@@ -15,10 +16,22 @@ export const getFolderDetails = (folderName: string) => {
       return { color: '#BC8224', Icon: PicturesIcon };
     case 'Videos':
       return { color: '#9216BB', Icon: VideosIcon };
-    case 'OneDrive':
-      return { color: '#1E3CB3', Icon: OneDriveIcon };
     case 'Downloads':
       return { color: '#0E9606', Icon: DownloadIcon };
+    case 'Musics':
+      return { color: '#FA3E31', Icon: MusicIcon };
+    case 'OneDrive':
+      return { color: '#1E3CB3', Icon: OneDriveIcon };
+    case 'Adobe':
+      return { color: '#FA3E31', Icon: MusicIcon };
+    case 'Phostoshop':
+      return { color: '#FA3E31', Icon: MusicIcon };
+    case 'Illustrator':
+      return { color: '#FA3E31', Icon: MusicIcon };
+    case 'Indesign':
+      return { color: '#FA3E31', Icon: MusicIcon };
+    case 'Visual-studio' || 'Vs-code':
+      return { color: '#FA3E31', Icon: MusicIcon };
     case 'Others':
       return {
         color: theme.theme === 'dark' ? '#D6E6E6' : '#555C5C',

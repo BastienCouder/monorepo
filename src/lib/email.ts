@@ -38,3 +38,18 @@ export const sendVerificationEmail = async (email: string, token: string) => {
     html: `<p>Click <a href="${confirmLink}">here</a> to confirm email.</p>`,
   });
 };
+
+export const sendTeamInvitationEmail = async (
+  email: string,
+  teamSlug: string,
+  teamKey: string
+) => {
+  const invitationLink = `${process.env.DOMAIN}/join-team?teamSlug=${teamSlug}&key=${teamKey}`;
+
+  await resend.emails.send({
+    from: domainEmail,
+    to: email,
+    subject: 'You are invited to join the team',
+    html: `<p>You have been invited to join the team. Click <a href="${invitationLink}">here</a> to accept the invitation. Use the following key when prompted: <strong>${teamKey}</strong></p>`,
+  });
+};

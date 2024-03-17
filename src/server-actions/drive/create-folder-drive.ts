@@ -1,22 +1,45 @@
+'use server';
+
 import { db } from '@/lib/prisma';
 
-interface CreateFolderInput {
-  name: string;
-  teamId: string;
-  parentId?: string | null; // Optionnel, pour les sous-dossiers
-}
-
-export async function createTeamFolder({
-  name,
-  teamId,
-  parentId = null,
-}: CreateFolderInput) {
+export async function createTeamFolder(
+  userId: string,
+  folderName: string,
+  parentId?: string | null,
+  teamId?: string
+) {
   try {
+    const existingFolder = await db.folder.findFirst({
+      where: {
+        name: folderName,
+        parentId,
+        teamId,
+      },
+    });
+
+    if (!userId) {
+      return { error: 'unauthorized.' };
+    }
+
+    if (existingFolder) {
+      return {
+        error:
+          'A folder with this name already exists in the current directory.',
+      };
+    }
+
     const newFolder = await db.folder.create({
       data: {
-        name: name,
-        teamId: teamId,
-        parentId: parentId,
+        name: folderName,
+        teamId,
+        parentId,
+      },
+    });
+
+    await db.team.update({
+      where: { id: teamId },
+      data: {
+        updatedAt: new Date(),
       },
     });
 

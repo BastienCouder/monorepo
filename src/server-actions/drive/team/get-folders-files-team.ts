@@ -5,19 +5,19 @@ import { currentUser } from '@/lib/authCheck';
 import { Folder as PrismaFolder, File as PrismaFile } from '@prisma/client';
 
 // Définitions des interfaces pour étendre les types Prisma existants
-interface ExtendedFile extends PrismaFile {
+
+export interface ExtendedFile extends PrismaFile {
   folder?: ExtendedFolder; // Optionnel pour gérer les cas où le fichier n'est pas associé à un dossier
 }
 
-interface ExtendedFolder extends PrismaFolder {
+export interface ExtendedFolder extends PrismaFolder {
   files: ExtendedFile[];
   subfolders: ExtendedFolder[];
   totalSize?: number;
   totalFiles?: number;
 }
 
-// Type pour la réponse de la requête du dossier
-interface FolderDataResponse {
+export interface FolderDataResponse {
   folder?: ExtendedFolder;
   subfolders: ExtendedFolder[];
   files: ExtendedFile[];
@@ -26,22 +26,9 @@ interface FolderDataResponse {
   message?: string;
 }
 
-const defaultFolders = ['Documents', 'Downloads', 'Pictures', 'Videos'];
-
-async function ensureDefaultFolders(userId: string): Promise<ExtendedFolder[]> {
-  await Promise.all(
-    defaultFolders.map(async (folderName) => {
-      const exists = await db.folder.findFirst({
-        where: { userId, name: folderName, parentId: null },
-      });
-      if (!exists) {
-        await db.folder.create({ data: { userId, name: folderName } });
-      }
-    })
-  );
-
+async function ensureDefaultFolders(teamId: string): Promise<ExtendedFolder[]> {
   const folders = await db.folder.findMany({
-    where: { userId, parentId: null },
+    where: { teamId, parentId: null },
     include: { files: true, subfolders: true },
   });
 
@@ -56,29 +43,31 @@ async function ensureDefaultFolders(userId: string): Promise<ExtendedFolder[]> {
   return enrichedFolders;
 }
 
-export async function userFolderFiles(
-  folderPath: string
+export async function getUserFolderFilesTeam(
+  folderPath: string,
+  teamId: string
 ): Promise<FolderDataResponse> {
   const user = await currentUser();
   if (!user?.id) throw new Error('Unauthorized');
 
   if (!folderPath || folderPath === '') {
-    const folders = await ensureDefaultFolders(user.id);
+    const folders = await ensureDefaultFolders(teamId);
     return { subfolders: folders, files: [] };
   }
 
-  const rootFolder = await findFolderByPath(user.id, folderPath);
+  const rootFolder = await findFolderByPathTeam(folderPath, teamId);
+
   if (!rootFolder)
     return { subfolders: [], files: [], message: 'Folder not found' };
 
-  const { totalSize, totalFiles } = await calculateTotalSizeAndFiles(
+  const { totalSize, totalFiles } = await calculateTotalSizeAndFilesTeam(
     rootFolder.id
   );
 
   const subfolders = await Promise.all(
     rootFolder.subfolders.map(async (sf) => ({
       ...sf,
-      ...(await calculateTotalSizeAndFiles(sf.id)),
+      ...(await calculateTotalSizeAndFilesTeam(sf.id)),
     }))
   );
 
@@ -91,7 +80,7 @@ export async function userFolderFiles(
   };
 }
 
-export async function calculateTotalSizeAndFiles(
+export async function calculateTotalSizeAndFilesTeam(
   folderId: string
 ): Promise<{ totalSize: number; totalFiles: number }> {
   const folder = await db.folder.findUnique({
@@ -103,7 +92,7 @@ export async function calculateTotalSizeAndFiles(
   let totalFiles = folder?.files.length || 0;
 
   for (const subfolder of folder?.subfolders || []) {
-    const counts = await calculateTotalSizeAndFiles(subfolder.id);
+    const counts = await calculateTotalSizeAndFilesTeam(subfolder.id);
     totalSize += counts.totalSize;
     totalFiles += counts.totalFiles;
   }
@@ -111,19 +100,19 @@ export async function calculateTotalSizeAndFiles(
   return { totalSize, totalFiles };
 }
 
-async function findFolderByPath(
-  userId: string,
-  folderId: string
+async function findFolderByPathTeam(
+  folderId: string,
+  teamId: string
 ): Promise<ExtendedFolder | null> {
   const folder = await db.folder.findFirst({
-    where: { userId, id: folderId },
+    where: { id: folderId, teamId },
     include: { files: true, subfolders: true },
   });
 
   if (!folder) return null;
   const enrichedSubfolders = await Promise.all(
     folder.subfolders.map(async (subfolder) => {
-      const { totalSize, totalFiles } = await calculateTotalSizeAndFiles(
+      const { totalSize, totalFiles } = await calculateTotalSizeAndFilesTeam(
         subfolder.id
       );
       return { ...subfolder, totalSize, totalFiles, files: [], subfolders: [] };

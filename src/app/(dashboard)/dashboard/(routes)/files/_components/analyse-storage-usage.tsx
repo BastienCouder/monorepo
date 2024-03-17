@@ -2,16 +2,18 @@
 
 import React from 'react';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
-import { getFolderDetails } from '../_lib/folder-details';
-import { MultiFileDropzone } from './dropzone';
+import { getFolderDetails } from '../_lib/folder-custom-details';
+import { MultiFileDropzone } from './multi-dropzone';
 import { useTheme } from 'next-themes';
-import { User } from '@prisma/client';
+import { User, UserRole } from '@prisma/client';
+import { LucideIcon } from 'lucide-react';
+import { useCurrentUser } from '@/hooks/use-current-user';
 
 export interface Directory {
   name: string;
   usedSpace: number;
-  Icon?: any;
-  filesCount?: any;
+  Icon?: LucideIcon;
+  filesCount?: number;
 }
 
 export type StorageUsageProps = {
@@ -24,7 +26,6 @@ export type StorageUsageProps = {
     totalSizeGB: number;
     totalFiles: number;
   };
-  user: User;
 };
 
 interface GraphDataItem {
@@ -51,13 +52,16 @@ const CustomTooltip = ({ active, payload }: CustomTooltipProps) => {
 
   return null;
 };
-export default function StorageUsage({ summary, user }: StorageUsageProps) {
+
+export default function StorageUsage({ summary }: StorageUsageProps) {
   const theme = useTheme();
+  const user = useCurrentUser();
   const COLORS = [
     '#2146B5',
     '#0E9606',
     '#9216BB',
     '#BC8224',
+    '#FA3E31',
     theme.theme === 'dark' ? '#D6E6E6' : '#555C5C',
   ];
 
@@ -65,7 +69,7 @@ export default function StorageUsage({ summary, user }: StorageUsageProps) {
     name: folder.name,
     value: Math.max(folder.totalSizeGB, 0.01),
   }));
-  // Si aucun espace n'est utilisé, diviser équitablement pour visualisation
+
   if (
     summary.totalSizeGB > 0 &&
     folderData.reduce((acc, folder) => acc + folder.value, 0) === 0
@@ -103,6 +107,7 @@ export default function StorageUsage({ summary, user }: StorageUsageProps) {
                 <Cell
                   key={`cell-${index}`}
                   fill={COLORS[index % COLORS.length]}
+                  className="rounded-full"
                 />
               ))}
             </Pie>
@@ -113,15 +118,15 @@ export default function StorageUsage({ summary, user }: StorageUsageProps) {
           </PieChart>
         </ResponsiveContainer>
         <p
-          className="font-bold absolute flex flex-col gap-px items-center"
+          className="font-bold absolute flex flex-col gap-px items-center -z-1"
           style={{
             left: '50%',
             top: '50%',
             transform: 'translate(-50%, -50%)',
           }}
         >
-          <span className="text-lg">{user.name}</span>
-          <span>of {user.name}</span>
+          <span className="text-lg">{user?.name}</span>
+          <span>of {user?.name}</span>
         </p>
       </section>
       {/* <div className='text-center'>

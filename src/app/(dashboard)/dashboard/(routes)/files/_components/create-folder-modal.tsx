@@ -61,7 +61,6 @@ const CreateFolderModal = ({ basePath, refreshData }: CreateFolderProps) => {
       <DrawerContent>
         <DrawerHeader>
           <DrawerTitle>New folder</DrawerTitle>
-          {/* <DrawerDescription>This action cannot be undone.</DrawerDescription> */}
         </DrawerHeader>
         <div className="p-4 pb-8">
           <CreateFolderForm
