@@ -1,5 +1,5 @@
 
-import { admin } from '@/app/(auth)/actions/admin.action';
+import { admin } from '@/server-actions/auth/admin.action';
 import * as authCheck from '@/lib/authCheck';
 import { UserRole } from '@prisma/client';
 

@@ -16,7 +16,7 @@ interface INav {
   isCollapsed: boolean;
   links: {
     title: string;
-    route: string;
+    href: string;
     label?: string;
     icon: LucideIcon;
   }[];
@@ -36,14 +36,14 @@ export function Nav({ links, isCollapsed }: INav) {
             <Tooltip key={index} delayDuration={0}>
               <TooltipTrigger asChild>
                 <Link
-                  href={link.route}
+                  href={link.href}
                   className={cn(
                     buttonVariants({
-                      variant: pathname === link.route ? 'default' : 'ghost',
+                      variant: pathname === link.href ? 'default' : 'ghost',
                       size: 'icon',
                     }),
                     'h-9 w-9',
-                    pathname === link.route &&
+                    pathname === link.href &&
                       'dark:bg-muted dark:text-muted-foreground dark:hover:bg-muted dark:hover:text-white'
                   )}
                 >
@@ -63,13 +63,13 @@ export function Nav({ links, isCollapsed }: INav) {
           ) : (
             <Link
               key={index}
-              href={link.route}
+              href={link.href}
               className={cn(
                 buttonVariants({
-                  variant: pathname === link.route ? 'default' : 'ghost',
-                  size: 'sm',
+                  variant: pathname === link.href ? 'default' : 'ghost',
+                  size: 'lg',
                 }),
-                pathname === link.route &&
+                pathname === link.href &&
                   'dark:bg-muted dark:text-white dark:hover:bg-muted dark:hover:text-white',
                 'justify-start'
               )}
@@ -80,7 +80,7 @@ export function Nav({ links, isCollapsed }: INav) {
                 <span
                   className={cn(
                     'ml-auto',
-                    pathname === link.route && 'text-background dark:text-white'
+                    pathname === link.href && 'text-background dark:text-white'
                   )}
                 >
                   {link.label}

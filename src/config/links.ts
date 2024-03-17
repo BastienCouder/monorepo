@@ -1,6 +1,6 @@
 'use client';
 
-import { Icons } from '@/components/icons';
+import { Icons } from '@/components/shared/icons';
 
 export const adminLinks = [
   {
@@ -14,16 +14,11 @@ export const adminLinks = [
 
 export const dashboardLinks = [
   {
-    title: 'Utilisateurs',
-    route: '/dashboard/users',
-    label: '',
-    icon: Icons.user,
-  },
-  {
-    title: 'Cours',
-    label: '',
+    title: 'Dashboard',
     route: '/dashboard/courses',
-    icon: Icons.course,
+    label: '',
+    icon: Icons.ellipsis,
+    isNotAllowed: ['USER'],
   },
   {
     title: 'Paramètres',
@@ -33,12 +28,6 @@ export const dashboardLinks = [
   },
 ];
 export const appLinks = [
-  {
-    title: 'Cours',
-    route: '/courses',
-    label: '',
-    icon: Icons.course,
-  },
   {
     title: 'Progression',
     route: '/profile',

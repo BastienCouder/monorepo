@@ -11,5 +11,5 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function dashbaord() {
-  return redirect(`/dashboard/courses/`);
+  return redirect(`/dashboard/files`);
 }

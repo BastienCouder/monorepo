@@ -7,7 +7,6 @@ import { useSearchParams } from 'next/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
 
-import { LoginSchema } from '@/schemas';
 import { Input } from '@/components/ui/input';
 import {
   Form,
@@ -18,17 +17,20 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { CardWrapper } from '@/components/auth/card-wrapper';
-import { login } from '@/app/(auth)/actions/login.action';
+import { login } from '@/server-actions/auth/login.action';
 import { Button } from '../ui/button';
 import { FormError } from '../modal/form-error';
 import { FormSuccess } from '../modal/form-success';
+import { LoginSchema } from '@/schemas/auth';
+import { useTranslation } from 'next-i18next';
 
 export const LoginForm = () => {
+  const { t } = useTranslation('common');
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get('callbackUrl');
   const urlError =
     searchParams.get('error') === 'OAuthAccountNotLinked'
-      ? 'Email déjà utilisé avec un autre fournisseur !'
+      ? 'Email already used with another supplier !'
       : '';
 
   const [showTwoFactor, setShowTwoFactor] = useState(false);
@@ -71,8 +73,8 @@ export const LoginForm = () => {
 
   return (
     <CardWrapper
-      headerLabel="Connexion"
-      backButtonLabel="Vous n'avez pas de compte ?"
+      headerLabel={t('login')}
+      backButtonLabel={t('dont-have-an-account')}
       backButtonHref="/register"
       showSocial
     >
@@ -85,7 +87,7 @@ export const LoginForm = () => {
                 name="code"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Code à deux facteurs</FormLabel>
+                    <FormLabel>{t('two-factor-code')}</FormLabel>
                     <FormControl>
                       <Input
                         {...field}
@@ -110,7 +112,7 @@ export const LoginForm = () => {
                         <Input
                           {...field}
                           disabled={isPending}
-                          placeholder="nom@exemple.com"
+                          placeholder="name@example.com"
                           type="email"
                         />
                       </FormControl>
@@ -123,7 +125,7 @@ export const LoginForm = () => {
                   name="password"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Mot de passe</FormLabel>
+                      <FormLabel>Password</FormLabel>
                       <FormControl>
                         <Input
                           {...field}
@@ -138,7 +140,7 @@ export const LoginForm = () => {
                         asChild
                         className="px-0 font-normal"
                       >
-                        <Link href="/reset">Mot de passe oublié ?</Link>
+                        <Link href="/reset">Forgot your password ?</Link>
                       </Button>
                       <FormMessage />
                     </FormItem>
@@ -155,7 +157,7 @@ export const LoginForm = () => {
             type="submit"
             className="w-full"
           >
-            {showTwoFactor ? 'Confirmer' : 'Connexion'}
+            {showTwoFactor ? 'Confirm' : 'Login'}
           </Button>
         </form>
       </Form>

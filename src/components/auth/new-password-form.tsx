@@ -18,7 +18,7 @@ import {
 } from '@/components/ui/form';
 import { CardWrapper } from '@/components/auth/card-wrapper';
 import { Button } from '@/components/ui/button';
-import { newPassword } from '@/app/(auth)/actions/new-password.action';
+import { newPassword } from '@/server-actions/auth/new-password.action';
 import { FormError } from '../modal/form-error';
 import { FormSuccess } from '../modal/form-success';
 

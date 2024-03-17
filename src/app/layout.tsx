@@ -1,42 +1,93 @@
-import React from 'react';
-import type { Metadata, Viewport } from 'next';
-import { Inter } from 'next/font/google';
 import '@/styles/globals.css';
+
+import { fontHeading, fontSans, fontUrban } from '@/assets/fonts';
+import { Analytics } from '@/components/analytics';
+import { ModalProvider } from '@/components/modal-provider';
+import { ThemeProvider } from '@/components/providers';
+import { TailwindIndicator } from '@/components/tailwind-indicator';
 import { Toaster } from '@/components/ui/toaster';
-import { auth } from '@/auth';
+import { siteConfig } from '@/config/site';
+import { cn } from '@/lib/utils';
 import { SessionProvider } from 'next-auth/react';
-import { ThemeProvider } from '@/context/theme-provider';
-import ProgressBar from '@/components/progress-bar';
+import { auth } from '@/auth';
 
-const inter = Inter({ subsets: ['latin'] });
-
-export const metadata: Metadata = {
-  title: 'PWA with Next 13',
-  description: 'PWA application with Next 13',
-  generator: 'Next.js',
-  manifest: '/manifest.json',
-  keywords: ['nextjs', 'nextjs13', 'next13', 'pwa', 'next-pwa'],
-};
-
-export const viewport: Viewport = {
-  themeColor: '#2196f3',
-};
-
-export default async function RootLayout({
-  children,
-}: Readonly<{
+interface RootLayoutProps {
   children: React.ReactNode;
-}>) {
+}
+
+export const metadata = {
+  title: {
+    default: siteConfig.name,
+    template: `%s | ${siteConfig.name}`,
+  },
+  description: siteConfig.description,
+  keywords: [
+    'Next.js',
+    'React',
+    'Prisma',
+    'PlanetScale',
+    'Auth.js',
+    'shadcn ui',
+    'Resend',
+    'React Email',
+    'Stripe',
+  ],
+  authors: [
+    {
+      name: 'mickasmt',
+    },
+  ],
+  creator: 'mickasmt',
+  metadataBase: new URL(siteConfig.url),
+  openGraph: {
+    type: 'website',
+    locale: 'en_US',
+    url: siteConfig.url,
+    title: siteConfig.name,
+    description: siteConfig.description,
+    siteName: siteConfig.name,
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: siteConfig.name,
+    description: siteConfig.description,
+    images: [siteConfig.ogImage],
+    creator: '@miickasmt',
+  },
+  icons: {
+    icon: '/favicon.ico',
+    shortcut: '/favicon-16x16.png',
+    apple: '/apple-touch-icon.png',
+  },
+  manifest: `${siteConfig.url}/site.webmanifest`,
+};
+
+export default async function RootLayout({ children }: RootLayoutProps) {
   const session = await auth();
 
   return (
     <SessionProvider session={session}>
-      <html lang="fr">
-        <body className={inter.className}>
-          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-            <Toaster />
-            <ProgressBar />
+      <html lang="fr" suppressHydrationWarning>
+        <head />
+        <body
+          className={cn(
+            'min-h-screen bg-background font-sans antialiased',
+            fontSans.variable,
+            fontUrban.variable,
+            fontHeading.variable
+          )}
+        >
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
             {children}
+            <Analytics />
+            <Toaster />
+            <ModalProvider />
+            <TailwindIndicator />
           </ThemeProvider>
         </body>
       </html>

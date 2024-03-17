@@ -1,24 +1,24 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import LoginPage from '@/app/(auth)/login/page';
-import * as loginAction from '@/app/(auth)/actions/login.action';
+import * as loginAction from '@/server-actions/auth/login.action';
 
 // Mock pour la fonction login
 jest.mock('@/app/(auth)/actions/login.action', () => ({
-    login: jest.fn((formData, callbackUrl) => Promise.resolve({
-      success: true,
-    })),
-  }));
+  login: jest.fn((formData, callbackUrl) => Promise.resolve({
+    success: true,
+  })),
+}));
 jest.mock('next/navigation', () => ({
-    useSearchParams: () => {
-      return {
-        get: jest.fn((key) => {
-          if (key === 'callbackUrl') return 'someCallbackUrl';
-          if (key === 'error') return 'OAuthAccountNotLinked';
-          return null;
-        }),
-      };
-    },
-  }));
+  useSearchParams: () => {
+    return {
+      get: jest.fn((key) => {
+        if (key === 'callbackUrl') return 'someCallbackUrl';
+        if (key === 'error') return 'OAuthAccountNotLinked';
+        return null;
+      }),
+    };
+  },
+}));
 
 describe('LoginPage', () => {
   it('renders the login page', () => {
@@ -45,6 +45,6 @@ describe('LoginPage', () => {
     expect(loginAction.login).toHaveBeenCalledWith({
       email: 'test@gmail.com',
       password: 'test1234',
-    }, 'someCallbackUrl'); 
+    }, 'someCallbackUrl');
   });
 });

@@ -1,7 +1,7 @@
 import * as userLib from '@/lib/data/user';
 import * as tokensLib from '@/lib/tokens';
 import * as emailLib from '@/lib/email';
-import { login } from '@/app/(auth)/actions/login.action';
+import { login } from '@/server-actions/auth/login.action';
 import { User } from '@/schemas/db-schema';
 
 jest.mock('@/lib/data/user');

@@ -9,19 +9,24 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from '@/components/ui/resizable';
-import { dashboardLinks } from '@/config/links';
+
 import { Nav } from './nav';
-import { ModeToggle } from '@/components/mode-toggle';
-import { UserNav } from '@/components/user-nav';
+
 import Logo from './logo';
 import { MobileNav } from './mobile-nav';
-import { useCurrentUser } from '@/hooks/useCurrentUser';
+import { useCurrentUser } from '@/hooks/use-current-user';
+import { ModeToggle } from '@/components/layout/mode-toggle';
+import { UserAccountNav } from '@/components/layout/user-account-nav';
+import { Team } from '@prisma/client';
+import TeamSwitcher from './team-switcher';
+import { dashboardConfig } from '@/config/dashboard';
 
 interface IDashboardShell {
   defaultLayout: number[] | undefined;
   defaultCollapsed?: boolean;
   navCollapsedSize?: number;
   children: React.ReactNode;
+  teams: Team[];
 }
 
 export function DashboardShell({
@@ -29,6 +34,7 @@ export function DashboardShell({
   defaultCollapsed = false,
   navCollapsedSize = 4,
   children,
+  teams,
 }: IDashboardShell) {
   const [isCollapsed, setIsCollapsed] = React.useState(defaultCollapsed);
   const user = useCurrentUser();
@@ -42,14 +48,14 @@ export function DashboardShell({
             sizes
           )}`;
         }}
-        className="h-full items-stretch"
+        className="min-h-screen items-stretch"
       >
         <ResizablePanel
           defaultSize={defaultLayout[0]}
           collapsedSize={navCollapsedSize}
           collapsible={true}
-          minSize={15}
-          maxSize={20}
+          minSize={12}
+          maxSize={15}
           onCollapse={() => {
             setIsCollapsed(true);
             document.cookie = `react-resizable-panels:collapsed=${JSON.stringify(
@@ -69,8 +75,7 @@ export function DashboardShell({
           )}
         >
           <Logo isCollapsed={isCollapsed} />
-          <Separator />
-          <Nav isCollapsed={isCollapsed} links={dashboardLinks} />
+          <Nav isCollapsed={isCollapsed} links={dashboardConfig.sidebarNav} />
         </ResizablePanel>
         <ResizableHandle withHandle />
         <ResizablePanel defaultSize={defaultLayout[1]} minSize={30}>
@@ -83,6 +88,7 @@ export function DashboardShell({
                 'flex items-center justify-between px-4'
               )}
             >
+              <TeamSwitcher teams={teams} />
               <div className="block lg:hidden">
                 <MobileNav />
               </div>
@@ -91,7 +97,7 @@ export function DashboardShell({
               </div>
               <div className="flex items-center space-x-4 lg:ml-auto">
                 <ModeToggle />
-                <UserNav
+                <UserAccountNav
                   user={{
                     name: user?.name ?? 'N/A',
                     email: user?.email ?? 'N/A',

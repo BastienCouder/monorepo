@@ -1,4 +1,4 @@
-import { newVerification } from '@/app/(auth)/actions/new-verification';
+import { newVerification } from '@/server-actions/auth/new-verification';
 import { getUserByEmail } from '@/lib/data/user';
 import { getVerificationTokenByToken } from '@/lib/data/verification-token';
 import { db } from '@/lib/prisma';

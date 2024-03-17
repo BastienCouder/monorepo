@@ -1,13 +1,10 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider        = "prisma-client-js"
   previewFeatures = ["fullTextSearch", "fullTextIndex"]
 }
 
 datasource db {
-  provider     = "postgresql"
+  provider     = "mysql"
   url          = env("DATABASE_URL")
   relationMode = "prisma"
 }
@@ -78,7 +75,8 @@ model TwoFactorConfirmation {
 
 enum UserRole {
   ADMIN
-  USER
+  OWNER
+  MEMBER
 }
 
 model User {
@@ -86,218 +84,126 @@ model User {
   name                  String?
   email                 String?                @unique
   emailVerified         DateTime?
-  role                  UserRole               @default(USER)
+  role                  UserRole               @default(MEMBER)
   password              String?
   createdAt             DateTime               @default(now())
   updatedAt             DateTime               @updatedAt
   isTwoFactorEnabled    Boolean                @default(false)
   deleteAt              DateTime?
+  storageLimit          Int                    @default(500000000)
+  storageUsed           Int                    @default(0)
   accounts              Account[]
   Session               Session[]
   TwoFactorConfirmation TwoFactorConfirmation?
-  UserProgress          UserProgress[]
-  Favorite              Favorite[]
-  QuizAttempt           QuizAttempt[]
+  OrgLimit              OrgLimit?
+
+  stripeCustomerId       String?      @unique @map(name: "stripe_customer_id")
+  stripeSubscriptionId   String?      @unique @map(name: "stripe_subscription_id")
+  stripePriceId          String?      @map(name: "stripe_price_id")
+  stripeCurrentPeriodEnd DateTime?    @map(name: "stripe_current_period_end")
+  TeamMember             TeamMember[]
+  Invitation             Invitation[]
+  Folder                 Folder[]
+  File                   File[]
 }
 
-model Course {
-  id          String             @id @default(uuid())
-  userId      String
-  title       String             @db.Text
-  description String?            @db.Text
-  imageUrl    String?            @db.Text
-  price       Float?
-  isPublished Boolean            @default(false)
-  chapters    Chapter[]
-  attachments Attachment[]
-  purchases   Purchase[]
-  categories  CategoryOnCourse[]
-  createdAt   DateTime           @default(now())
-  updatedAt   DateTime           @updatedAt
-  Favorite    Favorite[]
-}
-
-model Category {
-  id      String             @id @default(uuid())
-  name    String             @unique
-  courses CategoryOnCourse[]
-}
-
-model Favorite {
-  id        String   @id @default(uuid())
-  userId    String
-  courseId  String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  createdAt DateTime @default(now())
-
-  @@unique([userId, courseId])
-  @@index([courseId])
-}
-
-model CategoryOnCourse {
-  courseId   String
-  categoryId String
-  course     Course   @relation(fields: [courseId], references: [id])
-  category   Category @relation(fields: [categoryId], references: [id])
-
-  @@unique([courseId, categoryId])
-  @@index([categoryId])
-}
-
-model Attachment {
-  id   String @id @default(uuid())
-  name String
-  url  String @db.Text
-
-  courseId String
-  course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([courseId])
-}
-
-model Chapter {
-  id       String  @id @default(uuid())
-  title    String
-  videoUrl String? @db.Text
-
-  content     Content[]
-  position    Int
-  isPublished Boolean   @default(false)
-  isFree      Boolean   @default(false)
-
-  muxData MuxData?
-
-  courseId String
-  course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
-
-  userProgress UserProgress[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  quiz      Quiz[]
-
-  @@index([courseId])
-}
-
-model Content {
-  id          String   @id @default(uuid())
-  title       String
-  description String?
-  code        String?
-  imageUrl    String?
-  position    Int
-  chapter     Chapter? @relation(fields: [chapterId], references: [id])
-  chapterId   String?
-
-  @@index([chapterId])
-}
-
-model MuxData {
-  id         String  @id @default(uuid())
-  assetId    String
-  playbackId String?
-
-  chapterId String  @unique
-  chapter   Chapter @relation(fields: [chapterId], references: [id], onDelete: Cascade)
-}
-
-model UserProgress {
-  id        String  @id @default(uuid())
-  userId    String
-  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  chapterId String
-  chapter   Chapter @relation(fields: [chapterId], references: [id], onDelete: Cascade)
-
-  isCompleted Boolean @default(false)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@unique([userId, chapterId])
-  @@index([chapterId])
-}
-
-model Purchase {
+model OrgLimit {
   id     String @id @default(uuid())
-  userId String
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id])
+  count  Int    @default(0)
 
-  courseId String
-  course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt()
-
-  @@unique([userId, courseId])
-  @@index([courseId])
-}
-
-model Quiz {
-  id          String  @id @default(uuid())
-  title       String
-  isPublished Boolean @default(false)
-  chapterId   String
-  chapter     Chapter @relation(fields: [chapterId], references: [id], onDelete: Cascade)
-
-  questions   Question[]
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
-  QuizAttempt QuizAttempt[]
-
-  @@unique([chapterId])
-}
-
-model Question {
-  id        String   @id @default(uuid())
-  quizId    String
-  quiz      Quiz     @relation(fields: [quizId], references: [id])
-  label     String
-  position  Int
-  options   Option[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  Answer    Answer[]
-
-  @@index([quizId])
 }
 
-model Option {
-  id         String   @id @default(uuid())
-  questionId String
-  question   Question @relation(fields: [questionId], references: [id])
-  text       String
-  isCorrect  Boolean
+model Team {
+  id              String       @id @default(uuid())
+  name            String
+  slug            String       @unique
+  domain          String?      @unique
+  defaultRole     UserRole     @default(MEMBER)
+  billingId       String?
+  billingProvider String?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @default(now())
+  storageLimit    Int          @default(1000000000)
+  storageUsed     Int          @default(0)
+  members         TeamMember[]
+  invitations     Invitation[]
+  Folder          Folder[]
+  File            File[]
+}
+
+model TeamMember {
+  id        String   @id @default(uuid())
+  teamId    String
+  userId    String
+  role      UserRole @default(MEMBER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  team Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([teamId, userId])
+  @@index([userId])
+}
+
+model Invitation {
+  id           String   @id @default(uuid())
+  teamId       String
+  email        String?
+  role         UserRole @default(MEMBER)
+  token        String   @unique
+  expires      DateTime
+  invitedBy    String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @default(now())
+  sentViaEmail Boolean  @default(true)
+
+  user User @relation(fields: [invitedBy], references: [id], onDelete: Cascade)
+  team Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  @@unique([teamId, email])
+  @@index([email])
+}
+
+model Folder {
+  id         String   @id @default(cuid())
+  name       String
+  parentId   String?  @map("parent_id")
+  parent     Folder?  @relation("Subfolders", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  subfolders Folder[] @relation("Subfolders")
+  files      File[]
+  teamId     String?  @map("team_id")
+  team       Team?    @relation(fields: [teamId], references: [id], onDelete: Cascade)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
-  Answer     Answer[]
+  User       User?    @relation(fields: [userId], references: [id])
+  userId     String?
 
-  @@index([questionId])
+  @@index([parentId])
+  @@index([teamId])
 }
 
-model QuizAttempt {
-  id        String   @id @default(uuid())
-  userId    String
-  quizId    String
-  user      User     @relation(fields: [userId], references: [id])
-  quiz      Quiz     @relation(fields: [quizId], references: [id])
+model File {
+  id        String   @id @default(cuid())
+  name      String
+  mimeType  String?
+  size      Int
+  type      String
+  path      String?
+  folderId  String?  @map("folder_id")
+  folder    Folder?  @relation(fields: [folderId], references: [id])
+  teamId    String?  @map("team_id")
+  team      Team?    @relation(fields: [teamId], references: [id])
+  content   Bytes?
+  User      User?    @relation(fields: [userId], references: [id])
+  userId    String?
   createdAt DateTime @default(now())
-  answers   Answer[]
+  updatedAt DateTime @updatedAt
 
-  @@index([userId, quizId])
-}
-
-model Answer {
-  id            String      @id @default(uuid())
-  quizAttemptId String
-  questionId    String
-  optionId      String?
-  isCorrect     Boolean
-  question      Question    @relation(fields: [questionId], references: [id])
-  option        Option?     @relation(fields: [optionId], references: [id])
-  quizAttempt   QuizAttempt @relation(fields: [quizAttemptId], references: [id])
-
-  @@index([quizAttemptId, questionId, optionId])
+  @@index([folderId])
+  @@index([teamId])
 }

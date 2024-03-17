@@ -18,7 +18,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { FormError } from '@/components/modal/form-error';
 import { FormSuccess } from '@/components/modal/form-success';
-import { reset } from '@/app/(auth)/actions/reset.action';
+import { reset } from '@/server-actions/auth/reset.action';
 import { CardWrapper } from './card-wrapper';
 
 export const ResetForm = () => {
@@ -64,7 +64,7 @@ export const ResetForm = () => {
                     <Input
                       {...field}
                       disabled={isPending}
-                      placeholder="user@exemple.com"
+                      placeholder="name@example.com"
                       type="email"
                     />
                   </FormControl>

@@ -5,7 +5,6 @@ import { useState, useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import { RegisterSchema } from '@/schemas';
 import { Input } from '@/components/ui/input';
 import {
   Form,
@@ -18,10 +17,11 @@ import {
 } from '@/components/ui/form';
 import { CardWrapper } from '@/components/auth/card-wrapper';
 import { Button } from '@/components/ui/button';
-import { register } from '@/app/(auth)/actions/register.action';
+import { register } from '@/server-actions/auth/register.action';
 import { FormError } from '../modal/form-error';
 import { FormSuccess } from '../modal/form-success';
 import { Checkbox } from '../ui/checkbox';
+import { RegisterSchema } from '@/schemas/auth';
 
 export const RegisterForm = () => {
   const [error, setError] = useState<string | undefined>('');
@@ -52,7 +52,7 @@ export const RegisterForm = () => {
   return (
     <CardWrapper
       headerLabel="Créer un compte"
-      backButtonLabel="Vous avez déjà un compte ?"
+      backButtonLabel="Already have an account ?"
       backButtonHref="/login"
       showSocial
     >
@@ -69,7 +69,7 @@ export const RegisterForm = () => {
                     <Input
                       {...field}
                       disabled={isPending}
-                      placeholder="Nom..."
+                      placeholder="Name..."
                     />
                   </FormControl>
                   <FormMessage />
@@ -86,7 +86,7 @@ export const RegisterForm = () => {
                     <Input
                       {...field}
                       disabled={isPending}
-                      placeholder="nom@exemple.com"
+                      placeholder="name@example.com"
                       type="email"
                     />
                   </FormControl>
@@ -99,7 +99,7 @@ export const RegisterForm = () => {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Mot de passe</FormLabel>
+                  <FormLabel>Password</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
@@ -125,8 +125,7 @@ export const RegisterForm = () => {
                       />
                     </FormControl>
                     <FormDescription>
-                      Je consens au traitement de mes données conformément au
-                      RGPD.
+                      I accept the terms and conditions
                     </FormDescription>
                   </div>
                   <FormMessage />
@@ -137,7 +136,7 @@ export const RegisterForm = () => {
           <FormError message={error} />
           <FormSuccess message={success} />
           <Button disabled={isPending} type="submit" className="w-full">
-            Créer un compte
+            Create an account
           </Button>
         </form>
       </Form>

@@ -6,7 +6,7 @@ import * as emailLib from '@/lib/email';
 import * as tokensLib from '@/lib/tokens';
 import bcrypt from 'bcryptjs';
 import { db } from '@/lib/prisma';
-import { settings } from '@/app/(auth)/actions/settings';
+import { settings } from '@/server-actions/auth/settings';
 import { User } from '@/schemas/db-schema';
 
 
