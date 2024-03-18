@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from 'react';
 import { AiOutlineArrowLeft } from 'react-icons/ai';
 import { Button } from '@/components/ui/button';
-import { File, Folder as PrismaFolder, Team } from '@prisma/client';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { MultiFileDropzone } from './multi-dropzone';
 import { deleteFolderRecursively } from '@/server-actions/user/delete-folder-user';
@@ -14,10 +13,10 @@ import DirectoryCard from '../../../../files/_components/folder-files-card';
 import { getUserFolderFilesTeam } from '@/server-actions/drive/team/get-folders-files-team';
 import CreateFolderModal from './create-modal-folder-team';
 import CreateModal from '@/components/modal/create-modal';
-import { CreateJoinTeamForm } from '../../../_components/join-team-form';
 import { CreateInviteForm } from './create-invite-form';
+import { File, Folder, Team } from '@/schemas/db';
 
-export interface ExtendedPrismaFolder extends PrismaFolder {
+export interface ExtendedPrismaFolder extends Folder {
   totalSize?: number;
   totalFiles?: number;
 }
@@ -34,10 +33,12 @@ export interface CurrentFolderPath {
 }
 
 interface ActionsFolderFilesTeamProps {
-  team: Team
+  team: Team;
 }
 
-export default function ActionsFolderFilesTeam({ team }: ActionsFolderFilesTeamProps) {
+export default function ActionsFolderFilesTeam({
+  team,
+}: ActionsFolderFilesTeamProps) {
   const user = useCurrentUser();
   const userId = user?.id;
   const [currentPath, setCurrentPath] = useState<CurrentFolderPath>({
@@ -52,17 +53,22 @@ export default function ActionsFolderFilesTeam({ team }: ActionsFolderFilesTeamP
   useEffect(() => {
     const loadData = async () => {
       if (userId) {
-        const newData = await getUserFolderFilesTeam(currentPath.folderId, team.id);
+        const newData = await getUserFolderFilesTeam(
+          currentPath.folderId,
+          team.id
+        );
         setCurrentData(newData);
       }
     };
     loadData();
   }, [currentPath.folderId]);
 
-
   const refreshData = async () => {
     if (userId) {
-      const newData = await getUserFolderFilesTeam(currentPath.folderId, team.id);
+      const newData = await getUserFolderFilesTeam(
+        currentPath.folderId,
+        team.id
+      );
       setCurrentData(newData);
     }
   };
@@ -93,8 +99,6 @@ export default function ActionsFolderFilesTeam({ team }: ActionsFolderFilesTeamP
     setPathStack((prevStack) => [...prevStack, currentPath]);
   };
 
-
-
   const handleBackButtonClick = () => {
     if (pathStack.length > 0) {
       const newPathStack = [...pathStack];
@@ -108,22 +112,22 @@ export default function ActionsFolderFilesTeam({ team }: ActionsFolderFilesTeamP
   };
   const handleCopy = async () => {
     try {
-      await copyItems(selectedFolders)
-      setSelectedFolders([])
+      await copyItems(selectedFolders);
+      setSelectedFolders([]);
     } catch (error) {
-      console.error("error")
+      console.error('error');
     }
   };
 
   const handlePaste = async () => {
     try {
       if (userId) {
-        await pasteItems(userId, currentPath.folderId)
+        await pasteItems(userId, currentPath.folderId);
       }
-      setSelectedFolders([])
-      refreshData()
+      setSelectedFolders([]);
+      refreshData();
     } catch (error) {
-      console.error("error")
+      console.error('error');
     }
   };
 
@@ -132,16 +136,16 @@ export default function ActionsFolderFilesTeam({ team }: ActionsFolderFilesTeamP
       if (userId) {
         // await pasteItems(userId, currentPath.folderId)
       }
-      setSelectedFolders([])
+      setSelectedFolders([]);
     } catch (error) {
-      console.error("error")
+      console.error('error');
     }
   };
 
   return (
     <>
       <div className="flex justify-between gap-4">
-        <div className='flex gap-4 '>
+        <div className="flex gap-4 ">
           <CreateFolderModal
             basePath={currentPath.folderId}
             teamId={team.id}
@@ -163,12 +167,7 @@ export default function ActionsFolderFilesTeam({ team }: ActionsFolderFilesTeamP
           >
             <Copy size={20} />
           </Button>
-          <Button
-            variant={'ghost'}
-            className="p-0"
-
-            onClick={handlePaste}
-          >
+          <Button variant={'ghost'} className="p-0" onClick={handlePaste}>
             <FilePlus2 size={20} />
           </Button>
           <Button

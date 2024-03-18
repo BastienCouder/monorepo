@@ -183,8 +183,7 @@ model Folder {
   User       User?    @relation(fields: [userId], references: [id])
   userId     String?
 
-  @@index([parentId])
-  @@index([teamId])
+  @@index([parentId, teamId, userId])
 }
 
 model File {

@@ -1,12 +1,12 @@
 'use client';
-import { Team } from '@prisma/client';
+
 import React from 'react';
 import CreateModal from '@/components/modal/create-modal';
 import { CreateTeamForm } from './create-team-form';
 import { CreateJoinTeamForm } from './join-team-form';
-import Link from 'next/link';
 import FolderTeamCard from './folder-team-card';
 import { SearchInput } from '@/components/search-input';
+import { Team } from '@/schemas/db';
 
 interface ActionsDrive {
   teams: Team[];
@@ -17,7 +17,7 @@ export default function ActionsDrive({ teams = [] }: ActionsDrive) {
     <section className="w-full space-y-6 lg:pr-4">
       <h1 className="font-bold text-2xl">My teams</h1>
       <div className="flex justify-between">
-        <div className='flex gap-4'>
+        <div className="flex gap-4">
           <CreateModal
             title="Create team"
             Component={CreateTeamForm}

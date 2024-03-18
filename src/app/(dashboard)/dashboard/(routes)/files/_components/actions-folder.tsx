@@ -5,7 +5,6 @@ import CreateFolderModal from './create-folder-modal';
 import { AiOutlineArrowLeft } from 'react-icons/ai';
 import { Button } from '@/components/ui/button';
 import { getFolderDetails } from '../_lib/folder-custom-details';
-import { File, Folder as PrismaFolder } from '@prisma/client';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { userFolderFiles } from '@/server-actions/user/get-folder-files-user';
 import { MultiFileDropzone } from './multi-dropzone';
@@ -13,8 +12,9 @@ import { deleteFolderRecursively } from '@/server-actions/user/delete-folder-use
 import { Copy, FilePlus2, Trash } from 'lucide-react';
 import DirectoryCard from './folder-files-card';
 import { copyItems, pasteItems } from '@/server-actions/uploads/copy-paste';
+import { File, Folder } from '@/schemas/db';
 
-export interface ExtendedPrismaFolder extends PrismaFolder {
+export interface ExtendedPrismaFolder extends Folder {
   totalSize?: number;
   totalFiles?: number;
 }
@@ -43,7 +43,6 @@ export default function ActionsFolder() {
   const [selectedFolders, setSelectedFolders] = useState<string[]>([]);
 
   console.log(currentData);
-
 
   useEffect(() => {
     const loadData = async () => {
@@ -90,8 +89,6 @@ export default function ActionsFolder() {
     setPathStack((prevStack) => [...prevStack, currentPath]);
   };
 
-
-
   const handleBackButtonClick = () => {
     if (pathStack.length > 0) {
       const newPathStack = [...pathStack];
@@ -105,22 +102,22 @@ export default function ActionsFolder() {
   };
   const handleCopy = async () => {
     try {
-      await copyItems(selectedFolders)
-      setSelectedFolders([])
+      await copyItems(selectedFolders);
+      setSelectedFolders([]);
     } catch (error) {
-      console.error("error")
+      console.error('error');
     }
   };
 
   const handlePaste = async () => {
     try {
       if (userId) {
-        await pasteItems(userId, currentPath.folderId)
+        await pasteItems(userId, currentPath.folderId);
       }
-      setSelectedFolders([])
-      refreshData()
+      setSelectedFolders([]);
+      refreshData();
     } catch (error) {
-      console.error("error")
+      console.error('error');
     }
   };
 
@@ -129,9 +126,9 @@ export default function ActionsFolder() {
       if (userId) {
         // await pasteItems(userId, currentPath.folderId)
       }
-      setSelectedFolders([])
+      setSelectedFolders([]);
     } catch (error) {
-      console.error("error")
+      console.error('error');
     }
   };
 
@@ -153,12 +150,7 @@ export default function ActionsFolder() {
           >
             <Copy size={20} />
           </Button>
-          <Button
-            variant={'ghost'}
-            className="p-0"
-
-            onClick={handlePaste}
-          >
+          <Button variant={'ghost'} className="p-0" onClick={handlePaste}>
             <FilePlus2 size={20} />
           </Button>
           <Button

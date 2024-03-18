@@ -31,7 +31,7 @@ const defaultFolders = [
   'Downloads',
   'Pictures',
   'Videos',
-  'Music',
+  'Musics',
 ];
 
 async function ensureDefaultFolders(userId: string): Promise<ExtendedFolder[]> {

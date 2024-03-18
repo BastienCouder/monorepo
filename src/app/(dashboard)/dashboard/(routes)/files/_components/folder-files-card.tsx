@@ -1,6 +1,6 @@
 'use client';
 import { Badge } from '@/components/ui/badge';
-import { Download, Ellipsis, Trash } from 'lucide-react';
+import { Download, Ellipsis, LucideProps, Trash } from 'lucide-react';
 import React from 'react';
 import getFileIcon from './icon-file';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -14,17 +14,17 @@ import { CurrentFolderPath, ExtendedPrismaFolder } from './actions-folder';
 import { isNotDefaultFolder } from '@/lib/utils';
 import { renameFolder } from '@/server-actions/user/rename-folder-user';
 import { useCurrentUser } from '@/hooks/use-current-user';
-import { SelectFolderFilesForm } from './select-folder-files';
+import { Folder } from '@/schemas/db';
 
 export interface DirectoryCardProps {
   key: number;
-  folder: ExtendedPrismaFolder;
+  folder: Folder;
   usedSpace?: number;
   color: string;
   Icon: any;
   handleFolderClick: ({ folderName, folderId }: CurrentFolderPath) => void;
   currentPath: CurrentFolderPath;
-  handleCheckboxChange: any;
+  handleCheckboxChange: () => void;
   isChecked: boolean;
   handleDeleteFolder: (folderId: string) => void;
 }
@@ -148,9 +148,9 @@ const DirectoryCard = ({
           isFile(folder.name)
             ? null
             : handleFolderClick({
-                folderName: folder.name,
-                folderId: folder.id,
-              })
+              folderName: folder.name,
+              folderId: folder.id,
+            })
         }
         className="space-y-2"
       >

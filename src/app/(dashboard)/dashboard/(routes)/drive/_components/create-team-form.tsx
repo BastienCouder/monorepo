@@ -19,7 +19,6 @@ import { Loader2, MinusCircle } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { toast } from '@/components/ui/use-toast';
-import { capitalize } from '@/lib/utils';
 import { createTeamSchema } from '@/schemas/validations/team';
 import { createTeam } from '@/server-actions/team/create-team-with-invite';
 

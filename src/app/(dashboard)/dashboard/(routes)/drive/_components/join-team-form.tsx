@@ -22,7 +22,6 @@ import { useCurrentUser } from '@/hooks/use-current-user';
 import { toast } from '@/components/ui/use-toast';
 import {
   createJoinTeamSchema,
-  createTeamSchema,
 } from '@/schemas/validations/team';
 import { joinTeamWithKey } from '@/server-actions/team/join-with-key';
 

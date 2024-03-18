@@ -6,9 +6,10 @@ import OthersIcon from '@/assets/images/other';
 import PicturesIcon from '@/assets/images/pictures';
 import VideosIcon from '@/assets/images/video';
 import { useTheme } from 'next-themes';
+import { UseThemeProps } from 'next-themes/dist/types';
 
 export const getFolderDetails = (folderName: string) => {
-  const theme = useTheme();
+  const theme: UseThemeProps = useTheme();
   switch (folderName) {
     case 'Documents':
       return { color: '#2146B5', Icon: DocumentsIcon };

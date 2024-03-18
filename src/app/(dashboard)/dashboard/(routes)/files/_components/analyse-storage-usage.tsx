@@ -3,11 +3,11 @@
 import React from 'react';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
 import { getFolderDetails } from '../_lib/folder-custom-details';
-import { MultiFileDropzone } from './multi-dropzone';
 import { useTheme } from 'next-themes';
-import { User, UserRole } from '@prisma/client';
 import { LucideIcon } from 'lucide-react';
 import { useCurrentUser } from '@/hooks/use-current-user';
+import { User } from '@/schemas/db';
+import { UseThemeProps } from 'next-themes/dist/types';
 
 export interface Directory {
   name: string;
@@ -54,8 +54,8 @@ const CustomTooltip = ({ active, payload }: CustomTooltipProps) => {
 };
 
 export default function StorageUsage({ summary }: StorageUsageProps) {
-  const theme = useTheme();
-  const user = useCurrentUser();
+  const theme: UseThemeProps = useTheme();
+  const user: User = useCurrentUser();
   const COLORS = [
     '#2146B5',
     '#0E9606',
@@ -83,8 +83,8 @@ export default function StorageUsage({ summary }: StorageUsageProps) {
   const totalUsedSpace = folderData
     .reduce((acc, folder) => acc + folder.value, 0)
     .toFixed(2);
-  const totalSpace = summary.totalSizeGB.toFixed(2);
-  const freeSpace = (Number(totalSpace) - Number(totalUsedSpace)).toFixed(2);
+  const totalSpace: string = summary.totalSizeGB.toFixed(2);
+  const freeSpace: string = (Number(totalSpace) - Number(totalUsedSpace)).toFixed(2);
 
   return (
     <div className="w-full bg-background flex justify-center items-center flex-col p-4 rounded-md">
@@ -125,8 +125,8 @@ export default function StorageUsage({ summary }: StorageUsageProps) {
             transform: 'translate(-50%, -50%)',
           }}
         >
-          <span className="text-lg">{user?.name}</span>
-          <span>of {user?.name}</span>
+          <span className="text-lg">{user?.storageUsed}</span>
+          <span>of {user?.storageLimit}</span>
         </p>
       </section>
       {/* <div className='text-center'>

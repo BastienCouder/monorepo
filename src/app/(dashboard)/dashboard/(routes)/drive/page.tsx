@@ -3,6 +3,7 @@ import { getUserTeams } from '@/server-actions/team/get-user-team';
 import React from 'react';
 import ActionsDrive from './_components/actions-drive';
 import CreateFolderModal from '../../../../../components/modal/create-modal';
+import { Team } from '@/schemas/db';
 
 export default async function drive() {
   const user = await currentUser();
@@ -10,7 +11,7 @@ export default async function drive() {
     return;
   }
 
-  const teams = await getUserTeams(user.id);
+  const teams: Team[] = await getUserTeams(user.id);
 
   return (
     <div>

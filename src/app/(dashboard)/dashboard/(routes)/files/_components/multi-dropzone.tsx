@@ -13,6 +13,7 @@ import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { storage } from '@/lib/firebase';
 import { addFile } from '@/server-actions/uploads/add-file';
 import { useCurrentUser } from '@/hooks/use-current-user';
+import { File } from '@/schemas/db';
 
 const variants = {
   base: 'relative rounded-md p-4 w-full max-w-[calc(100vw-1rem)] flex justify-center items-center flex-col cursor-pointer border border-dashed border-gray-400 dark:border-gray-300 transition-colors duration-200 ease-in-out',

@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Form } from '@/components/ui/form';
 import { useState } from 'react';
 import { Checkbox } from '@/components/ui/checkbox';
-import { ExtendedPrismaFolder } from './actions-folder';
+import { Folder } from '@/schemas/db';
 
 type SelectFolderFilesFormValues = z.infer<typeof SelectFolderFilesSchema>;
 
@@ -17,7 +17,7 @@ const defaultValues: Partial<SelectFolderFilesFormValues> = {};
 
 type FormType = {
   index: number;
-  folder: ExtendedPrismaFolder;
+  folder: Folder;
 };
 
 const SelectFolderFilesSchema = z.object({

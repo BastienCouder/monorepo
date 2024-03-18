@@ -16,14 +16,12 @@ export const SearchInput = () => {
   const router = useRouter();
   const pathname = usePathname();
 
-  const currentCategoryId = searchParams.get('categories');
-
   useEffect(() => {
     const url = qs.stringifyUrl(
       {
         url: pathname,
         query: {
-          categories: currentCategoryId,
+
           title: debouncedValue,
         },
       },
@@ -31,7 +29,7 @@ export const SearchInput = () => {
     );
 
     router.push(url);
-  }, [debouncedValue, currentCategoryId, router, pathname]);
+  }, [debouncedValue, router, pathname]);
 
   return (
     <div className="relative">
@@ -39,7 +37,7 @@ export const SearchInput = () => {
       <Input
         onChange={(e) => setValue(e.target.value)}
         value={value}
-        className="w-full md:w-[300px] pl-9 rounded-lg bg-muted"
+        className="w-full md:w-[300px] pl-9 ring-1 rounded-lg bg-muted"
         placeholder="Rechercher un cours"
       />
     </div>
