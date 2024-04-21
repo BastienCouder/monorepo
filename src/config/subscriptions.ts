@@ -3,7 +3,7 @@ import { env } from '@/env.mjs';
 
 export const pricingData: SubscriptionPlan[] = [
   {
-    title: 'Starter',
+    title: 'Freemium',
     description: 'For Beginners',
     benefits: [
       'Up to 100 monthly posts',
@@ -24,6 +24,33 @@ export const pricingData: SubscriptionPlan[] = [
       monthly: null,
       yearly: null,
     },
+    userStorageLimit: 500000000, // 5 GB for individual users
+    teamStorageLimit: 1000000000, // 10 GB for teams
+  },
+  {
+    title: 'Advenced',
+    description: 'Unlock Advanced Features',
+    benefits: [
+      'Up to 500 monthly posts',
+      'Advanced analytics and reporting',
+      'Access to business templates',
+      'Priority customer support',
+      'Exclusive webinars and training.',
+    ],
+    limitations: [
+      'No custom branding',
+      'Limited access to business resources.',
+    ],
+    prices: {
+      monthly: 12,
+      yearly: 120,
+    },
+    stripeIds: {
+      monthly: env.NEXT_PUBLIC_STRIPE_ADVENCED_MONTHLY_PLAN_ID,
+      yearly: env.NEXT_PUBLIC_STRIPE_ADVENCED_YEARLY_PLAN_ID,
+    },
+    userStorageLimit: 500000000, // 5 GB for individual users
+    teamStorageLimit: 1000000000, // 10 GB for teams
   },
   {
     title: 'Pro',
@@ -40,13 +67,15 @@ export const pricingData: SubscriptionPlan[] = [
       'Limited access to business resources.',
     ],
     prices: {
-      monthly: 15,
-      yearly: 144,
+      monthly: 27,
+      yearly: 220,
     },
     stripeIds: {
       monthly: env.NEXT_PUBLIC_STRIPE_PRO_MONTHLY_PLAN_ID,
       yearly: env.NEXT_PUBLIC_STRIPE_PRO_YEARLY_PLAN_ID,
     },
+    userStorageLimit: 500000000, // 5 GB for individual users
+    teamStorageLimit: 1000000000, // 10 GB for teams
   },
   {
     title: 'Business',
@@ -67,5 +96,7 @@ export const pricingData: SubscriptionPlan[] = [
       monthly: env.NEXT_PUBLIC_STRIPE_BUSINESS_MONTHLY_PLAN_ID,
       yearly: env.NEXT_PUBLIC_STRIPE_BUSINESS_YEARLY_PLAN_ID,
     },
+    userStorageLimit: 500000000, // 5 GB for individual users
+    teamStorageLimit: 1000000000, // 10 GB for teams
   },
 ];

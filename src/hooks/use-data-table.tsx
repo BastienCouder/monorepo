@@ -42,7 +42,7 @@ interface UseDataTableProps<TData, TValue> {
    * The number of pages in the table
    * @type number
    */
-  pageCount: number;
+  pageCount?: number;
 
   /**
    * The searchable columns of the table
@@ -73,15 +73,15 @@ export function useDataTable<TData, TValue>({
   const searchParams = useSearchParams();
 
   // Search params
-  const page = searchParams?.get('page') ?? '1';
-  const pageAsNumber = Number(page);
-  const fallbackPage =
-    isNaN(pageAsNumber) || pageAsNumber < 1 ? 1 : pageAsNumber;
-  const per_page = searchParams?.get('per_page') ?? '10';
-  const perPageAsNumber = Number(per_page);
-  const fallbackPerPage = isNaN(perPageAsNumber) ? 10 : perPageAsNumber;
-  const sort = searchParams?.get('sort');
-  const [column, order] = sort?.split('.') ?? [];
+  // const page = searchParams?.get('page') ?? '1';
+  // const pageAsNumber = Number(page);
+  // const fallbackPage =
+  //   isNaN(pageAsNumber) || pageAsNumber < 1 ? 1 : pageAsNumber;
+  // const per_page = searchParams?.get('per_page') ?? '10';
+  // const perPageAsNumber = Number(per_page);
+  // const fallbackPerPage = isNaN(perPageAsNumber) ? 10 : perPageAsNumber;
+  // const sort = searchParams?.get('sort');
+  // const [column, order] = sort?.split('.') ?? [];
 
   // Create query string
   const createQueryString = React.useCallback(
@@ -137,61 +137,61 @@ export function useDataTable<TData, TValue>({
     React.useState<ColumnFiltersState>(initialColumnFilters);
 
   // Handle server-side pagination
-  const [{ pageIndex, pageSize }, setPagination] =
-    React.useState<PaginationState>({
-      pageIndex: fallbackPage - 1,
-      pageSize: fallbackPerPage,
-    });
+  // const [{ pageIndex, pageSize }, setPagination] =
+  //   React.useState<PaginationState>({
+  //     pageIndex: fallbackPage - 1,
+  //     pageSize: fallbackPerPage,
+  //   });
 
-  const pagination = React.useMemo(
-    () => ({
-      pageIndex,
-      pageSize,
-    }),
-    [pageIndex, pageSize]
-  );
+  // const pagination = React.useMemo(
+  //   () => ({
+  //     pageIndex,
+  //     pageSize,
+  //   }),
+  //   [pageIndex, pageSize]
+  // );
 
-  React.useEffect(() => {
-    setPagination({
-      pageIndex: fallbackPage - 1,
-      pageSize: fallbackPerPage,
-    });
-  }, [fallbackPage, fallbackPerPage]);
+  // React.useEffect(() => {
+  //   setPagination({
+  //     pageIndex: fallbackPage - 1,
+  //     pageSize: fallbackPerPage,
+  //   });
+  // }, [fallbackPage, fallbackPerPage]);
 
-  React.useEffect(() => {
-    router.push(
-      `${pathname}?${createQueryString({
-        page: pageIndex + 1,
-        per_page: pageSize,
-      })}`,
-      {
-        scroll: false,
-      }
-    );
+  // React.useEffect(() => {
+  //   router.push(
+  //     `${pathname}?${createQueryString({
+  //       page: pageIndex + 1,
+  //       per_page: pageSize,
+  //     })}`,
+  //     {
+  //       scroll: false,
+  //     }
+  //   );
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pageIndex, pageSize]);
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [pageIndex, pageSize]);
 
-  // Handle server-side sorting
-  const [sorting, setSorting] = React.useState<SortingState>([
-    {
-      id: column ?? '',
-      desc: order === 'desc',
-    },
-  ]);
+  // // Handle server-side sorting
+  // const [sorting, setSorting] = React.useState<SortingState>([
+  //   {
+  //     id: column ?? '',
+  //     desc: order === 'desc',
+  //   },
+  // ]);
 
-  React.useEffect(() => {
-    router.push(
-      `${pathname}?${createQueryString({
-        page,
-        sort: sorting[0]?.id
-          ? `${sorting[0]?.id}.${sorting[0]?.desc ? 'desc' : 'asc'}`
-          : null,
-      })}`
-    );
+  // React.useEffect(() => {
+  //   router.push(
+  //     `${pathname}?${createQueryString({
+  //       page,
+  //       sort: sorting[0]?.id
+  //         ? `${sorting[0]?.id}.${sorting[0]?.desc ? 'desc' : 'asc'}`
+  //         : null,
+  //     })}`
+  //   );
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sorting]);
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [sorting]);
 
   // Handle server-side filtering
   const debouncedSearchableColumnFilters = JSON.parse(
@@ -212,7 +212,7 @@ export function useDataTable<TData, TValue>({
   React.useEffect(() => {
     // Initialize new params
     const newParamsObject = {
-      page: 1,
+      // page: 1,
     };
 
     // Handle debounced searchable column filters
@@ -261,16 +261,16 @@ export function useDataTable<TData, TValue>({
     columns,
     pageCount: pageCount ?? -1,
     state: {
-      pagination,
-      sorting,
+      // pagination,
+      // sorting,
       columnVisibility,
       rowSelection,
       columnFilters,
     },
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
-    onPaginationChange: setPagination,
-    onSortingChange: setSorting,
+    // onPaginationChange: setPagination,
+    // onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
     getCoreRowModel: getCoreRowModel(),

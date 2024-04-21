@@ -41,6 +41,7 @@ export function CreateTeamForm({ setIsOpen }: FormType) {
     defaultValues,
     mode: 'onChange',
   });
+
   async function onSubmit(data: TeamFormValues) {
     setLoading(true);
 

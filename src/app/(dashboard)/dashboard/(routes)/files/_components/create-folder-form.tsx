@@ -21,8 +21,8 @@ import { useCurrentUser } from '@/hooks/use-current-user';
 import { admin } from '@/server-actions/auth/admin.action';
 import { toast } from '@/components/ui/use-toast';
 import { createFolderSchema } from '@/schemas/validations/folder';
-import { createFolder } from '@/server-actions/user/create-folder-user';
 import { capitalize } from '@/lib/utils';
+import { createFolder } from '@/server-actions/user/create-folder';
 
 type FolderFormValues = z.infer<typeof createFolderSchema>;
 

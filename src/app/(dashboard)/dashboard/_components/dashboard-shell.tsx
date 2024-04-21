@@ -12,21 +12,20 @@ import {
 
 import { Nav } from './nav';
 
-import Logo from './logo';
 import { MobileNav } from './mobile-nav';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { ModeToggle } from '@/components/layout/mode-toggle';
 import { UserAccountNav } from '@/components/layout/user-account-nav';
-import { Team } from '@prisma/client';
-import TeamSwitcher from './team-switcher';
-import { dashboardConfig } from '@/config/dashboard';
+import { Button } from '@/components/ui/button';
+import { Icons } from '@/components/shared/icons';
+import Link from 'next/link';
+import { useDashboardConfig } from '@/config/dashboard';
 
 interface IDashboardShell {
   defaultLayout: number[] | undefined;
   defaultCollapsed?: boolean;
   navCollapsedSize?: number;
   children: React.ReactNode;
-  teams: Team[];
 }
 
 export function DashboardShell({
@@ -34,10 +33,11 @@ export function DashboardShell({
   defaultCollapsed = false,
   navCollapsedSize = 4,
   children,
-  teams,
 }: IDashboardShell) {
   const [isCollapsed, setIsCollapsed] = React.useState(defaultCollapsed);
   const user = useCurrentUser();
+  const config = useDashboardConfig();
+  const sidebarNav = config.sidebarNav;
 
   return (
     <TooltipProvider delayDuration={0}>
@@ -48,7 +48,7 @@ export function DashboardShell({
             sizes
           )}`;
         }}
-        className="min-h-screen items-stretch"
+        className="min-h-full items-stretch bg-muted"
       >
         <ResizablePanel
           defaultSize={defaultLayout[0]}
@@ -70,12 +70,12 @@ export function DashboardShell({
           }}
           className={cn(
             isCollapsed &&
-              'min-w-[50px] transition-all duration-300 ease-in-out',
+            ' transition-all duration-300 ease-in-out',
             'hidden lg:block'
           )}
         >
-          <Logo isCollapsed={isCollapsed} />
-          <Nav isCollapsed={isCollapsed} links={dashboardConfig.sidebarNav} />
+          {/* <Logo isCollapsed={isCollapsed} /> */}
+          <Nav isCollapsed={isCollapsed} links={sidebarNav} />
         </ResizablePanel>
         <ResizableHandle withHandle />
         <ResizablePanel defaultSize={defaultLayout[1]} minSize={30}>
@@ -84,31 +84,37 @@ export function DashboardShell({
               className={cn(
                 'sticky top-0 z-10',
                 'h-[52px]',
-                'bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60',
+                'bg-muted backdrop-blur supports-[backdrop-filter]:bg-muted',
                 'flex items-center justify-between px-4'
               )}
             >
-              <TeamSwitcher teams={teams} />
+
               <div className="block lg:hidden">
                 <MobileNav />
               </div>
               <div className="block lg:hidden">
-                <Logo isCollapsed={true} />
+                {/* <Logo isCollapsed={true} /> */}
               </div>
               <div className="flex items-center space-x-4 lg:ml-auto">
                 <ModeToggle />
+                <Link href={'/dashboard/settings'}>
+                  <Button variant={'ghost'} className='py-0 px-1'>
+                    <Icons.settings size={20} />
+                  </Button>
+                </Link>
                 <UserAccountNav
                   user={{
                     name: user?.name ?? 'N/A',
+                    image: user?.image ?? 'N/A',
                     email: user?.email ?? 'N/A',
                   }}
                 />
               </div>
-            </div>
+            </div >
             <div className={cn('overflow-y-auto')}>{children}</div>
-          </div>
-        </ResizablePanel>
-      </ResizablePanelGroup>
-    </TooltipProvider>
+          </div >
+        </ResizablePanel >
+      </ResizablePanelGroup >
+    </TooltipProvider >
   );
 }

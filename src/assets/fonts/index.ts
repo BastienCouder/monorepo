@@ -1,5 +1,5 @@
 import localFont from 'next/font/local';
-import { Inter as FontSans, Urbanist } from 'next/font/google';
+import { Inter as FontSans, Urbanist, Raleway } from 'next/font/google';
 
 export const fontSans = FontSans({
   subsets: ['latin'],
@@ -9,6 +9,11 @@ export const fontSans = FontSans({
 export const fontUrban = Urbanist({
   subsets: ['latin'],
   variable: '--font-urban',
+});
+
+export const fontRaleway = Raleway({
+  subsets: ['latin'],
+  variable: '--font-raleway ',
 });
 
 export const fontHeading = localFont({

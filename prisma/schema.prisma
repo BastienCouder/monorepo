@@ -74,9 +74,11 @@ model TwoFactorConfirmation {
 }
 
 enum UserRole {
-  ADMIN
-  OWNER
   MEMBER
+  ADMINISTRATOR
+  EDITOR
+  OWNER
+  READER
 }
 
 model User {
@@ -85,6 +87,7 @@ model User {
   email                 String?                @unique
   emailVerified         DateTime?
   role                  UserRole               @default(MEMBER)
+  image                 String?
   password              String?
   createdAt             DateTime               @default(now())
   updatedAt             DateTime               @updatedAt
@@ -191,19 +194,16 @@ model File {
   name        String
   mimeType    String?
   size        Int
-  type        String?
-  path        String?
-  firebaseUrl String?
+  path        String   @db.VarChar(555)
+  firebaseUrl String?  @db.VarChar(555)
   folderId    String?  @map("folder_id")
   folder      Folder?  @relation(fields: [folderId], references: [id])
   teamId      String?  @map("team_id")
   team        Team?    @relation(fields: [teamId], references: [id])
-  content     Bytes?
   User        User?    @relation(fields: [userId], references: [id])
   userId      String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  @@index([folderId])
-  @@index([teamId])
+  @@index([folderId, teamId, userId])
 }

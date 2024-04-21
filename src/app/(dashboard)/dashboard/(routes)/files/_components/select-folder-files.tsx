@@ -34,17 +34,14 @@ export function SelectFolderFilesForm({ folder, index }: FormType) {
 
   async function onSubmit(data: SelectFolderFilesFormValues) {
     setLoading(true);
-    console.log(data); // Ici, vous pouvez voir les dossiers sélectionnés
     setLoading(false);
   }
 
   const handleCheckedChange = (checked: boolean) => {
     const selectedFolders = form.getValues('selectedFolders') || [];
     if (checked) {
-      // Ajoute l'ID du dossier si la case est cochée
       form.setValue('selectedFolders', [...selectedFolders, folder.id]);
     } else {
-      // Retire l'ID du dossier si la case est décochée
       form.setValue(
         'selectedFolders',
         selectedFolders.filter((id: string) => id !== folder.id)

@@ -8,6 +8,7 @@ import { LucideIcon } from 'lucide-react';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { User } from '@/schemas/db';
 import { UseThemeProps } from 'next-themes/dist/types';
+import { formatStorage } from '@/lib/utils';
 
 export interface Directory {
   name: string;
@@ -20,12 +21,13 @@ export type StorageUsageProps = {
   summary: {
     folders: {
       name: string;
-      totalSizeGB: number;
+      totalSize: number;
       totalFiles: number;
     }[];
-    totalSizeGB: number;
+    totalSize: number;
     totalFiles: number;
   };
+  user: User
 };
 
 interface GraphDataItem {
@@ -45,7 +47,7 @@ const CustomTooltip = ({ active, payload }: CustomTooltipProps) => {
 
     return (
       <div className="p-3 text-background text-sm bg-foreground rounded-lg">
-        <p>{`${name} : ${value.toFixed(2)} GB`}</p>
+        <p>{`${name} : ${formatStorage(value)}`}</p>
       </div>
     );
   }
@@ -53,38 +55,24 @@ const CustomTooltip = ({ active, payload }: CustomTooltipProps) => {
   return null;
 };
 
-export default function StorageUsage({ summary }: StorageUsageProps) {
-  const theme: UseThemeProps = useTheme();
-  const user: User = useCurrentUser();
-  const COLORS = [
-    '#2146B5',
-    '#0E9606',
-    '#9216BB',
-    '#BC8224',
-    '#FA3E31',
-    theme.theme === 'dark' ? '#D6E6E6' : '#555C5C',
-  ];
+export default function StorageUsage({ summary, user }: StorageUsageProps) {
+  const folderColors = summary.folders.map(folder => getFolderDetails(folder.name).color);
 
   let folderData = summary.folders.map((folder) => ({
     name: folder.name,
-    value: Math.max(folder.totalSizeGB, 0.01),
+    value: Math.max(folder.totalSize, 0.01),
   }));
 
   if (
-    summary.totalSizeGB > 0 &&
+    summary.totalSize > 0 &&
     folderData.reduce((acc, folder) => acc + folder.value, 0) === 0
   ) {
     folderData = folderData.map((folder, index) => ({
       ...folder,
-      value: summary.totalSizeGB / folderData.length,
+      value: summary.totalSize / folderData.length,
     }));
   }
 
-  const totalUsedSpace = folderData
-    .reduce((acc, folder) => acc + folder.value, 0)
-    .toFixed(2);
-  const totalSpace: string = summary.totalSizeGB.toFixed(2);
-  const freeSpace: string = (Number(totalSpace) - Number(totalUsedSpace)).toFixed(2);
 
   return (
     <div className="w-full bg-background flex justify-center items-center flex-col p-4 rounded-md">
@@ -106,7 +94,7 @@ export default function StorageUsage({ summary }: StorageUsageProps) {
               {folderData.map((entry, index) => (
                 <Cell
                   key={`cell-${index}`}
-                  fill={COLORS[index % COLORS.length]}
+                  fill={folderColors[index % folderColors.length]}
                   className="rounded-full"
                 />
               ))}
@@ -125,8 +113,8 @@ export default function StorageUsage({ summary }: StorageUsageProps) {
             transform: 'translate(-50%, -50%)',
           }}
         >
-          <span className="text-lg">{user?.storageUsed}</span>
-          <span>of {user?.storageLimit}</span>
+          <span className="text-base">{formatStorage(user?.storageUsed)}</span>
+          <span className="text-sm">of {formatStorage(user?.storageLimit)}</span>
         </p>
       </section>
       {/* <div className='text-center'>
@@ -152,7 +140,7 @@ export default function StorageUsage({ summary }: StorageUsageProps) {
                   </span>
                 </p>
                 <p className="text-sm font-bold">
-                  {folder.totalSizeGB.toFixed(2)} Go
+                  {formatStorage(folder.totalSize)}
                 </p>
               </div>
             </div>

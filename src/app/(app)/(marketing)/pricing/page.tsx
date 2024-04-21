@@ -1,5 +1,5 @@
-import { PricingCards } from '@/components/pricing-cards';
-import { PricingFaq } from '@/components/pricing-faq';
+import { PricingCards } from '@/app/(app)/(marketing)/pricing/_components/pricing-cards';
+import { PricingFaq } from '@/app/(app)/(marketing)/pricing/_components/pricing-faq';
 import { currentUser } from '@/lib/authCheck';
 import { getUserSubscriptionPlan } from '@/lib/subscription';
 

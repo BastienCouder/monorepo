@@ -1,8 +1,9 @@
+'use server';
 // @ts-nocheck
 // TODO: Fix this when we turn strict mode on.
 import { pricingData } from '@/config/subscriptions';
 import { stripe } from '@/lib/stripe';
-import { UserSubscriptionPlan } from 'types';
+import { UserSubscriptionPlan } from '@/types';
 import { db } from './prisma';
 
 export async function getUserSubscriptionPlan(
@@ -27,7 +28,7 @@ export async function getUserSubscriptionPlan(
   // Check if user is on a paid plan.
   const isPaid =
     user.stripePriceId &&
-    user.stripeCurrentPeriodEnd?.getTime() + 86_400_000 > Date.now()
+    user.stripeCurrentPeriodEnd?.getTime()! + 86_400_000 > Date.now()
       ? true
       : false;
 
@@ -38,14 +39,14 @@ export async function getUserSubscriptionPlan(
 
   const plan = isPaid && userPlan ? userPlan : pricingData[0];
 
+  // Determine the interval of the subscription
   const interval = isPaid
     ? userPlan?.stripeIds.monthly === user.stripePriceId
       ? 'month'
-      : userPlan?.stripeIds.yearly === user.stripePriceId
-        ? 'year'
-        : null
+      : 'year'
     : null;
 
+  // Check if the subscription is set to cancel at the end of the period
   let isCanceled = false;
   if (isPaid && user.stripeSubscriptionId) {
     const stripePlan = await stripe.subscriptions.retrieve(
@@ -54,10 +55,18 @@ export async function getUserSubscriptionPlan(
     isCanceled = stripePlan.cancel_at_period_end;
   }
 
+  // Update user storage limit based on their subscription plan
+  if (plan.userStorageLimit) {
+    await db.user.update({
+      where: { id: userId },
+      data: { storageLimit: plan.userStorageLimit },
+    });
+  }
+
   return {
     ...plan,
     ...user,
-    stripeCurrentPeriodEnd: user.stripeCurrentPeriodEnd?.getTime(),
+    stripeCurrentPeriodEnd: user.stripeCurrentPeriodEnd?.getTime()!,
     isPaid,
     interval,
     isCanceled,

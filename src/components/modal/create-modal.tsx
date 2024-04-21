@@ -45,26 +45,32 @@ interface CreateModalProps {
     setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   }>;
   variant:
-    | 'link'
-    | 'default'
-    | 'destructive'
-    | 'outline'
-    | 'secondary'
-    | 'ghost'
-    | 'success'
-    | null
-    | undefined;
+  | 'link'
+  | 'default'
+  | 'destructive'
+  | 'outline'
+  | 'secondary'
+  | 'ghost'
+  | 'success'
+  | null
+  | undefined;
 }
 
 const CreateModal: React.FC<CreateModalProps> = ({
   variant,
   title,
   Component,
+
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const isDesktop = useMediaQuery('(min-width: 768px)');
 
   const resolvedVariant = variant ?? 'default';
+
+
+  const contentProps = {
+    setIsOpen,
+  };
 
   if (isDesktop) {
     return (
@@ -78,7 +84,7 @@ const CreateModal: React.FC<CreateModalProps> = ({
           <DialogHeader>
             <DialogTitle>{title}</DialogTitle>
             <DialogDescription className="pt-4">
-              {<Component setIsOpen={setIsOpen} />}
+              {<Component {...contentProps} />}
             </DialogDescription>
           </DialogHeader>
         </DialogContent>
@@ -96,7 +102,7 @@ const CreateModal: React.FC<CreateModalProps> = ({
         <DrawerHeader>
           <DrawerTitle> {title}</DrawerTitle>
         </DrawerHeader>
-        <div className="p-4 pb-8">{<Component setIsOpen={setIsOpen} />}</div>
+        <div className="p-4 pb-8">{<Component {...contentProps} />}</div>
       </DrawerContent>
     </Drawer>
   );

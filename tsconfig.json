@@ -30,7 +30,8 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "jest.setup.jsxx",
-    "jest.config.js"
+    "jest.config.js",
+    "src/navigation.js"
   ],
   "exclude": ["node_modules"]
 }

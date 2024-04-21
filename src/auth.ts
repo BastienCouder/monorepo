@@ -1,6 +1,6 @@
 import NextAuth from 'next-auth';
 import { UserRole } from '@prisma/client';
-
+import { PrismaAdapter } from '@auth/prisma-adapter';
 import authConfig from '@/auth.config';
 import { db } from './lib/prisma';
 import { getUserById } from './lib/data/user';
@@ -16,8 +16,8 @@ export const {
   unstable_update: update,
 } = NextAuth({
   pages: {
-    signIn: '/auth/login',
-    error: '/auth/error',
+    signIn: '/login',
+    error: '/error',
   },
   events: {
     async linkAccount({ user }) {
@@ -32,24 +32,24 @@ export const {
       // Allow OAuth without email verification
       if (account?.provider !== 'credentials') return true;
 
-      // @ts-expect-error
-      const existingUser = await getUserById(user.id);
+      // // @ts-expect-error
+      // const existingUser = await getUserById(user.id);
 
-      // Prevent sign in without email verification
-      if (!existingUser?.emailVerified) return false;
+      // // Prevent sign in without email verification
+      // if (!existingUser?.emailVerified) return false;
 
-      if (existingUser.isTwoFactorEnabled) {
-        const twoFactorConfirmation = await getTwoFactorConfirmationByUserId(
-          existingUser.id
-        );
+      // if (existingUser.isTwoFactorEnabled) {
+      //   const twoFactorConfirmation = await getTwoFactorConfirmationByUserId(
+      //     existingUser.id
+      //   );
 
-        if (!twoFactorConfirmation) return false;
+      //   if (!twoFactorConfirmation) return false;
 
-        // Delete two factor confirmation for next sign in
-        await db.twoFactorConfirmation.delete({
-          where: { id: twoFactorConfirmation.id },
-        });
-      }
+      //   // Delete two factor confirmation for next sign in
+      //   await db.twoFactorConfirmation.delete({
+      //     where: { id: twoFactorConfirmation.id },
+      //   });
+      // }
 
       return true;
     },
@@ -92,6 +92,7 @@ export const {
       return token;
     },
   },
+  adapter: PrismaAdapter(db),
   session: { strategy: 'jwt' },
   ...authConfig,
 });

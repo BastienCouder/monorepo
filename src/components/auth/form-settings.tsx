@@ -88,7 +88,7 @@ const Settings = () => {
         </CardHeader>
         <CardContent className="space-y-4">
           <Form {...form}>
-            <form className="space-y-6" onSubmit={form.handleSubmit(onSubmit)}>
+            <form className="space-y-6" onSubmit={form.handleSubmit(onSubmit)} >
               <div className="space-y-4">
                 <FormField
                   control={form.control}

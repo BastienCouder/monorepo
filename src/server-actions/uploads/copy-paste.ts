@@ -3,6 +3,7 @@ import { storage } from '@/lib/firebase';
 import { db } from '@/lib/prisma';
 import { Folder } from '@prisma/client';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
+import { revalidatePath } from 'next/cache';
 
 interface ExtendedFile extends File {
   folder?: ExtendedFolder;
@@ -44,6 +45,7 @@ export async function copyItems(ids: string[]): Promise<void> {
       }
     }
   }
+  revalidatePath('/dashboard');
 
   copiedItems = {
     folderIds: [...copiedItems.folderIds, ...folderIds],
@@ -73,6 +75,8 @@ export async function pasteItems(
   }
 
   // Réinitialiser les éléments copiés après l'opération
+  revalidatePath('/dashboard');
+
   copiedItems = { folderIds: [], fileIds: [] };
 }
 
@@ -164,4 +168,25 @@ async function copyFile(
       userId: userId,
     },
   });
+}
+export async function moveItems(
+  folderIds: string[],
+  fileIds: string[],
+  targetFolderId: string
+) {
+  // Move folders
+  for (const folderId of folderIds) {
+    await db.folder.update({
+      where: { id: folderId },
+      data: { parentId: targetFolderId },
+    });
+  }
+
+  // Move files
+  for (const fileId of fileIds) {
+    await db.file.update({
+      where: { id: fileId },
+      data: { folderId: targetFolderId },
+    });
+  }
 }

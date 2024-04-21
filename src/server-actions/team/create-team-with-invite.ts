@@ -1,20 +1,18 @@
 'use server';
-import { sendTeamInvitationEmail } from '@/lib/email';
+
 import { db } from '@/lib/prisma';
+import { getUserSubscriptionPlan } from '@/lib/subscription';
 import { v4 as uuidv4 } from 'uuid';
 
-enum UserRole {
-  MEMBER = 'MEMBER',
-  ADMIN = 'ADMIN',
-}
-
-export const createTeam = async (
+export async function createTeam(
   creatorUserId: string,
   name: string,
   memberEmails: string[]
-) => {
+) {
   const key = uuidv4();
   const slug = name.toLowerCase().replace(/\s+/g, '-');
+  const userSubscription = await getUserSubscriptionPlan(creatorUserId);
+  const teamStorageLimit = userSubscription.userStorageLimit;
 
   const team = await db.team.create({
     data: {
@@ -26,15 +24,16 @@ export const createTeam = async (
       members: {
         create: {
           userId: creatorUserId,
-          role: UserRole.ADMIN,
+          role: 'ADMINISTRATOR',
         },
       },
+      storageLimit: teamStorageLimit,
     },
   });
 
-  memberEmails.forEach((email) => {
-    sendTeamInvitationEmail(email, team.slug, team.key);
-  });
+  // memberEmails.forEach((email) => {
+  //   sendTeamInvitationEmail(email, team.slug, team.key);
+  // });
 
   return team;
-};
+}

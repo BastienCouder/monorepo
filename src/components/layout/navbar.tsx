@@ -9,6 +9,7 @@ import { Button, buttonVariants } from '@/components/ui/button';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { useSigninModal } from '@/hooks/use-signin-modal';
+import { ModeToggle } from './mode-toggle';
 
 interface NavBarProps {
   user: Pick<User, 'name' | 'image' | 'email'> | undefined;
@@ -30,9 +31,8 @@ export function NavBar({
 
   return (
     <header
-      className={`sticky top-0 z-40 flex w-full justify-center bg-background/60 backdrop-blur-xl transition-all ${
-        scroll ? (scrolled ? 'border-b' : 'bg-background/0') : 'border-b'
-      }`}
+      className={`sticky top-0 z-40 flex w-full justify-center bg-background/60 backdrop-blur-xl transition-all ${scroll ? (scrolled ? 'border-b' : 'bg-background/0') : 'border-b'
+        }`}
     >
       <div className="container flex h-16 items-center justify-between py-4">
         <MainNav items={items}>{children}</MainNav>
@@ -48,7 +48,10 @@ export function NavBar({
               Login Page
             </Link>
           ) : null}
+          <div className='px-2'>
 
+            <ModeToggle />
+          </div>
           {user ? (
             <UserAccountNav user={user} />
           ) : (

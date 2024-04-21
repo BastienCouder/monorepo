@@ -1,5 +1,8 @@
 /** @type {import('next').NextConfig} */
 import withPWAInit from '@ducanh2912/next-pwa';
+import createNextIntlPlugin from 'next-intl/plugin';
+
+const withNextIntl = createNextIntlPlugin();
 
 const withPWA = withPWAInit({
   dest: 'public',
@@ -13,21 +16,21 @@ const withPWA = withPWAInit({
   },
 });
 
-export default withPWA({
-  images: {
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'utfs.io',
-      },
-    ],
-  },
-  webpackDevMiddleware: (config) => {
-    config.watchOptions = {
-      poll: 1000,
-      aggregateTimeout: 300,
-    };
+export default withNextIntl(
+  withPWA({
+    images: {
+      remotePatterns: [
+        { protocol: 'https', hostname: 'firebasestorage.googleapis.com' },
+        { protocol: 'https', hostname: 'utfs.io' },
+      ],
+    },
 
-    return config;
-  },
-});
+    webpackDevMiddleware: (config) => {
+      config.watchOptions = {
+        poll: 1000,
+        aggregateTimeout: 300,
+      };
+      return config;
+    },
+  })
+);

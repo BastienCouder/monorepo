@@ -1,8 +1,7 @@
 import '@/styles/globals.css';
 
-import { fontHeading, fontSans, fontUrban } from '@/assets/fonts';
+import { fontHeading, fontRaleway, fontSans, fontUrban } from '@/assets/fonts';
 import { Analytics } from '@/components/analytics';
-import { ModalProvider } from '@/components/modal-provider';
 import { ThemeProvider } from '@/components/providers';
 import { TailwindIndicator } from '@/components/tailwind-indicator';
 import { Toaster } from '@/components/ui/toaster';
@@ -13,6 +12,7 @@ import { auth } from '@/auth';
 
 interface RootLayoutProps {
   children: React.ReactNode;
+  params: { locale: string }
 }
 
 export const metadata = {
@@ -34,10 +34,10 @@ export const metadata = {
   ],
   authors: [
     {
-      name: 'mickasmt',
+      name: 'bastiencdr',
     },
   ],
-  creator: 'mickasmt',
+  creator: 'bastiencdr',
   metadataBase: new URL(siteConfig.url),
   openGraph: {
     type: 'website',
@@ -62,18 +62,19 @@ export const metadata = {
   manifest: `${siteConfig.url}/site.webmanifest`,
 };
 
-export default async function RootLayout({ children }: RootLayoutProps) {
+export default async function RootLayout({ children, params: { locale } }: RootLayoutProps) {
   const session = await auth();
 
   return (
     <SessionProvider session={session}>
-      <html lang="fr" suppressHydrationWarning>
+      <html lang={locale} suppressHydrationWarning>
         <head />
         <body
           className={cn(
             'min-h-screen bg-background font-sans antialiased',
             fontSans.variable,
             fontUrban.variable,
+            fontRaleway.variable,
             fontHeading.variable
           )}
         >
@@ -86,7 +87,6 @@ export default async function RootLayout({ children }: RootLayoutProps) {
             {children}
             <Analytics />
             <Toaster />
-            <ModalProvider />
             <TailwindIndicator />
           </ThemeProvider>
         </body>

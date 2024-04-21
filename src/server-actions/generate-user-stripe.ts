@@ -30,15 +30,14 @@ export async function generateUserStripe(
     const subscriptionPlan = await getUserSubscriptionPlan(session.user.id);
 
     if (subscriptionPlan.isPaid && subscriptionPlan.stripeCustomerId) {
-      // User on Paid Plan - Create a portal session to manage subscription.
       const stripeSession = await stripe.billingPortal.sessions.create({
         customer: subscriptionPlan.stripeCustomerId,
         return_url: billingUrl,
       });
+      console.log('f' + stripeSession);
 
       redirectUrl = stripeSession.url as string;
     } else {
-      // User on Free Plan - Create a checkout session to upgrade.
       const stripeSession = await stripe.checkout.sessions.create({
         success_url: billingUrl,
         cancel_url: billingUrl,
@@ -56,13 +55,14 @@ export async function generateUserStripe(
           userId: session.user.id,
         },
       });
+      console.log(stripeSession);
 
       redirectUrl = stripeSession.url as string;
     }
-  } catch (error) {
-    throw new Error('Failed to generate user stripe session');
+  } catch (error: any) {
+    console.error(error);
+    throw new Error('Failed to generate user stripe session', error);
   }
 
-  // no revalidatePath because redirect
   redirect(redirectUrl);
 }

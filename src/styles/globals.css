@@ -64,8 +64,8 @@
 }
 
 ::selection {
-  color: aliceblue;
-  background-color: #0c172d;
+  display: none;
+  width: 0;
 }
 
 ::-webkit-scrollbar {
@@ -96,4 +96,95 @@
   border-radius: 8px;
   padding: 4px;
   margin: 10px;
+}
+
+
+
+.atom-container {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 120px;
+  height: 120px;
+}
+
+
+.orbit {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+}
+
+.orbit.first {
+  animation: first-orbit 1s linear infinite;
+  border-bottom: 3px solid hsl(var(--primary));
+}
+
+.orbit.second {
+  animation: second-orbit 1s linear infinite;
+  border-right: 3px solid hsl(var(--primary));
+}
+
+.orbit.third {
+  animation: third-orbit 1s linear infinite;
+  border-top: 3px solid hsl(var(--primary));
+}
+
+.orbit.fourth {
+  animation: fourth-orbit 1s linear infinite;
+  border-left: 3px solid hsl(var(--primary));
+}
+
+@keyframes atom-core-pulse {
+
+  0%,
+  100% {
+    box-shadow: 0 0 5 hsl(var(--primary));
+  }
+
+  50% {
+    box-shadow: 0 0 25px hsl(var(--primary));
+  }
+}
+
+@keyframes first-orbit {
+  from {
+    transform: rotateX(35deg) rotateY(-45deg) rotateZ(0deg);
+  }
+
+  to {
+    transform: rotateX(35deg) rotateY(-45deg) rotateZ(360deg);
+  }
+}
+
+@keyframes second-orbit {
+  0% {
+    transform: rotateX(50deg) rotateY(10deg) rotateZ(0deg);
+  }
+
+  100% {
+    transform: rotateX(50deg) rotateY(10deg) rotateZ(360deg);
+  }
+}
+
+@keyframes third-orbit {
+  0% {
+    transform: rotateX(35deg) rotateY(55deg) rotateZ(0deg);
+  }
+
+  100% {
+    transform: rotateX(35deg) rotateY(55deg) rotateZ(360deg);
+  }
+}
+
+@keyframes fourth-orbit {
+  0% {
+    transform: rotateX(50deg) rotateY(-10deg) rotateZ(0deg);
+  }
+
+  100% {
+    transform: rotateX(50deg) rotateY(-10deg) rotateZ(360deg);
+  }
 }

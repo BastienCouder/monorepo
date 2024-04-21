@@ -114,3 +114,22 @@ const defaultFolders = [
 export function isNotDefaultFolder(folderName: string) {
   return !defaultFolders.includes(folderName);
 }
+
+// Converts bytes to kilobytes (KB)
+const bytesToKB = (bytes: number) => (bytes / 1024).toFixed(2);
+
+// Converts bytes to megabytes (MB)
+const bytesToMB = (bytes: number) => (bytes / 1024 ** 2).toFixed(2);
+
+// Converts bytes to gigabytes (GB)
+const bytesToGB = (bytes: number) => (bytes / 1024 ** 3).toFixed(2);
+
+export const formatStorage = (bytes: number) => {
+  if (bytes >= 1024 ** 3) {
+    return `${bytesToGB(bytes)} GB`;
+  } else if (bytes >= 1024 ** 2) {
+    return `${bytesToMB(bytes)} MB`;
+  } else {
+    return `${bytesToKB(bytes)} KB`;
+  }
+};

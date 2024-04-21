@@ -1,152 +1,201 @@
 'use client';
 
 import * as React from 'react';
+import Link from 'next/link';
 import type {
   DataTableFilterableColumn,
-  DataTableFilterOption,
   DataTableSearchableColumn,
 } from '@/types';
-import { CaretSortIcon, PlusIcon } from '@radix-ui/react-icons';
+import { CaretLeftIcon, Cross2Icon, PlusCircledIcon, TrashIcon } from '@radix-ui/react-icons';
 import type { Table } from '@tanstack/react-table';
 
-import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import { Button, buttonVariants } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { DataTableAdvancedFilter } from '@/components/data-table/advanced/data-table-advanced-filter';
-import { DataTableViewOptions } from '@/components/data-table/data-table-view-options';
+import { DataTableFacetedFilter } from '@/components/data-table/data-table-faceted-filter';
+import { ClipboardCopyIcon, ClipboardIcon, Table as TableIcon } from 'lucide-react';
+import { TbLayoutList, TbTableFilled } from 'react-icons/tb';
+import { IoGrid, IoReturnDownBackOutline } from 'react-icons/io5';
+import { useSelection } from '@/app/(dashboard)/dashboard/(routes)/ai/(route)/_context/select-item';
+import CreateFolderModal from '@/app/(dashboard)/dashboard/(routes)/ai/(route)/_components/create-folder-modal';
+import { ChoiceCheckbox } from '@/app/(dashboard)/dashboard/(routes)/ai/(route)/_components/choice-checkbox';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 
-import { DataTableAdvancedFilterItem } from './data-table-advanced-filter-item';
-import { DataTableMultiFilter } from './data-table-multi-filter';
-
-interface DataTableAdvancedToolbarProps<TData> {
-  dataTable: Table<TData>;
-  searchableColumns?: DataTableSearchableColumn<TData>[];
+interface DataTableToolbarProps<TData> {
+  table: Table<TData>;
   filterableColumns?: DataTableFilterableColumn<TData>[];
+  searchableColumns?: DataTableSearchableColumn<TData>[];
+  newRowLink?: string;
+  deleteRowsAction?: React.MouseEventHandler<HTMLButtonElement>;
+  copyRowsAction?: () => void;
+  pasteRowsAction?: () => void;
+  goBack?: () => void,
+  basePath: string | undefined
+  isGridView?: boolean,
+  toggleView: () => void
 }
 
 export function DataTableAdvancedToolbar<TData>({
-  dataTable,
+  table,
   filterableColumns = [],
   searchableColumns = [],
-}: DataTableAdvancedToolbarProps<TData>) {
-  const [selectedOptions, setSelectedOptions] = React.useState<
-    DataTableFilterOption<TData>[]
-  >([]);
-  const [open, setOpen] = React.useState(false);
+  newRowLink,
+  deleteRowsAction,
+  copyRowsAction,
+  pasteRowsAction,
+  goBack,
+  basePath,
+  isGridView,
+  toggleView
+}: DataTableToolbarProps<TData>) {
+  const isFiltered = table.getState().columnFilters.length > 0;
+  const [isPending, startTransition] = React.useTransition();
+  const { selectedItems } = useSelection();
 
-  React.useEffect(() => {
-    if (selectedOptions.length > 0) {
-      setOpen(true);
-    }
-  }, [selectedOptions]);
+  const hasTableSelectedItems = table.getSelectedRowModel().rows.length > 0;
+  const hasContextSelectedItems = selectedItems.length > 0;
 
-  const options: DataTableFilterOption<TData>[] = React.useMemo(() => {
-    const searchableOptions = searchableColumns.map((column) => ({
-      id: crypto.randomUUID(),
-      label: String(column.id),
-      value: column.id,
-      items: [],
-    }));
-    const filterableOptions = filterableColumns.map((column) => ({
-      id: crypto.randomUUID(),
-      label: column.title,
-      value: column.id,
-      items: column.options,
-    }));
-
-    return [...searchableOptions, ...filterableOptions];
-  }, [filterableColumns, searchableColumns]);
+  const disableActions = !hasTableSelectedItems && !hasContextSelectedItems;
 
   return (
-    <div className="w-full space-y-2.5 overflow-auto p-1">
-      <div className="flex items-center justify-between space-x-2">
-        <div className="flex flex-1 items-center space-x-2">
-          {searchableColumns.length > 0 &&
-            searchableColumns.map(
-              (column) =>
-                dataTable.getColumn(column.id ? String(column.id) : '') && (
-                  <Input
-                    key={String(column.id)}
-                    placeholder={`Filter ${column.title}...`}
-                    value={
-                      (dataTable
-                        .getColumn(String(column.id))
-                        ?.getFilterValue() as string) ?? ''
-                    }
-                    onChange={(event) =>
-                      dataTable
-                        .getColumn(String(column.id))
-                        ?.setFilterValue(event.target.value)
-                    }
-                    className="h-8 w-[150px] lg:w-[250px]"
-                  />
-                )
-            )}
-        </div>
-        <div className="flex items-center space-x-2">
-          {selectedOptions.length > 0 ? (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setOpen((prev) => !prev)}
-            >
-              Filter
-              <CaretSortIcon
-                className="ml-2 size-4 opacity-50"
-                aria-hidden="true"
-              />
-            </Button>
-          ) : (
-            <DataTableAdvancedFilter
-              options={options.filter(
-                (option) =>
-                  !selectedOptions.some(
-                    (selectedOption) => selectedOption.value === option.value
-                  )
-              )}
-              selectedOptions={selectedOptions}
-              setSelectedOptions={setSelectedOptions}
-            />
+    <div className="flex w-full items-center justify-between space-x-2 overflow-auto p-1">
+      <div className="flex flex-1 items-center space-x-2">
+        {searchableColumns.length > 0 &&
+          searchableColumns.map(
+            (column) =>
+              table.getColumn(column.id ? String(column.id) : '') && (
+                <Input
+                  key={String(column.id)}
+                  placeholder={`Rechercher...`}
+                  value={
+                    (table
+                      .getColumn(String(column.id))
+                      ?.getFilterValue() as string) ?? ''
+                  }
+                  onChange={(event) =>
+                    table
+                      .getColumn(String(column.id))
+                      ?.setFilterValue(event.target.value)
+                  }
+                  className="h-7 w-[150px] lg:w-[250px]"
+                />
+              )
           )}
-          <DataTableViewOptions table={dataTable} />
+        {filterableColumns.length > 0 &&
+          filterableColumns.map(
+            (column) =>
+              table.getColumn(column.id ? String(column.id) : '') && (
+                <DataTableFacetedFilter
+                  key={String(column.id)}
+                  column={table.getColumn(column.id ? String(column.id) : '')}
+                  title={column.title}
+                  options={column.options}
+                />
+              )
+          )}
+        {isFiltered && (
+          <Button
+            aria-label="Réinitialiser les filtres"
+            variant="default"
+            className="h-7 px-4"
+            onClick={() => table.resetColumnFilters()}
+          >
+            Reset
+            <Cross2Icon className="ml-2 size-4" aria-hidden="true" />
+          </Button>
+        )}
+        <div className='w-[4.5rem] bg-primary rounded-md flex justify-center items-center gap-3 p-1'>
+          <button onClick={toggleView} className={` ${isGridView ? 'bg-muted text-primary' : 'bg-primary text-muted'} cc  p-1 rounded-sm  cursor-pointer`}>
+            {<IoGrid size={13} />}
+          </button>
+          <button onClick={toggleView} className={` ${isGridView ? 'bg-primary text-muted' : 'bg-muted text-primary'} transition-all p-1 rounded-sm  cursor-pointer`}>
+            {<TbLayoutList size={16} />}
+          </button>
         </div>
       </div>
-      {open ? (
-        <div className="flex items-center space-x-2">
-          {selectedOptions.some((option) => option.isMulti) ? (
-            <DataTableMultiFilter
-              table={dataTable}
-              allOptions={options}
-              options={selectedOptions.filter((option) => option.isMulti)}
-              setSelectedOptions={setSelectedOptions}
-            />
-          ) : null}
-          {selectedOptions
-            .filter((option) => !option.isMulti)
-            .map((selectedOption) => (
-              <DataTableAdvancedFilterItem
-                key={String(selectedOption.value)}
-                table={dataTable}
-                selectedOption={selectedOption}
-                setSelectedOptions={setSelectedOptions}
-              />
-            ))}
-          <DataTableAdvancedFilter
-            options={options}
-            selectedOptions={selectedOptions}
-            setSelectedOptions={setSelectedOptions}
+
+      <div className="flex items-center space-x-2">
+
+        <CreateFolderModal
+          basePath={basePath}
+        />
+
+        {copyRowsAction && (
+          <Button
+            aria-label="Copier les lignes sélectionnées"
+            variant="outline"
+            size="sm"
+            className="h-8 transition-all"
+            onClick={copyRowsAction}
+            disabled={isPending || disableActions}
           >
-            <Button
-              variant="outline"
-              size="sm"
-              role="combobox"
-              className="rounded-full"
+            <ClipboardCopyIcon className="mr-2 size-4" aria-hidden="true" />
+            Copier
+          </Button>
+        )}
+
+        {pasteRowsAction && (
+          <Button
+            aria-label="Coller les éléments"
+            variant="outline"
+            size="sm"
+            className="h-8 transition-all"
+            onClick={pasteRowsAction}
+            disabled={isPending}
+          >
+            <ClipboardIcon className="mr-2 size-4" aria-hidden="true" />
+            Coller
+          </Button>
+        )}
+        {/* Bouton de suppression et création de nouvelle ligne existant */}
+        {deleteRowsAction ? (
+          <Button
+            aria-label="Supprimer les lignes sélectionnées"
+            variant="outline"
+            size="sm"
+            className="h-8 transition-all"
+            onClick={(event) => {
+              startTransition(() => {
+                table.toggleAllPageRowsSelected(false);
+                deleteRowsAction(event);
+              });
+            }}
+            disabled={isPending || disableActions}
+          >
+            <TrashIcon className="mr-2 size-4" aria-hidden="true" />
+            Delete
+          </Button>
+        ) : newRowLink ? (
+          <Link aria-label="Créer une nouvelle ligne" href={newRowLink}>
+            <div
+              className={cn(
+                buttonVariants({
+                  variant: 'outline',
+                  size: 'sm',
+                  className: 'h-8 transition-all',
+                })
+              )}
             >
-              <PlusIcon className="mr-2 size-4 opacity-50" aria-hidden="true" />
-              Add filter
-            </Button>
-          </DataTableAdvancedFilter>
-        </div>
-      ) : null}
+              <PlusCircledIcon className="mr-2 size-4" aria-hidden="true" />
+              Nouveau
+            </div>
+          </Link>
+        ) : null}
+        {goBack && (
+          <Button
+            aria-label="Coller les éléments"
+            variant="default"
+            size="sm"
+            className="h-8 transition-all"
+            onClick={goBack}
+            disabled={isPending}
+          >
+            <IoReturnDownBackOutline className="mr-2 size-4" aria-hidden="true" />
+            Back
+          </Button>
+        )}
+        {/* <DataTableViewOptions table={table} /> */}
+      </div>
     </div>
   );
 }

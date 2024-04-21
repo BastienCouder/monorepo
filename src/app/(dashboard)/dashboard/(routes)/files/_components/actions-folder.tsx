@@ -8,11 +8,15 @@ import { getFolderDetails } from '../_lib/folder-custom-details';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { userFolderFiles } from '@/server-actions/user/get-folder-files-user';
 import { MultiFileDropzone } from './multi-dropzone';
-import { deleteFolderRecursively } from '@/server-actions/user/delete-folder-user';
+
 import { Copy, FilePlus2, Trash } from 'lucide-react';
-import DirectoryCard from './folder-files-card';
+import DirectoryCard from './folder-card';
 import { copyItems, pasteItems } from '@/server-actions/uploads/copy-paste';
-import { File, Folder } from '@/schemas/db';
+import { File, Folder, User } from '@/schemas/db';
+import FileCard from './file-card';
+import { getFileDetails } from '../_lib/files-custom-details';
+import { FolderSkeleton } from '@/components/skeleton/folder-skeleton';
+import { deleteFolder } from '@/server-actions/drive/delete-folder';
 
 export interface ExtendedPrismaFolder extends Folder {
   totalSize?: number;
@@ -25,48 +29,73 @@ interface FolderData {
   files: File[];
 }
 
-export interface CurrentFolderPath {
+export interface CurrentPath {
   folderName: string;
   folderId: string;
 }
 
+
+
 export default function ActionsFolder() {
-  const user = useCurrentUser();
+  const user: User = useCurrentUser();
   const userId = user?.id;
-  const [currentPath, setCurrentPath] = useState<CurrentFolderPath>({
+  const [currentPath, setCurrentPath] = useState<CurrentPath>({
     folderName: '',
     folderId: '',
   });
   const [currentData, setCurrentData] = useState<FolderData>();
   const [isChecked, setIsChecked] = useState(false);
-  const [pathStack, setPathStack] = useState<CurrentFolderPath[]>([]);
+  const [pathStack, setPathStack] = useState<CurrentPath[]>([]);
   const [selectedFolders, setSelectedFolders] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
-  console.log(currentData);
 
   useEffect(() => {
     const loadData = async () => {
       if (userId) {
-        const newData = await userFolderFiles(currentPath.folderId);
-        console.log(newData);
-
-        setCurrentData(newData);
+        setIsLoading(true);
+        try {
+          const newData = await userFolderFiles(currentPath.folderId);
+          setCurrentData(newData);
+        } catch (error) {
+          console.error('Failed to load folder data:', error);
+        } finally {
+          setIsLoading(false);
+        }
       }
     };
     loadData();
-  }, [currentPath.folderId]);
+  }, [currentPath.folderId, userId]);
 
   const refreshData = async () => {
     if (userId) {
-      const newData = await userFolderFiles(currentPath.folderId);
-      setCurrentData(newData);
+      setIsLoading(true);
+      try {
+        const newData = await userFolderFiles(currentPath.folderId);
+        setCurrentData(newData);
+      } catch (error) {
+        console.error('Failed to refresh data:', error);
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 
   const handleDeleteFolder = async (folderId: string) => {
     try {
       if (userId) {
-        await deleteFolderRecursively(folderId, userId);
+        await deleteFolder(folderId, userId);
+        refreshData();
+      }
+    } catch (error) {
+      console.error('Error deleting folder:', error);
+    }
+  };
+
+  const handleDeleteFile = async (fileId: string) => {
+    try {
+      if (userId) {
+        // await deleteFile(fileId, userId);
         refreshData();
       }
     } catch (error) {
@@ -133,8 +162,7 @@ export default function ActionsFolder() {
   };
 
   return (
-    <section className="w-full space-y-6 lg:pr-4">
-      <h1 className="font-bold text-2xl">My folders</h1>
+    <>
       <div className="flex justify-between gap-4">
         <CreateFolderModal
           basePath={currentPath.folderId}
@@ -171,28 +199,54 @@ export default function ActionsFolder() {
           )}
         </div>
       </div>
-      <MultiFileDropzone folderId={currentPath.folderId} />
-      <ul className="w-full grid grid-cols-1 sm:grid-cols-3 gap-6 justify-center sm:justify-start">
-        {currentData?.subfolders?.map((folder, index) => {
-          const { color, Icon } = getFolderDetails(folder.name);
-          const isChecked = selectedFolders.includes(folder.id);
-          return (
-            <DirectoryCard
-              key={index}
-              folder={folder}
-              color={color}
-              Icon={Icon}
-              handleFolderClick={() =>
-                handleFolderClick(folder.name, folder.id)
-              }
-              currentPath={currentPath}
-              isChecked={selectedFolders.includes(folder.id)}
-              handleCheckboxChange={() => handleCheckboxChange(folder.id)}
-              handleDeleteFolder={handleDeleteFolder}
-            />
-          );
-        })}
-      </ul>
-    </section>
+      <MultiFileDropzone folderId={currentPath.folderId} refreshData={refreshData} />
+      {isLoading ? (
+        <>
+          <FolderSkeleton />
+        </>) : (
+        <>
+          <ul className="w-full grid grid-cols-1 sm:grid-cols-3 gap-6 justify-center sm:justify-start">
+            {currentData?.subfolders?.map((folder, index) => {
+              const { color, Icon } = getFolderDetails(folder.name);
+              const isChecked = selectedFolders.includes(folder.id);
+              return (
+                <DirectoryCard
+                  key={index}
+                  folder={folder}
+                  color={color}
+                  Icon={Icon}
+                  handleFolderClick={() =>
+                    handleFolderClick(folder.name, folder.id)
+                  }
+                  currentPath={currentPath}
+                  isChecked={selectedFolders.includes(folder.id)}
+                  handleCheckboxChange={() => handleCheckboxChange(folder.id)}
+                  handleDeleteFolder={handleDeleteFolder}
+                />
+              );
+            })}
+          </ul>
+          <ul className="w-full grid grid-cols-1 sm:grid-cols-3 gap-6 justify-center sm:justify-start">
+            {currentData?.files?.map((file, index) => {
+              const { color, Icon } = getFileDetails(file.mimeType);
+              const isChecked = selectedFolders.includes(file.id);
+              return (
+                <FileCard
+                  key={index}
+                  file={file}
+                  color={color}
+                  Icon={Icon}
+                  currentPath={currentPath}
+                  isChecked={selectedFolders.includes(file.id)}
+                  handleCheckboxChange={() => handleCheckboxChange(file.id)}
+                  handleDeleteFile={handleDeleteFile}
+                  refreshData={refreshData}
+                />
+              );
+            })}
+          </ul>
+        </>
+      )}
+    </>
   );
 }

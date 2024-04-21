@@ -1,5 +1,4 @@
 import { NavBar } from '@/components/layout/navbar';
-import { SiteFooter } from '@/components/layout/site-footer';
 import { marketingConfig } from '@/config/marketing';
 import { currentUser } from '@/lib/authCheck';
 import { Suspense } from 'react';
@@ -19,7 +18,6 @@ export default async function MarketingLayout({
         <NavBar user={user} items={marketingConfig.mainNav} scroll={true} />
       </Suspense>
       <main className="flex-1">{children}</main>
-      <SiteFooter />
     </div>
   );
 }

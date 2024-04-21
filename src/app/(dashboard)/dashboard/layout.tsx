@@ -1,10 +1,10 @@
 import React from 'react';
 import { DashboardShell } from './_components/dashboard-shell';
 import { cookies } from 'next/headers';
-import { db } from '@/lib/prisma';
-import { currentUser } from '@/lib/authCheck';
-import { userInfoTeam } from '@/server-actions/user-info-team';
-import TeamSwitcher from './_components/team-switcher';
+
+import { userInfoTeam } from '@/server-actions/team/user-info-team';
+import { SelectionProvider } from './(routes)/ai/(route)/_context/select-item';
+
 
 interface DashboardLayoutProps {
   children?: React.ReactNode;
@@ -28,10 +28,12 @@ const DashboardLayout = async ({ children }: DashboardLayoutProps) => {
       <DashboardShell
         defaultLayout={defaultLayout}
         defaultCollapsed={defaultCollapsed}
-        teams={teams}
+
       >
-        <main className={`flex min-h-screen w-full bg-muted`}>
-          <div className="w-full  px-4">{children}</div>
+        <main className="flex w-full bg-muted" style={{ minHeight: `calc(100vh - 3rem)` }}>
+          <SelectionProvider>
+            <div className="w-full  px-4">{children}</div>
+          </SelectionProvider>
         </main>
       </DashboardShell>
     </>

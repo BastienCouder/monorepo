@@ -25,7 +25,7 @@ export function DataTableViewOptions<TData>({
       <DropdownMenuTrigger asChild>
         <Button
           aria-label="Afficher les colonnes"
-          variant="outline"
+          variant="default"
           size="sm"
           className="ml-auto hidden h-8 lg:flex"
         >

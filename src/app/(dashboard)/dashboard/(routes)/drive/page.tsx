@@ -1,9 +1,9 @@
 import { currentUser } from '@/lib/authCheck';
-import { getUserTeams } from '@/server-actions/team/get-user-team';
+
 import React from 'react';
 import ActionsDrive from './_components/actions-drive';
-import CreateFolderModal from '../../../../../components/modal/create-modal';
 import { Team } from '@/schemas/db';
+import { getUserTeams } from '@/server-actions/user/get-user-team';
 
 export default async function drive() {
   const user = await currentUser();

@@ -7,7 +7,7 @@ export const createUserSchema = z.object({
   password: z.string().min(6).max(161),
   // // @ts-expect-error
   // role: z.enum(enumToArray(UserRole))
-  role: z.enum([UserRole.ADMIN, UserRole.USER]),
+  role: z.enum([UserRole.ADMINISTRATOR, UserRole.MEMBER]),
 });
 
 export const updateUserSchema = z.object({
@@ -16,7 +16,7 @@ export const updateUserSchema = z.object({
   newPassword: z.string().min(6).max(161).optional(),
   // // @ts-expect-error
   // role: z.enum(enumToArray(UserRole))
-  role: z.enum([UserRole.ADMIN, UserRole.USER]),
+  role: z.enum([UserRole.ADMINISTRATOR, UserRole.MEMBER]),
 });
 
 export const deleteUserSchema = z.object({

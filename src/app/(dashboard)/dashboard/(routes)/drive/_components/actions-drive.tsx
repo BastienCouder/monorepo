@@ -7,12 +7,15 @@ import { CreateJoinTeamForm } from './join-team-form';
 import FolderTeamCard from './folder-team-card';
 import { SearchInput } from '@/components/search-input';
 import { Team } from '@/schemas/db';
+import { Separator } from '@/components/ui/separator';
+import { BillingInfo } from '@/app/(app)/(marketing)/pricing/_components/billing-info';
 
 interface ActionsDrive {
   teams: Team[];
 }
 
 export default function ActionsDrive({ teams = [] }: ActionsDrive) {
+
   return (
     <section className="w-full space-y-6 lg:pr-4">
       <h1 className="font-bold text-2xl">My teams</h1>
@@ -29,7 +32,6 @@ export default function ActionsDrive({ teams = [] }: ActionsDrive) {
             variant={'outline'}
           />
         </div>
-        <SearchInput />
       </div>
       <ul className="flex justify-start gap-4 w-full flex-wrap sm:flex-nowrap">
         {teams.length > 0 ? (
@@ -42,6 +44,8 @@ export default function ActionsDrive({ teams = [] }: ActionsDrive) {
           </div>
         )}
       </ul>
+      <Separator className='bg-primary h-[2px]' />
+      <BillingInfo />
     </section>
   );
 }

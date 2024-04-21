@@ -108,6 +108,8 @@ export type SubscriptionPlan = {
     monthly: string | null;
     yearly: string | null;
   };
+  userStorageLimit: number;
+  teamStorageLimit: number;
 };
 
 export type UserSubscriptionPlan = SubscriptionPlan &

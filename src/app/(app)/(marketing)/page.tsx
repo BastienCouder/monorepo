@@ -48,7 +48,6 @@ export default async function IndexPage() {
               SaaS Starter
             </span>
           </h1>
-
           <p
             className="max-w-[42rem] animate-fade-up text-balance leading-normal text-muted-foreground opacity-0 sm:text-xl sm:leading-8"
             style={{ animationDelay: '0.35s', animationFillMode: 'forwards' }}

@@ -22,8 +22,7 @@ export const SignInModal = () => {
           </a>
           <h3 className="font-urban text-2xl font-bold">Sign In</h3>
           <p className="text-sm text-gray-500">
-            This is strictly for demo purposes - only your email and profile
-            picture will be stored.
+            Connect quickly with google.
           </p>
         </div>
 
@@ -34,7 +33,6 @@ export const SignInModal = () => {
             onClick={() => {
               setSignInClicked(true);
               signIn('google', { redirect: false }).then(() =>
-                // TODO: fix this without setTimeOut(), modal closes too quickly. Idea: update value before redirect
                 setTimeout(() => {
                   signInModal.onClose();
                 }, 1000)

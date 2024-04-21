@@ -6,7 +6,7 @@ export const SettingsSchema = z
     name: z.optional(z.string()),
     isTwoFactorEnabled: z.optional(z.boolean()),
     role: z.enum([
-      (UserRole.ADMIN = 'ADMIN'),
+      (UserRole.ADMINISTRATOR = 'ADMINISTRATOR'),
       (UserRole.OWNER = 'OWNER'),
       (UserRole.MEMBER = 'MEMBER'),
     ]),

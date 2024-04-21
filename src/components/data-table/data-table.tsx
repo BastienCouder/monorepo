@@ -1,3 +1,5 @@
+"use client"
+
 import * as React from 'react';
 import type {
   DataTableFilterableColumn,
@@ -19,9 +21,9 @@ import {
 } from '@/components/ui/table';
 
 import { DataTableAdvancedToolbar } from './advanced/data-table-advanced-toolbar';
-import { DataTableFloatingBar } from './data-table-floating-bar';
-import { DataTablePagination } from './data-table-pagination';
 import { DataTableToolbar } from './data-table-toolbar';
+import GridFoldersFiles from '@/app/(dashboard)/dashboard/(routes)/ai/(route)/_components/grid';
+
 
 interface DataTableProps<TData, TValue> {
   /**
@@ -76,6 +78,13 @@ interface DataTableProps<TData, TValue> {
    * @example deleteRowsAction={(event) => deleteSelectedRows(dataTable, event)}
    */
   deleteRowsAction?: React.MouseEventHandler<HTMLButtonElement>;
+
+  copyRowsAction?: (() => void) | undefined;
+  pasteRowsAction?: (() => void) | undefined;
+  goBack?: (() => void) | undefined;
+  basePath?: string,
+  data?: { folders: any[]; files: any[]; }
+  currentPath: React.Dispatch<React.SetStateAction<string>>
 }
 
 export function DataTable<TData, TValue>({
@@ -84,16 +93,33 @@ export function DataTable<TData, TValue>({
   searchableColumns = [],
   filterableColumns = [],
   advancedFilter = false,
-  floatingBarContent,
   deleteRowsAction,
+  copyRowsAction,
+  pasteRowsAction,
+  goBack,
+  basePath,
+  data,
+  currentPath
 }: DataTableProps<TData, TValue>) {
+  const [isGridView, setIsGridView] = React.useState(true);
+
+  const toggleView = () => {
+    setIsGridView(!isGridView);
+  };
   return (
     <div className="w-full space-y-2.5 overflow-auto">
       {advancedFilter ? (
         <DataTableAdvancedToolbar
-          dataTable={dataTable}
+          table={dataTable}
           filterableColumns={filterableColumns}
           searchableColumns={searchableColumns}
+          deleteRowsAction={deleteRowsAction}
+          copyRowsAction={copyRowsAction}
+          pasteRowsAction={pasteRowsAction}
+          goBack={goBack}
+          basePath={basePath}
+          isGridView={isGridView}
+          toggleView={toggleView}
         />
       ) : (
         <DataTableToolbar
@@ -101,66 +127,81 @@ export function DataTable<TData, TValue>({
           filterableColumns={filterableColumns}
           searchableColumns={searchableColumns}
           deleteRowsAction={deleteRowsAction}
+          copyRowsAction={copyRowsAction}
+          pasteRowsAction={pasteRowsAction}
+          goBack={goBack}
+          basePath={basePath}
+          isGridView={isGridView}
+          toggleView={toggleView}
         />
       )}
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            {dataTable.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
-                  );
-                })}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {dataTable.getRowModel().rows?.length ? (
-              dataTable.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && 'selected'}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
+      {isGridView ?
+        <>
+          <GridFoldersFiles data={data} setCurrentPath={currentPath} basePath={basePath} />
+        </>
+        : (
+          <>
+            <div className="rounded-md">
+              <Table>
+                <TableHeader>
+                  {dataTable.getHeaderGroups().map((headerGroup) => (
+                    <TableRow key={headerGroup.id}>
+                      {headerGroup.headers.map((header) => {
+                        return (
+                          <TableHead key={header.id}>
+                            {header.isPlaceholder
+                              ? null
+                              : flexRender(
+                                header.column.columnDef.header,
+                                header.getContext()
+                              )}
+                          </TableHead>
+                        );
+                      })}
+                    </TableRow>
                   ))}
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
-                  Aucun résultats.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </div>
-      <div className="space-y-2.5">
-        <DataTablePagination table={dataTable} />
-        {floatingBarContent ? (
-          <DataTableFloatingBar table={dataTable}>
-            {floatingBarContent}
-          </DataTableFloatingBar>
-        ) : null}
-      </div>
+                </TableHeader>
+
+                <TableBody>
+                  {dataTable.getRowModel().rows?.length ? (
+                    dataTable.getRowModel().rows.map((row) => (
+                      <TableRow
+                        key={row.id}
+                        data-state={row.getIsSelected() && 'selected'}
+                      >
+                        {row.getVisibleCells().map((cell) => (
+                          <TableCell key={cell.id}>
+                            {flexRender(
+                              cell.column.columnDef.cell,
+                              cell.getContext()
+                            )}
+                          </TableCell>
+                        ))}
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell
+                        colSpan={columns.length}
+                        className="h-24 text-center"
+                      >
+                        Aucun résultats.
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </div>
+            {/* <div className="space-y-2.5">
+              <DataTablePagination table={dataTable} />
+              {floatingBarContent ? (
+                <DataTableFloatingBar table={dataTable}>
+                  {floatingBarContent}
+                </DataTableFloatingBar>
+              ) : null}
+            </div> */}
+          </>
+        )}
     </div>
   );
 }

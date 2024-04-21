@@ -1,4 +1,5 @@
 import type { Config } from 'tailwindcss';
+const { fontFamily } = require('tailwindcss/defaultTheme');
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
@@ -19,6 +20,9 @@ module.exports = {
       },
     },
     extend: {
+      minHeight: {
+        'screen-body': 'calc(100vh - 0rem)',
+      },
       screens: {
         productTablet: '768px',
         productDesktop: '1068px',
@@ -60,8 +64,9 @@ module.exports = {
         },
       },
       fontFamily: {
-        inter: 'var(--font-inter)',
-        prata: 'var(--font-prata)',
+        sans: ['var(--font-sans)', ...fontFamily.sans],
+        urban: ['var(--font-urban)', ...fontFamily.sans],
+        heading: ['var(--font-heading)', ...fontFamily.sans],
       },
       borderRadius: {
         lg: 'var(--radius)',

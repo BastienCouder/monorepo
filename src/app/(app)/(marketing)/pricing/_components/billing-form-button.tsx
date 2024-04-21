@@ -1,0 +1,60 @@
+'use client';
+
+import { Icons } from '@/components/shared/icons';
+import { Button } from '@/components/ui/button';
+import { generateUserStripe } from '@/server-actions/generate-user-stripe';
+import { SubscriptionPlan, UserSubscriptionPlan } from '@/types';
+import { useTransition } from 'react';
+
+interface BillingFormButtonProps {
+  offer: SubscriptionPlan;
+  subscriptionPlan: UserSubscriptionPlan;
+  year: boolean;
+}
+
+export function BillingFormButton({
+  year,
+  offer,
+  subscriptionPlan,
+}: BillingFormButtonProps) {
+  let [isPending, startTransition] = useTransition();
+  const generateUserStripeSession = generateUserStripe.bind(
+    null,
+    offer.stripeIds[year ? 'yearly' : 'monthly']!
+  );
+
+  const stripeSessionAction = () => {
+    startTransition(() => {
+      generateUserStripeSession()
+        .then(() => {
+          // Handle success if needed
+        })
+        .catch((error) => {
+          // Handle error if needed
+          console.error(error);
+        });
+    });
+  };
+
+  return (
+    <Button
+      variant="default"
+      className="w-full"
+      disabled={isPending}
+      onClick={stripeSessionAction}
+    >
+      {isPending ? (
+        <>
+          <Icons.spinner className="mr-2 size-4 animate-spin" /> Loading...
+        </>
+      ) : (
+        <>
+          {subscriptionPlan.stripePriceId ===
+            offer.stripeIds[year ? 'yearly' : 'monthly']
+            ? 'Manage Subscription'
+            : 'Get started'}
+        </>
+      )}
+    </Button>
+  );
+}

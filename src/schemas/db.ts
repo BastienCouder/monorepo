@@ -2,7 +2,13 @@
 
 import { z } from 'zod';
 
-export const UserRole = z.enum(['ADMIN', 'OWNER', 'MEMBER']);
+export const UserRole = z.enum([
+  'ADMINISTRATOR',
+  'OWNER',
+  'MEMBER',
+  'EDITOR',
+  'READER',
+]);
 
 const UserSchema: z.ZodSchema<any> = z.lazy(() =>
   z.object({
