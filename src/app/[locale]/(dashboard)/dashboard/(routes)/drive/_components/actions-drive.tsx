@@ -8,7 +8,7 @@ import FolderTeamCard from './folder-team-card';
 import { SearchInput } from '@/components/search-input';
 import { Team } from '@/schemas/db';
 import { Separator } from '@/components/ui/separator';
-import { BillingInfo } from '@/app/(app)/(marketing)/pricing/_components/billing-info';
+import { BillingInfo } from '@/app/[locale]/(app)/(marketing)/pricing/_components/billing-info';
 
 interface ActionsDrive {
   teams: Team[];
