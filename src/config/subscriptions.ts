@@ -77,26 +77,4 @@ export const pricingData: SubscriptionPlan[] = [
     userStorageLimit: 500000000, // 5 GB for individual users
     teamStorageLimit: 1000000000, // 10 GB for teams
   },
-  {
-    title: 'Business',
-    description: 'For Power Users',
-    benefits: [
-      'Unlimited posts',
-      'Real-time analytics and reporting',
-      'Access to all templates, including custom branding',
-      '24/7 business customer support',
-      'Personalized onboarding and account management.',
-    ],
-    limitations: [],
-    prices: {
-      monthly: 30,
-      yearly: 300,
-    },
-    stripeIds: {
-      monthly: env.NEXT_PUBLIC_STRIPE_BUSINESS_MONTHLY_PLAN_ID,
-      yearly: env.NEXT_PUBLIC_STRIPE_BUSINESS_YEARLY_PLAN_ID,
-    },
-    userStorageLimit: 500000000, // 5 GB for individual users
-    teamStorageLimit: 1000000000, // 10 GB for teams
-  },
 ];

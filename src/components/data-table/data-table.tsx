@@ -1,4 +1,4 @@
-"use client"
+'use client';
 
 import * as React from 'react';
 import type {
@@ -22,8 +22,9 @@ import {
 
 import { DataTableAdvancedToolbar } from './advanced/data-table-advanced-toolbar';
 import { DataTableToolbar } from './data-table-toolbar';
-import GridFoldersFiles from '@/app/(dashboard)/dashboard/(routes)/ai/(route)/_components/grid';
-
+import GridFoldersFiles from '@/components/dnd/grid';
+import { useSelection } from '@/app/[locale]/(dashboard)/dashboard/(routes)/ai/(route)/_context/select-item';
+import { GridSkeleton } from '../skeleton/grid-skeleton';
 
 interface DataTableProps<TData, TValue> {
   /**
@@ -78,13 +79,16 @@ interface DataTableProps<TData, TValue> {
    * @example deleteRowsAction={(event) => deleteSelectedRows(dataTable, event)}
    */
   deleteRowsAction?: React.MouseEventHandler<HTMLButtonElement>;
+  operateRowsAction?: React.MouseEventHandler<HTMLButtonElement>;
 
   copyRowsAction?: (() => void) | undefined;
   pasteRowsAction?: (() => void) | undefined;
   goBack?: (() => void) | undefined;
-  basePath?: string,
-  data?: { folders: any[]; files: any[]; }
-  currentPath: React.Dispatch<React.SetStateAction<string>>
+  basePath?: string;
+  data?: { folders: any[]; files: any[] };
+  currentPath: React.Dispatch<React.SetStateAction<string>>;
+  isLoading: boolean;
+  teamId?: string | undefined;
 }
 
 export function DataTable<TData, TValue>({
@@ -94,17 +98,27 @@ export function DataTable<TData, TValue>({
   filterableColumns = [],
   advancedFilter = false,
   deleteRowsAction,
+  operateRowsAction,
   copyRowsAction,
   pasteRowsAction,
   goBack,
   basePath,
   data,
-  currentPath
+  isLoading,
+  currentPath,
+  teamId,
 }: DataTableProps<TData, TValue>) {
   const [isGridView, setIsGridView] = React.useState(true);
+  const { clearSelection } = useSelection();
+
+  const resetDataTableState = () => {
+    // dataTable.getIsAllRowsSelected = [];:
+  };
 
   const toggleView = () => {
     setIsGridView(!isGridView);
+    clearSelection();
+    resetDataTableState();
   };
   return (
     <div className="w-full space-y-2.5 overflow-auto">
@@ -115,17 +129,20 @@ export function DataTable<TData, TValue>({
           searchableColumns={searchableColumns}
           deleteRowsAction={deleteRowsAction}
           copyRowsAction={copyRowsAction}
+          operateRowsAction={operateRowsAction}
           pasteRowsAction={pasteRowsAction}
           goBack={goBack}
           basePath={basePath}
           isGridView={isGridView}
           toggleView={toggleView}
+          teamId={teamId}
         />
       ) : (
         <DataTableToolbar
           table={dataTable}
           filterableColumns={filterableColumns}
           searchableColumns={searchableColumns}
+          operateRowsAction={operateRowsAction}
           deleteRowsAction={deleteRowsAction}
           copyRowsAction={copyRowsAction}
           pasteRowsAction={pasteRowsAction}
@@ -135,64 +152,70 @@ export function DataTable<TData, TValue>({
           toggleView={toggleView}
         />
       )}
-      {isGridView ?
+      {isGridView ? (
         <>
-          <GridFoldersFiles data={data} setCurrentPath={currentPath} basePath={basePath} />
+          {!isLoading ? (
+            <GridSkeleton />
+          ) : (
+            <>
+              <GridFoldersFiles data={data} setCurrentPath={currentPath} />
+            </>
+          )}
         </>
-        : (
-          <>
-            <div className="rounded-md">
-              <Table>
-                <TableHeader>
-                  {dataTable.getHeaderGroups().map((headerGroup) => (
-                    <TableRow key={headerGroup.id}>
-                      {headerGroup.headers.map((header) => {
-                        return (
-                          <TableHead key={header.id}>
-                            {header.isPlaceholder
-                              ? null
-                              : flexRender(
+      ) : (
+        <>
+          <div className="rounded-sm">
+            <Table>
+              <TableHeader>
+                {dataTable.getHeaderGroups().map((headerGroup) => (
+                  <TableRow key={headerGroup.id}>
+                    {headerGroup.headers.map((header) => {
+                      return (
+                        <TableHead key={header.id}>
+                          {header.isPlaceholder
+                            ? null
+                            : flexRender(
                                 header.column.columnDef.header,
                                 header.getContext()
                               )}
-                          </TableHead>
-                        );
-                      })}
-                    </TableRow>
-                  ))}
-                </TableHeader>
+                        </TableHead>
+                      );
+                    })}
+                  </TableRow>
+                ))}
+              </TableHeader>
 
-                <TableBody>
-                  {dataTable.getRowModel().rows?.length ? (
-                    dataTable.getRowModel().rows.map((row) => (
-                      <TableRow
-                        key={row.id}
-                        data-state={row.getIsSelected() && 'selected'}
-                      >
-                        {row.getVisibleCells().map((cell) => (
-                          <TableCell key={cell.id}>
-                            {flexRender(
-                              cell.column.columnDef.cell,
-                              cell.getContext()
-                            )}
-                          </TableCell>
-                        ))}
-                      </TableRow>
-                    ))
-                  ) : (
-                    <TableRow>
-                      <TableCell
-                        colSpan={columns.length}
-                        className="h-24 text-center"
-                      >
-                        Aucun résultats.
-                      </TableCell>
+              <TableBody>
+                {dataTable.getRowModel().rows?.length ? (
+                  dataTable.getRowModel().rows.map((row) => (
+                    <TableRow
+                      key={row.id}
+                      data-state={row.getIsSelected() && 'selected'}
+                    >
+                      {row.getVisibleCells().map((cell) => (
+                        <TableCell key={cell.id}>
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
+                          )}
+                        </TableCell>
+                      ))}
                     </TableRow>
-                  )}
-                </TableBody>
-              </Table>
-            </div>
-            {/* <div className="space-y-2.5">
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell
+                      colSpan={columns.length}
+                      className="h-24 text-center"
+                    >
+                      Aucun résultats.
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </div>
+          {/* <div className="space-y-2.5">
               <DataTablePagination table={dataTable} />
               {floatingBarContent ? (
                 <DataTableFloatingBar table={dataTable}>
@@ -200,8 +223,8 @@ export function DataTable<TData, TValue>({
                 </DataTableFloatingBar>
               ) : null}
             </div> */}
-          </>
-        )}
+        </>
+      )}
     </div>
   );
 }

@@ -26,7 +26,6 @@ import {
 import { createUserSchema } from '@/schemas/user';
 import { useRouter } from 'next/navigation';
 
-
 import { toast } from '@/components/ui/use-toast';
 import { admin } from '@/server-actions/auth/admin.action';
 import { createUser } from '@/server-actions/auth/users.action';

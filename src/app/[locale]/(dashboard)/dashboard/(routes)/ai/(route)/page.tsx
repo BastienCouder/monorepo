@@ -3,28 +3,36 @@ import type { SearchParams } from '@/types';
 
 import { DataTableSkeleton } from '@/components/data-table/data-table-skeleton';
 
-
 import { Metadata } from 'next';
 import { siteConfig } from '@/config/site';
 import { FoldersFilesTable } from './_components/folders-files-table';
-import File from './_components/interface-multi-files';
+import { getTranslations } from 'next-intl/server';
+import { currentUser } from '@/lib/authCheck';
+import { db } from '@/lib/prisma';
+import { User } from '@/schemas/db';
 
-
-export interface UsersPageProps {
+export interface AIPageProps {
   searchParams: SearchParams;
 }
 
-export async function generateMetadata(): Promise<Metadata> {
+export async function generateMetadata({
+  params: { locale },
+}: {
+  params: { locale: string };
+}): Promise<Metadata> {
+  const t = await getTranslations({ locale, namespace: 'Metadata' });
+
   return {
-    title: `Gestion des Utilisateurs - ${siteConfig.name}`,
-    description: `Administrez efficacement les utilisateurs de votre plateforme avec notre outil de gestion. Ajoutez, supprimez, ou modifiez les informations des membres pour maintenir votre communauté active et sécurisée.`,
+    title: `${t('ai-title')} - ${siteConfig.name}`,
+    description: `${t('ai-description')}`,
     robots: { index: false, follow: false, nocache: false },
   };
 }
 
-export default async function UsersPage({ searchParams }: UsersPageProps) {
+export default async function AIPage({ searchParams }: AIPageProps) {
+  const user: User = await currentUser();
 
-
+  const userData: User = await db.user.findUnique({ where: { id: user?.id } });
 
   return (
     <>
@@ -40,7 +48,7 @@ export default async function UsersPage({ searchParams }: UsersPageProps) {
            * By encapsulating the `DataTable` component within the `usertable` component, we can ensure that the necessary logic and state management is handled correctly.
            */}
 
-          <FoldersFilesTable searchParams={searchParams} />
+          <FoldersFilesTable searchParams={searchParams} user={userData} />
         </React.Suspense>
       </div>
     </>
@@ -53,14 +61,14 @@ const generateFakeData = (type: any, itemCount: any) => {
   for (let i = 0; i < itemCount; i++) {
     if (type === 'folder') {
       data.push({
-        id: `folder-${i}`,
-        name: `Dossier ${i + 1}`,
+        id: `folder - ${i} `,
+        name: `Dossier ${i + 1} `,
         createdAt: new Date().toISOString(),
       });
     } else if (type === 'file') {
       data.push({
-        id: `file-${i}`,
-        name: `Fichier ${i + 1}`,
+        id: `file - ${i} `,
+        name: `Fichier ${i + 1} `,
         size: Math.floor(Math.random() * 1024 * 1024), // Taille aléatoire en octets
         createdAt: new Date().toISOString(),
       });

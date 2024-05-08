@@ -2,18 +2,18 @@ import { Icons } from '@/components/shared/icons';
 import { DashboardConfig } from '@/types';
 import { useTranslations } from 'next-intl';
 
-export function useDashboardConfig(): DashboardConfig {
-  const t = useTranslations('DashboardConfig');
+export function useDashboardConfig() {
+  // const t = useTranslations('DashboardConfig');
 
   // Configuration object using translated strings
   const dashboardConfig: DashboardConfig = {
     mainNav: [
       {
-        title: t('Documentation'),
+        title: 'Documentation',
         href: '/docs',
       },
       {
-        title: t('Support'),
+        title: 'support',
         href: '/support',
         disabled: true,
       },
@@ -25,20 +25,25 @@ export function useDashboardConfig(): DashboardConfig {
       //   icon: Icons.file,
       // },
       {
-        title: t('Drive'),
-        href: '/dashboard/drive',
-        icon: Icons.drive,
-      },
-      {
-        title: t('AI'),
-        href: '/dashboard/ai',
+        title: 'Documentation',
+        href: '/docs',
         icon: Icons.spinner,
       },
       // {
-      //   title: t('Upgrade'),
-      //   href: '/pricing',
-      //   icon: Icons.billing,
+      //   title: 'Drive',
+      //   href: '/dashboard/drive',
+      //   icon: Icons.drive,
       // },
+      {
+        title: 'AI',
+        href: '/dashboard/ai',
+        icon: Icons.spinner,
+      },
+      {
+        title: 'Upgrade',
+        href: '/pricing',
+        icon: Icons.billing,
+      },
       // {
       //   title: t('Settings'),
       //   href: '/dashboard/settings',

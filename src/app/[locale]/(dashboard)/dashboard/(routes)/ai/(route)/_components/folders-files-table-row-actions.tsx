@@ -33,19 +33,19 @@ type WithId = {
 type FolderFileTableRowActionsProps<TData extends WithId> = {
   row: Row<TData>;
   startTransition: React.TransitionStartFunction;
-  setCurrentPath: (path: string) => void,
+  setCurrentPath: (path: string) => void;
 };
 
 function FolderFileTableRowActions<TData extends WithId>({
   row,
   startTransition,
-  setCurrentPath
+  setCurrentPath,
 }: FolderFileTableRowActionsProps<TData>) {
   const [showEditDialog, setShowEditDialog] = useState<boolean>(false);
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <div className='h-full'>
+        <div className="h-full">
           <Button
             aria-label="Open menu"
             variant="default"
@@ -59,37 +59,24 @@ function FolderFileTableRowActions<TData extends WithId>({
         <DropdownMenuContent align="end" className="w-[160px]">
           <DialogTrigger asChild>
             <DropdownMenuItem>
-
-              <CreateRenameModal
-                itemId={row.original.id}
-              />
+              <CreateRenameModal itemId={row.original.id} type="name" />
             </DropdownMenuItem>
           </DialogTrigger>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem
-            onClick={() => {
-              startTransition(() => {
-                row.toggleSelected(false);
 
-                toast.promise(
-                  deleteItem(
-                    row.original.id,
-                  ),
-                  {
-                    loading: 'EN cours de suppression...',
-                    success: () => "L'utilisateur a été supprimé avec succès.",
-                    error: (err: unknown) => catchError(err),
-                  }
-                );
-              });
-            }}
+          <DropdownMenuItem
+            onClick={() => console.log('Download file:', row.original.id)}
           >
-            Supprimer
+            Download
           </DropdownMenuItem>
+
           {row.original.hasOwnProperty('size') ? (
-            <DropdownMenuItem onClick={() => console.log('Download file:', row.original.id)}>Download  </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setCurrentPath(row.original.id)}>
+              Open
+            </DropdownMenuItem>
           ) : (
-            <DropdownMenuItem onClick={() => setCurrentPath(row.original.id)}>Open  </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setCurrentPath(row.original.id)}>
+              Open
+            </DropdownMenuItem>
           )}
         </DropdownMenuContent>
         <DialogContent>

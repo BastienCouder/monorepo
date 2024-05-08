@@ -3,7 +3,6 @@ import type { SearchParams } from '@/types';
 
 import { DataTableSkeleton } from '@/components/data-table/data-table-skeleton';
 
-
 import { Metadata } from 'next';
 import { DriveTable } from './_components/drive-table';
 import { db } from '@/lib/prisma';
@@ -14,10 +13,11 @@ import { getTeamMembers } from '@/server-actions/team/get-team-members';
 import { SettingsTeam } from './_components/settings-team';
 import { getUserRoleInTeam } from '@/server-actions/team/get-user-role-team';
 import { siteConfig } from '@/config/site';
+import { getTranslations, unstable_setRequestLocale } from 'next-intl/server';
 
 export interface UsersPageProps {
   searchParams: SearchParams;
-  params: { slug: string, locale: string }
+  params: { slug: string; locale: string };
 }
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -28,21 +28,25 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default async function UsersPage({ searchParams, params }: UsersPageProps) {
-  const user = await currentUser()
+export default async function DriveTeamPage({
+  searchParams,
+  params,
+}: UsersPageProps) {
+  const user = await currentUser();
+  unstable_setRequestLocale(params.locale);
 
   const team = await db.team.findUnique({
     where: {
       slug: params.slug,
     },
   });
-  if (!team || !user) {
-    return
-  }
-  const userTeam = await getTeamMembers(team.id)
 
-  const role = await getUserRoleInTeam(team.id, user.id)
-  console.log(role);
+  if (!team || !user) {
+    return;
+  }
+
+  const userTeam = await getTeamMembers(team.id);
+  const role = await getUserRoleInTeam(team.id, user.id);
 
   return (
     <>
@@ -57,12 +61,12 @@ export default async function UsersPage({ searchParams, params }: UsersPageProps
            * This is done because the table columns need to be memoized, and the `useDataTable` hook needs to be called in a client component.
            * By encapsulating the `DataTable` component within the `usertable` component, we can ensure that the necessary logic and state management is handled correctly.
            */}
-          <section className="w-full space-y-2 lg:pr-4">
+          <section className="w-full space-y-2">
             <div className="w-full flex justify-between">
               <h1 className="font-bold text-xl first-letter:uppercase">
                 {team?.name}
               </h1>
-              <div className='flex gap-4'>
+              <div className="flex gap-4">
                 {/* {userTeam.map((user, index) => (
                   <img
                     key={index}
@@ -76,11 +80,11 @@ export default async function UsersPage({ searchParams, params }: UsersPageProps
                   <SettingsTeam team={team} userId={user.id} />
                 )}
                 <Link href={'/dashboard/drive'}>
-                  <Button>Back</Button>
+                  <Button>back</Button>
                 </Link>
               </div>
             </div>
-            <DriveTable searchParams={searchParams} team={team} userTeam={userTeam} />
+            <DriveTable searchParams={searchParams} team={team} />
           </section>
         </React.Suspense>
       </div>

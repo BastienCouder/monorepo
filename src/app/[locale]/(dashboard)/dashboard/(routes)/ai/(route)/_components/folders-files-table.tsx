@@ -1,44 +1,41 @@
 'use client';
-
 import React, { useState, useEffect, useMemo } from 'react';
 import { useDataTable } from '@/hooks/use-data-table';
 import { getFoldersFiles } from '../_lib/queries';
 import {
-  fetchItemsTableColumnDefs, searchableColumns,
+  fetchItemsTableColumnDefs,
+  searchableColumns,
   filterableColumns,
 } from './folders-files-table-column-def';
 import { SearchParams } from '@/types';
-import { useCurrentUser } from '@/hooks/use-current-user';
 import { DataTable } from '@/components/data-table/data-table';
-import { copySelectedRows, deleteSelectedRows, pasteSelectedRows } from './folders-files-table-actions';
-import File from './interface-multi-files';
+import {
+  copySelectedRows,
+  deleteSelectedRows,
+  operateSelectedRows,
+  pasteSelectedRows,
+} from './folders-files-table-actions';
+import InterfaceMultiDropzone from './interface-multi-dropzone';
 import { useSelection } from '../_context/select-item';
+import { Folder, File, User } from '@/schemas/db';
 
-interface Folder {
-  id: string;
-  name: string;
-  createdAt: Date;
-}
-
-interface File {
-  id: string;
-  name: string;
-  size: number;
-  createdAt: Date;
-}
-
-type Item = Folder | File;
-
-export function FoldersFilesTable({ searchParams }: { searchParams: SearchParams }) {
-  const user = useCurrentUser();
-  const { selectedItems } = useSelection();
+export function FoldersFilesTable({
+  searchParams,
+  user,
+}: {
+  searchParams: SearchParams;
+  user: User;
+}) {
+  const { selectedItems, clearSelection } = useSelection();
 
   const userId = user?.id;
   const [pathHistory, setPathHistory] = useState<string[]>([]);
   const [currentPath, setCurrentPath] = useState('');
-  const [folderFiles, setFolderFiles] = useState<{ folders: Folder[]; files: File[] }>({ folders: [], files: [] });
-  const [pageCount, setPageCount] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
+  const [folderFiles, setFolderFiles] = useState<{
+    folders: Folder[];
+    files: File[];
+  }>({ folders: [], files: [] });
+  const [isLoading, setIsLoading] = useState(false);
 
   const goBack = () => {
     const newPathHistory = [...pathHistory];
@@ -50,18 +47,20 @@ export function FoldersFilesTable({ searchParams }: { searchParams: SearchParams
   useEffect(() => {
     const fetchData = async () => {
       if (userId) {
-        setIsLoading(true);
         try {
-          const response = await getFoldersFiles(userId, currentPath, searchParams);
+          const response = await getFoldersFiles(
+            userId,
+            currentPath,
+            searchParams
+          );
+          setIsLoading(true);
           setFolderFiles({
             folders: response.folders.data,
             files: response.files.data,
           });
-          setPageCount(response.folders.pageCount as number);
         } catch (error) {
           console.error('Failed to fetch data:', error);
         } finally {
-          setIsLoading(false);
         }
       }
     };
@@ -71,17 +70,20 @@ export function FoldersFilesTable({ searchParams }: { searchParams: SearchParams
   const [isPending, startTransition] = React.useTransition();
 
   const columns = useMemo(() => {
-    return fetchItemsTableColumnDefs(setCurrentPath, isPending, startTransition);
+    return fetchItemsTableColumnDefs(
+      setCurrentPath,
+      isPending,
+      startTransition
+    );
   }, [folderFiles, setCurrentPath, isPending]);
-
 
   useEffect(() => {
     if (currentPath && !pathHistory.includes(currentPath)) {
-      setPathHistory(prev => [...prev, currentPath]);
+      setPathHistory((prev) => [...prev, currentPath]);
     }
   }, [currentPath]);
 
-  const { dataTable } = useDataTable<Item, unknown>({
+  const { dataTable } = useDataTable<Folder | File, unknown>({
     data: [...folderFiles.folders, ...folderFiles.files],
     columns,
     searchableColumns,
@@ -89,9 +91,10 @@ export function FoldersFilesTable({ searchParams }: { searchParams: SearchParams
   });
 
   return (
-    <div className='space-y-4 overflow-hidden mb-10'>
-      <File folderId={currentPath} />
+    <div className="space-y-4 overflow-hidden mb-10">
+      <InterfaceMultiDropzone folderId={currentPath} user={user} />
       <DataTable
+        isLoading={isLoading}
         dataTable={dataTable}
         columns={columns}
         searchableColumns={searchableColumns}
@@ -99,13 +102,15 @@ export function FoldersFilesTable({ searchParams }: { searchParams: SearchParams
         basePath={currentPath}
         data={folderFiles}
         // floatingBarContent={FoldersFilesTableFloatingBarContent(dataTable, userId!, currentPath)}
-        deleteRowsAction={() => deleteSelectedRows(dataTable, userId!)}
+        deleteRowsAction={() =>
+          deleteSelectedRows(selectedItems, dataTable, clearSelection)
+        }
+        operateRowsAction={() => operateSelectedRows(selectedItems, dataTable)}
         copyRowsAction={() => copySelectedRows(selectedItems, dataTable)}
-        pasteRowsAction={() => pasteSelectedRows(userId!, currentPath)}
+        pasteRowsAction={() => pasteSelectedRows(currentPath)}
         goBack={() => goBack()}
         currentPath={setCurrentPath}
       />
-
     </div>
   );
 }

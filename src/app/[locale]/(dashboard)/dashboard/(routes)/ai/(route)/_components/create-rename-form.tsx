@@ -33,10 +33,7 @@ type FormType = {
   itemId: string;
 };
 
-export function CreateRenameForm({
-  setIsOpen,
-  itemId
-}: FormType) {
+export function CreateRenameForm({ setIsOpen, itemId }: FormType) {
   const session = useCurrentUser();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -52,14 +49,14 @@ export function CreateRenameForm({
       const userId = session?.id;
 
       if (userId && itemId) {
-        await renameItem(itemId, userId, capitalize(data.name));
+        const res = await renameItem(itemId, userId, data.name);
+        console.log(res);
       }
       toast({
-        title: 'Folder created',
+        title: 'Item Rename',
       });
       router.refresh();
       setIsOpen(false);
-
     } catch (error) {
       console.error(error);
       toast({
@@ -80,7 +77,7 @@ export function CreateRenameForm({
             <FormItem>
               <FormLabel>Name</FormLabel>
               <FormControl>
-                <Input placeholder="..." {...field} />
+                <Input placeholder="New Name..." {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>

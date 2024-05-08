@@ -13,7 +13,7 @@ export default function Logo({ isCollapsed }: ILogo) {
   return (
     <div
       className={cn(
-        'flex h-[52px] items-center',
+        'flex h-[52px] items-start py-2',
         'justify-center',
         isCollapsed ? 'h-[52px]' : 'px-2'
       )}

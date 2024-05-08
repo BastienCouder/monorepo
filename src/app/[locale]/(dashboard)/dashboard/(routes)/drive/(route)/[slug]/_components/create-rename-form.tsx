@@ -33,10 +33,7 @@ type FormType = {
   itemId: string;
 };
 
-export function CreateRenameForm({
-  setIsOpen,
-  itemId
-}: FormType) {
+export function CreateRenameForm({ setIsOpen, itemId }: FormType) {
   const session = useCurrentUser();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -59,7 +56,6 @@ export function CreateRenameForm({
       });
       router.refresh();
       setIsOpen(false);
-
     } catch (error) {
       console.error(error);
       toast({

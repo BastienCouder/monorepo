@@ -29,7 +29,17 @@ export function DataTableColumnHeader<TData, TValue>({
   className,
 }: DataTableColumnHeaderProps<TData, TValue>) {
   if (column.getCanSort() || !column.getCanSort()) {
-    return (<div className='flex'> <div className={`text-xs bg-primary rounded-md flex text-background px-3 py-2 ${cn(className)}`}> <p className='bg-primary'>{title}</p> </div></div>);
+    return (
+      <div className="flex">
+        {' '}
+        <div
+          className={`text-xs rounded-md flex text-background px-3 py-2 ${cn(className)}`}
+        >
+          {' '}
+          <p className="text-foreground font-semibold text-[0.8rem]">{title}</p>{' '}
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -44,7 +54,7 @@ export function DataTableColumnHeader<TData, TValue>({
                   ? `Tri croissant. Cliquez pour trier par ordre décroissant.`
                   : `Non trié. Cliquez pour trier par ordre croissant.`
             }
-            variant="default"
+            variant="ghost"
             size="sm"
             className="-ml-3 h-8 data-[state=open]:bg-primary/80"
           >

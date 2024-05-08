@@ -6,17 +6,20 @@ import { cva, type VariantProps } from 'class-variance-authority';
 
 import { cn } from '@/lib/utils';
 
-const progressVariants = cva('h-full w-full flex-1 bg-primary transition-all', {
-  variants: {
-    variant: {
-      default: 'bg-primary',
-      success: 'bg-emerald-700',
+const progressVariants = cva(
+  'h-full w-full flex-1 rounded-md bg-primary transition-all',
+  {
+    variants: {
+      variant: {
+        default: 'bg-primary',
+        success: 'bg-emerald-700',
+      },
     },
-  },
-  defaultVariants: {
-    variant: 'default',
-  },
-});
+    defaultVariants: {
+      variant: 'default',
+    },
+  }
+);
 
 export interface ProgressProps
   extends React.HTMLAttributes<HTMLDivElement>,
@@ -32,7 +35,7 @@ const Progress = React.forwardRef<
   <ProgressPrimitive.Root
     ref={ref}
     className={cn(
-      'relative h-4 w-full border overflow-hidden rounded-full bg-background',
+      'relative h-2 w-full border  rounded-md overflow-hidden bg-background',
       className
     )}
     {...props}

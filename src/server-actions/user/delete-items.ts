@@ -1,5 +1,9 @@
 'use server';
+import { currentUser } from '@/lib/authCheck';
+import { storage } from '@/lib/firebase';
 import { db } from '@/lib/prisma';
+import { File } from '@/schemas/db';
+import { deleteObject, ref } from 'firebase/storage';
 import { revalidatePath } from 'next/cache';
 
 async function deleteFolderRecursively(
@@ -35,7 +39,25 @@ async function deleteFolderRecursively(
   return sizeDeleted;
 }
 
-export async function deleteItems(itemIds: string[], userId: string) {
+async function deleteFileFromFirebase(firebaseUrl: string) {
+  try {
+    const fileRef = ref(storage, firebaseUrl);
+    await deleteObject(fileRef);
+    console.log(`File deleted from Firebase Storage: ${firebaseUrl}`);
+  } catch (error) {
+    console.error('Failed to delete file from Firebase:', error);
+    throw new Error('Failed to delete file from Firebase');
+  }
+}
+export async function deleteItems(itemIds: string[]) {
+  const user = await currentUser();
+  const userId = user?.id;
+  console.log('items: ', itemIds);
+
+  if (!userId) {
+    return;
+  }
+
   const results = [];
   let totalSizeDeleted = 0;
 
@@ -52,13 +74,17 @@ export async function deleteItems(itemIds: string[], userId: string) {
           success: 'Folder and its contents deleted successfully.',
         });
       } else {
-        const file = await db.file.findUnique({
+        const file: File = await db.file.findUnique({
           where: { id: itemId, userId: userId },
-          select: { size: true },
+          select: { size: true, path: true },
         });
 
         if (file) {
           totalSizeDeleted += file.size;
+
+          console.log(file.path);
+
+          // await deleteFileFromFirebase(file.path);
           await db.file.delete({
             where: { id: itemId, userId: userId },
           });
@@ -79,6 +105,7 @@ export async function deleteItems(itemIds: string[], userId: string) {
   if (totalSizeDeleted > 0) {
     await updateUserStorage(userId, -totalSizeDeleted);
   }
+  console.log(results);
 
   revalidatePath('/dashboard');
   return results;

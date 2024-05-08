@@ -4,20 +4,23 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useDataTable } from '@/hooks/use-data-table';
 import { getDrive } from '../_lib/queries';
 import {
-  fetchItemsTableColumnDefs, searchableColumns,
+  fetchItemsTableColumnDefs,
+  searchableColumns,
   filterableColumns,
 } from './folders-files-table-column-def';
 import { SearchParams } from '@/types';
-import { useCurrentUser } from '@/hooks/use-current-user';
 import { DataTable } from '@/components/data-table/data-table';
-import { copySelectedRows, deleteSelectedRows, pasteSelectedRows } from './folders-files-table-actions';
-import File from './interface-multi-files';
-import { Team, User } from '@/schemas/db';
+import { Team } from '@/schemas/db';
 import { useSelection } from '../../../../ai/(route)/_context/select-item';
-import TeamStorageInfo from '../_component/team-storage-progress';
-import CreateModal from '@/components/modal/create-modal';
-import { CreateInviteForm } from './create-invite-form';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+
+import {
+  copySelectedRows,
+  deleteSelectedRows,
+  operateSelectedRows,
+  pasteSelectedRows,
+} from './folders-files-table-actions';
+import InterfaceMulfile from './interface-multi-files';
+import { useCurrentUser } from '@/hooks/use-current-user';
 
 interface Folder {
   id: string;
@@ -32,16 +35,22 @@ interface File {
   createdAt: Date;
 }
 
-type Item = Folder | File;
-
-export function DriveTable({ searchParams, team, userTeam }: { searchParams: SearchParams, team: Team, userTeam: User }) {
+export function DriveTable({
+  searchParams,
+  team,
+}: {
+  searchParams: SearchParams;
+  team: Team;
+}) {
   const user = useCurrentUser();
-  const { selectedItems } = useSelection();
-
-  const userId = user?.id;
+  const { selectedItems, clearSelection } = useSelection();
   const [pathHistory, setPathHistory] = useState<string[]>([]);
   const [currentPath, setCurrentPath] = useState('');
-  const [folderFiles, setFolderFiles] = useState<{ folders: Folder[]; files: File[] }>({ folders: [], files: [] });
+  const [folderFiles, setFolderFiles] = useState<{
+    folders: Folder[];
+    files: File[];
+  }>({ folders: [], files: [] });
+  const [isLoading, setIsLoading] = useState(false);
 
   const goBack = () => {
     const newPathHistory = [...pathHistory];
@@ -52,35 +61,38 @@ export function DriveTable({ searchParams, team, userTeam }: { searchParams: Sea
 
   useEffect(() => {
     const fetchData = async () => {
-      if (userId) {
-        try {
-          const response = await getDrive(userId, currentPath, searchParams, team.id);
-          setFolderFiles({
-            folders: response.folders.data,
-            files: response.files.data,
-          });
-        } catch (error) {
-          console.error('Failed to fetch data:', error);
-        }
+      try {
+        const response = await getDrive(currentPath, searchParams, team.id);
+        setIsLoading(true);
+        setFolderFiles({
+          folders: response.folders.data,
+          files: response.files.data,
+        });
+      } catch (error) {
+        console.error('Failed to fetch data:', error);
+      } finally {
       }
     };
     fetchData();
-  }, [userId, currentPath, searchParams]);
+  }, [currentPath, searchParams]);
 
   const [isPending, startTransition] = React.useTransition();
 
   const columns = useMemo(() => {
-    return fetchItemsTableColumnDefs(setCurrentPath, isPending, startTransition);
+    return fetchItemsTableColumnDefs(
+      setCurrentPath,
+      isPending,
+      startTransition
+    );
   }, [folderFiles, setCurrentPath, isPending]);
-
 
   useEffect(() => {
     if (currentPath && !pathHistory.includes(currentPath)) {
-      setPathHistory(prev => [...prev, currentPath]);
+      setPathHistory((prev) => [...prev, currentPath]);
     }
   }, [currentPath]);
 
-  const { dataTable } = useDataTable<Item, unknown>({
+  const { dataTable } = useDataTable<any, unknown>({
     data: [...folderFiles.folders, ...folderFiles.files],
     columns,
     searchableColumns,
@@ -88,22 +100,20 @@ export function DriveTable({ searchParams, team, userTeam }: { searchParams: Sea
   });
 
   return (
-    <div className='space-y-4 overflow-hidden mb-10'>
-      <div className='flex items-center gap-4'>
+    <div className="space-y-4 overflow-hidden mb-10">
+      <div className="flex items-center gap-4">
         {/* <CreateModal
           title="Invite"
           Component={CreateInviteForm}
           variant={'outline'}
         /> */}
-        <TeamStorageInfo team={team} />
-        <Avatar>
-          <AvatarImage src={userTeam.image} />
-          <AvatarFallback>{userTeam.name}</AvatarFallback>
-        </Avatar>
-
+        {/* <TeamStorageInfo team={team} /> */}
       </div>
-      <File folderId={currentPath} teamId={team.id} />
+      <InterfaceMulfile folderId={currentPath} teamId={team.id} />
+
       <DataTable
+        teamId={team.id}
+        isLoading={isLoading}
         advancedFilter
         dataTable={dataTable}
         columns={columns}
@@ -112,13 +122,21 @@ export function DriveTable({ searchParams, team, userTeam }: { searchParams: Sea
         basePath={currentPath}
         data={folderFiles}
         // floatingBarContent={FoldersFilesTableFloatingBarContent(dataTable, userId!, currentPath)}
-        deleteRowsAction={() => deleteSelectedRows(dataTable, team.id, user?.id!)}
+        deleteRowsAction={() =>
+          deleteSelectedRows(
+            selectedItems,
+            dataTable,
+            clearSelection,
+            team.id,
+            user?.id
+          )
+        }
+        operateRowsAction={() => operateSelectedRows(selectedItems, dataTable)}
         copyRowsAction={() => copySelectedRows(selectedItems, dataTable)}
-        pasteRowsAction={() => pasteSelectedRows(userId!, currentPath)}
+        pasteRowsAction={() => pasteSelectedRows(currentPath)}
         goBack={() => goBack()}
         currentPath={setCurrentPath}
       />
-
     </div>
   );
 }

@@ -3,6 +3,7 @@
     "lib": ["dom", "dom.iterable", "esnext"],
     "target": "es2015",
     "allowJs": true,
+
     "skipLibCheck": true,
     "strict": true,
     "noEmit": true,
@@ -31,7 +32,7 @@
     ".next/types/**/*.ts",
     "jest.setup.jsxx",
     "jest.config.js",
-    "src/navigation.js"
+    "src/navigation.jsx"
   ],
   "exclude": ["node_modules"]
 }

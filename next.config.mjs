@@ -24,7 +24,6 @@ export default withNextIntl(
         { protocol: 'https', hostname: 'utfs.io' },
       ],
     },
-
     webpackDevMiddleware: (config) => {
       config.watchOptions = {
         poll: 1000,

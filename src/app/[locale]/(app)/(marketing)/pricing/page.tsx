@@ -1,7 +1,7 @@
-import { PricingCards } from '@/app/(app)/(marketing)/pricing/_components/pricing-cards';
-import { PricingFaq } from '@/app/(app)/(marketing)/pricing/_components/pricing-faq';
 import { currentUser } from '@/lib/authCheck';
 import { getUserSubscriptionPlan } from '@/lib/subscription';
+import { PricingCards } from './_components/pricing-cards';
+import { PricingFaq } from './_components/pricing-faq';
 
 export const metadata = {
   title: 'Pricing',

@@ -34,6 +34,7 @@ const TeamSchema: z.ZodSchema<any> = z.lazy(() =>
     slug: z.string(),
     // key: z.string(),
     updatedAt: z.date(),
+    createdAt: z.date(),
     storageLimit: z.number(),
     storageUsed: z.number(),
     creatorId: z.string(),
@@ -99,6 +100,7 @@ const FolderSchema: z.ZodSchema<any> = z.lazy(() =>
     team: TeamSchema.optional(),
     subfolders: z.array(FolderSchema).optional(),
     files: z.array(FileSchema).optional(),
+    operate: z.boolean(),
   })
 );
 
@@ -118,6 +120,7 @@ const FileSchema: z.ZodSchema<any> = z.lazy(() =>
     folder: FolderSchema.optional(),
     user: UserSchema.optional(),
     team: TeamSchema.optional(),
+    operate: z.boolean(),
   })
 );
 

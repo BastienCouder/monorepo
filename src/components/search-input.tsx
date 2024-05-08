@@ -21,7 +21,6 @@ export const SearchInput = () => {
       {
         url: pathname,
         query: {
-
           title: debouncedValue,
         },
       },

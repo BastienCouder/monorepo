@@ -21,9 +21,7 @@ export const SignInModal = () => {
             <Icons.logo className="size-10" />
           </a>
           <h3 className="font-urban text-2xl font-bold">Sign In</h3>
-          <p className="text-sm text-gray-500">
-            Connect quickly with google.
-          </p>
+          <p className="text-sm text-gray-500">Connect quickly with google.</p>
         </div>
 
         <div className="flex flex-col space-y-4 bg-secondary/50 px-4 py-8 md:px-16">

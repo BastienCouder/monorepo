@@ -34,10 +34,7 @@ type FormType = {
   basePath: string | undefined;
 };
 
-export function CreateFolderForm({
-  setIsOpen,
-  basePath,
-}: FormType) {
+export function CreateFolderForm({ setIsOpen, basePath }: FormType) {
   const session = useCurrentUser();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -54,9 +51,9 @@ export function CreateFolderForm({
 
       if (userId) {
         if (basePath && basePath !== '') {
-          await createFolder(userId, capitalize(data.name), basePath);
+          await createFolder(userId, data.name, basePath);
         } else {
-          await createFolder(userId, capitalize(data.name), null);
+          await createFolder(userId, data.name, null);
         }
         toast({
           title: 'Folder created',

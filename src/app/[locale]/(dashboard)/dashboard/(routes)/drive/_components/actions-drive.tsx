@@ -15,19 +15,20 @@ interface ActionsDrive {
 }
 
 export default function ActionsDrive({ teams = [] }: ActionsDrive) {
-
   return (
-    <section className="w-full space-y-6 lg:pr-4">
+    <section className="w-full space-y-6">
       <h1 className="font-bold text-2xl">My teams</h1>
       <div className="flex justify-between">
         <div className="flex gap-4">
           <CreateModal
             title="Create team"
+            dialogTitle="Create Team"
             Component={CreateTeamForm}
             variant={'default'}
           />
           <CreateModal
             title="Join team"
+            dialogTitle="Join Team"
             Component={CreateJoinTeamForm}
             variant={'outline'}
           />
@@ -44,7 +45,7 @@ export default function ActionsDrive({ teams = [] }: ActionsDrive) {
           </div>
         )}
       </ul>
-      <Separator className='bg-primary h-[2px]' />
+      <Separator className="bg-primary h-[2px]" />
       <BillingInfo />
     </section>
   );

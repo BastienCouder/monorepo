@@ -1,5 +1,5 @@
 'use client';
-import React, { ComponentType, useState } from 'react';
+import React, { ComponentType, ReactNode, useState } from 'react';
 import { buttonVariants } from '@/components/ui/button';
 import {
   Dialog,
@@ -16,7 +16,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from '@/components/ui/drawer';
-import { PlusCircle } from 'lucide-react';
+import { LucideIcon, PlusCircle } from 'lucide-react';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { DialogTriggerProps } from '@radix-ui/react-alert-dialog';
 import { cn } from '@/lib/utils';
@@ -40,33 +40,33 @@ const CustomDialogTrigger: React.FC<CustomDialogTriggerProps> = ({
 };
 
 interface CreateModalProps {
-  title: string;
+  title: ReactNode;
+  dialogTitle: ReactNode;
   Component: React.ComponentType<{
     setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   }>;
   variant:
-  | 'link'
-  | 'default'
-  | 'destructive'
-  | 'outline'
-  | 'secondary'
-  | 'ghost'
-  | 'success'
-  | null
-  | undefined;
+    | 'link'
+    | 'default'
+    | 'destructive'
+    | 'outline'
+    | 'secondary'
+    | 'ghost'
+    | 'success'
+    | null
+    | undefined;
 }
 
 const CreateModal: React.FC<CreateModalProps> = ({
   variant,
   title,
+  dialogTitle,
   Component,
-
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const isDesktop = useMediaQuery('(min-width: 768px)');
 
   const resolvedVariant = variant ?? 'default';
-
 
   const contentProps = {
     setIsOpen,
@@ -82,7 +82,7 @@ const CreateModal: React.FC<CreateModalProps> = ({
         </CustomDialogTrigger>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{title}</DialogTitle>
+            <DialogTitle>{dialogTitle}</DialogTitle>
             <DialogDescription className="pt-4">
               {<Component {...contentProps} />}
             </DialogDescription>
@@ -95,8 +95,7 @@ const CreateModal: React.FC<CreateModalProps> = ({
   return (
     <Drawer open={isOpen} onOpenChange={setIsOpen}>
       <DrawerTrigger className={buttonVariants({ variant: resolvedVariant })}>
-        <PlusCircle className="w-4 h-4 mr-1" />
-        {title}
+        {dialogTitle}
       </DrawerTrigger>
       <DrawerContent>
         <DrawerHeader>

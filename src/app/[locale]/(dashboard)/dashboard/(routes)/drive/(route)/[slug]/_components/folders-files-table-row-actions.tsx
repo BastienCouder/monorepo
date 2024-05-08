@@ -22,7 +22,7 @@ import { Row } from '@tanstack/react-table';
 
 import CreateRenameModal from './create-rename-modal';
 import { deleteItem } from '@/server-actions/user/delete-item';
-import { toast } from 'sonner';
+// import { toast } from 'sonner';
 import { catchError } from '@/lib/catch-error';
 
 type WithId = {
@@ -32,22 +32,22 @@ type WithId = {
 type FolderFileTableRowActionsProps<TData extends WithId> = {
   row: Row<TData>;
   startTransition: React.TransitionStartFunction;
-  setCurrentPath: (path: string) => void,
+  setCurrentPath: (path: string) => void;
 };
 
 function FolderFileTableRowActions<TData extends WithId>({
   row,
   startTransition,
-  setCurrentPath
+  setCurrentPath,
 }: FolderFileTableRowActionsProps<TData>) {
   const [showEditDialog, setShowEditDialog] = useState<boolean>(false);
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <div className='h-full'>
+        <div className="h-full">
           <Button
             aria-label="Open menu"
-            variant="default"
+            variant="ghost"
             className="flex px-2 my-2 py-1 h-full data-[state=open]:bg-muted"
           >
             <DotsHorizontalIcon className="size-4" aria-hidden="true" />
@@ -58,10 +58,7 @@ function FolderFileTableRowActions<TData extends WithId>({
         <DropdownMenuContent align="end" className="w-[160px]">
           <DialogTrigger asChild>
             <DropdownMenuItem>
-
-              <CreateRenameModal
-                itemId={row.original.id}
-              />
+              <CreateRenameModal itemId={row.original.id} />
             </DropdownMenuItem>
           </DialogTrigger>
           <DropdownMenuSeparator />
@@ -70,25 +67,26 @@ function FolderFileTableRowActions<TData extends WithId>({
               startTransition(() => {
                 row.toggleSelected(false);
 
-                toast.promise(
-                  deleteItem(
-                    row.original.id,
-                  ),
-                  {
-                    loading: 'EN cours de suppression...',
-                    success: () => "L'utilisateur a été supprimé avec succès.",
-                    error: (err: unknown) => catchError(err),
-                  }
-                );
+                // toast.promise(deleteItem(row.original.id), {
+                //   loading: 'EN cours de suppression...',
+                //   success: () => "L'utilisateur a été supprimé avec succès.",
+                //   error: (err: unknown) => catchError(err),
+                // });
               });
             }}
           >
             Supprimer
           </DropdownMenuItem>
           {row.original.hasOwnProperty('size') ? (
-            <DropdownMenuItem onClick={() => console.log('Download file:', row.original.id)}>Download  </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => console.log('Download file:', row.original.id)}
+            >
+              Download{' '}
+            </DropdownMenuItem>
           ) : (
-            <DropdownMenuItem onClick={() => setCurrentPath(row.original.id)}>Open  </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setCurrentPath(row.original.id)}>
+              Open{' '}
+            </DropdownMenuItem>
           )}
         </DropdownMenuContent>
         <DialogContent>

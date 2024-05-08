@@ -20,7 +20,6 @@ interface BillingInfoProps extends React.HTMLAttributes<HTMLFormElement> {
 }
 
 export function BillingInfo({ subscriptionPlan }: BillingInfoProps) {
-
   return (
     <Card>
       <CardHeader>

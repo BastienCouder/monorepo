@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Menu } from 'lucide-react';
 
-import { dashboardLinks } from '@/config/links';
 import { siteConfig } from '@/config/site';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -44,7 +43,7 @@ export const MobileNav = ({ userRole }: IMobileNav) => {
         <div className="w-full">
           <div className={cn('pb-4')}>
             <div className="grid grid-flow-row auto-rows-max text-sm">
-              {dashboardLinks.map((item, index) => (
+              {/* {useDashboardLinks.map((item, index) => (
                 <Link
                   key={index}
                   href={item.route}
@@ -58,7 +57,7 @@ export const MobileNav = ({ userRole }: IMobileNav) => {
                 >
                   {item.title}
                 </Link>
-              ))}
+              ))} */}
             </div>
           </div>
         </div>

@@ -21,7 +21,6 @@ import { CreateForm } from './create-form';
 import { useState } from 'react';
 import { useMediaQuery } from '@/hooks/use-media-query';
 
-
 const CreateModal = () => {
   const [isOpen, setIsOpen] = useState(false);
   const isDesktop = useMediaQuery('(min-width: 768px)');
@@ -34,7 +33,7 @@ const CreateModal = () => {
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle className='mb-4'>Créer</DialogTitle>
+            <DialogTitle className="mb-4">Créer</DialogTitle>
             <DialogDescription>
               <CreateForm setIsOpen={setIsOpen} />
             </DialogDescription>

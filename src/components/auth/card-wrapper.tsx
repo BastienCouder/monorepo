@@ -30,10 +30,9 @@ export const CardWrapper = ({
   backButtonHref,
   showSocial,
 }: CardWrapperProps) => {
-
   return (
     <Card className="w-[450px] space-y-2 shadow-md rounded-md">
-      <CardHeader className='p-0'>
+      <CardHeader className="p-0">
         <Header />
       </CardHeader>
       {showSocial && (
@@ -48,11 +47,11 @@ export const CardWrapper = ({
         </p>
         <div className="w-1/2 h-1 bg-primary"></div>
       </div>
-      <CardContent className='pt-4 pb-0'>{children}</CardContent>
-      <CardFooter className='flex flex-col gap-2'>
+      <CardContent className="pt-4 pb-0">{children}</CardContent>
+      <CardFooter className="flex flex-col gap-2">
         <BackButton label={backButtonLabel} href={backButtonHref} />
-        <Link href={'/'} className='w-full flex justify-center items-center '>
-          <Button className='w-1/2'>Back to app</Button>
+        <Link href={'/'} className="w-full flex justify-center items-center ">
+          <Button className="w-1/2">Back to app</Button>
         </Link>
       </CardFooter>
     </Card>

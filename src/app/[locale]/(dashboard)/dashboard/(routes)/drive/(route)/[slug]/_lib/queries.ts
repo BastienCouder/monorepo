@@ -7,17 +7,19 @@ import type { SearchParams } from '@/types';
 import { filterColumn } from '@/lib/filter-column';
 import { searchParamsSchema } from '@/schemas/page-params';
 import { Prisma } from '@prisma/client';
+import { Folder, File } from '@/schemas/db';
 
 export async function getDrive(
-  userId: string,
   folderPath: string,
   searchParams: SearchParams,
   teamId: string
 ) {
   noStore();
   try {
+    const { currentpath, ...filteredSearchParams } = searchParams;
+
     const { page, per_page, sort, name } =
-      searchParamsSchema.parse(searchParams);
+      searchParamsSchema.parse(filteredSearchParams);
     // const pageAsNumber = Number(page);
     // const fallbackPage =
     //   isNaN(pageAsNumber) || pageAsNumber < 1 ? 1 : pageAsNumber;
@@ -39,32 +41,66 @@ export async function getDrive(
       ? { [column]: order }
       : { id: Prisma.SortOrder.desc };
 
-    const whereClauseFolder = {
-      teamId,
-      parentId: folderPath || null,
-      ...(name && { name: filterColumn({ value: name }) }),
-    };
+    let whereClauseFolder;
+    let whereClauseFile;
 
-    const whereClauseFile = {
-      teamId,
-      ...(name && { name: filterColumn({ value: name }) }),
-    };
+    let folders: Folder[] = [];
+    let files: File[] = [];
 
-    const folders = await db.folder.findMany({
-      where: whereClauseFolder,
-      // take: limit,
-      // skip: offset,
-      orderBy: orderByClause,
-    });
+    if (!filteredSearchParams.name) {
+      whereClauseFolder = {
+        teamId,
+        parentId: folderPath || null,
+        ...(name && { name: filterColumn({ value: name }) }),
+      };
 
-    const folderIds = folders.map((folder) => folder.id);
+      whereClauseFile = {
+        teamId,
+        ...(name && { name: filterColumn({ value: name }) }),
+      };
 
-    const files = await db.file.findMany({
-      where: { ...whereClauseFile, folderId: folderPath },
-      // take: limit,
-      // skip: offset,
-      orderBy: orderByClause,
-    });
+      folders = await db.folder.findMany({
+        where: whereClauseFolder,
+        // take: limit,
+        // skip: offset,
+        orderBy: orderByClause,
+      });
+
+      files = await db.file.findMany({
+        where: { ...whereClauseFile, folderId: folderPath },
+        // take: limit,
+        // skip: offset,
+        orderBy: orderByClause,
+      });
+    }
+
+    if (filteredSearchParams.name) {
+      whereClauseFolder = {
+        teamId,
+        ...(name && { name: filterColumn({ value: name }) }),
+      };
+
+      whereClauseFile = {
+        teamId,
+        ...(name && { name: filterColumn({ value: name }) }),
+      };
+
+      folders = await db.folder.findMany({
+        where: whereClauseFolder,
+        // take: limit,
+        // skip: offset,
+        // orderBy: orderByClause,
+      });
+
+      files = await db.file.findMany({
+        where: { ...whereClauseFile },
+        // take: limit,
+        // skip: offset,
+        // orderBy: orderByClause,
+      });
+    }
+
+    const folderIds = folders?.map((folder) => folder.id);
 
     const folderCount = await db.folder.count({ where: whereClauseFolder });
     const fileCount = await db.file.count({
@@ -74,27 +110,12 @@ export async function getDrive(
     // const folderPageCount = Math.ceil(folderCount / limit);
     // const filePageCount = Math.ceil(fileCount / limit);
 
-    const filesAggregate = await db.file.groupBy({
-      by: ['folderId'],
-      _sum: {
-        size: true,
-      },
-      _count: {
-        id: true,
-      },
-      where: {
-        folderId: {
-          in: folderIds,
-        },
-      },
-    });
-
-    const foldersWithData = folders.map((folder) => ({
-      ...folder,
-      filesAggregate: filesAggregate.find(
-        (agg) => agg.folderId === folder.id
-      ) || { _sum: { size: 0 }, _count: { id: 0 } },
-    }));
+    const foldersWithData = await Promise.all(
+      folders.map(async (folder) => ({
+        ...folder,
+        sizeFolder: await calculateFolderSize(folder.id),
+      }))
+    );
 
     return {
       folders: {
@@ -115,4 +136,25 @@ export async function getDrive(
       files: { data: [], totalCount: 0, pageCount: 0 },
     };
   }
+}
+
+async function calculateFolderSize(folderId: string): Promise<number> {
+  const files = await db.file.findMany({
+    where: { folderId },
+    select: { size: true },
+  });
+
+  const subfolders = await db.folder.findMany({
+    where: { parentId: folderId },
+    select: { id: true },
+  });
+
+  const subfolderSizes = await Promise.all(
+    subfolders.map((subfolder) => calculateFolderSize(subfolder.id))
+  );
+
+  return (
+    files.reduce((acc, file) => acc + file.size, 0) +
+    subfolderSizes.reduce((acc, size) => acc + size, 0)
+  );
 }

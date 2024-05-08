@@ -20,9 +20,7 @@ import { Loader2, MinusCircle } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { toast } from '@/components/ui/use-toast';
-import {
-  createJoinTeamSchema,
-} from '@/schemas/validations/team';
+import { createJoinTeamSchema } from '@/schemas/validations/team';
 import { joinTeamWithKey } from '@/server-actions/team/join-with-key';
 
 type JoinTeamFormValues = z.infer<typeof createJoinTeamSchema>;

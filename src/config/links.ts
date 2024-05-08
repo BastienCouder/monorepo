@@ -3,11 +3,11 @@ import { useTranslations } from 'next-intl';
 
 // Custom hook for admin links
 export function useAdminLinks() {
-  const t = useTranslations('AdminLinks');
+  // const t = useTranslations('AdminLinks');
 
   const adminLinks = [
     {
-      title: t('Dashboard'),
+      title: 'Dashboard',
       route: '/dashboard',
       label: '',
       icon: Icons.gauge,
@@ -19,18 +19,18 @@ export function useAdminLinks() {
 }
 
 export function useDashboardLinks() {
-  const t = useTranslations('DashboardLinks');
+  // const t = useTranslations('DashboardLinks');
 
   const dashboardLinks = [
     {
-      title: t('Dashboard'),
+      title: 'Dashboard',
       route: '/dashboard',
       label: '',
       icon: Icons.ellipsis,
       isNotAllowed: ['USER'],
     },
     {
-      title: t('Settings'),
+      title: 'Settings',
       route: '/dashboard/settings',
       label: '',
       icon: Icons.settings,
@@ -41,11 +41,11 @@ export function useDashboardLinks() {
 }
 
 export function useAppLinks() {
-  const t = useTranslations('AppLinks');
+  // const t = useTranslations('AppLinks');
 
   const appLinks = [
     {
-      title: t('Progress'),
+      title: 'Progress',
       route: '/profile',
       label: '',
       icon: Icons.user,

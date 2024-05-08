@@ -16,11 +16,11 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from '@/components/ui/drawer';
-import { PlusCircle } from 'lucide-react';
 import { CreateFolderForm } from './create-folder-form';
 import React from 'react';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { TbFolderPlus } from 'react-icons/tb';
+import { cn } from '@/lib/utils';
 
 interface CreateFolderProps {
   basePath: string | undefined;
@@ -33,19 +33,15 @@ const CreateFolderModal = ({ basePath }: CreateFolderProps) => {
   if (isDesktop) {
     return (
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogTrigger className={`${buttonVariants()}`}>
+        <DialogTrigger className={`${cn(buttonVariants())}`}>
           <TbFolderPlus className="w-4 h-4 mr-2" /> New folder
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>New folder</DialogTitle>
-            <DialogDescription className="pt-4">
-              <CreateFolderForm
-                setIsOpen={setIsOpen}
-                basePath={basePath}
-
-              />
-            </DialogDescription>
+            <div className="pt-4">
+              <CreateFolderForm setIsOpen={setIsOpen} basePath={basePath} />
+            </div>
           </DialogHeader>
         </DialogContent>
       </Dialog>
@@ -54,7 +50,7 @@ const CreateFolderModal = ({ basePath }: CreateFolderProps) => {
 
   return (
     <Drawer open={isOpen} onOpenChange={setIsOpen}>
-      <DrawerTrigger className={buttonVariants()}>
+      <DrawerTrigger className={cn(buttonVariants())}>
         <TbFolderPlus className="w-4 h-4 mr-2" />
         New folder
       </DrawerTrigger>
@@ -63,11 +59,7 @@ const CreateFolderModal = ({ basePath }: CreateFolderProps) => {
           <DrawerTitle>New folder</DrawerTitle>
         </DrawerHeader>
         <div className="p-4 pb-8">
-          <CreateFolderForm
-            setIsOpen={setIsOpen}
-            basePath={basePath}
-
-          />
+          <CreateFolderForm setIsOpen={setIsOpen} basePath={basePath} />
         </div>
         {/* <DrawerFooter>
       <Button>Submit</Button>

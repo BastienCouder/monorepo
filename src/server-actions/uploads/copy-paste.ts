@@ -1,88 +1,84 @@
 'use server';
+import { currentUser } from '@/lib/authCheck';
 import { storage } from '@/lib/firebase';
 import { db } from '@/lib/prisma';
-import { Folder } from '@prisma/client';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { revalidatePath } from 'next/cache';
 
-interface ExtendedFile extends File {
-  folder?: ExtendedFolder;
-}
+// export async function copyItems(ids: string[]): Promise<void> {
+//   const copiedItems: CopiedItems = getLocalStorage('copiedItems', {
+//     folderIds: [],
+//     fileIds: [],
+//   });
+//   const folderIds: string[] = [];
+//   const fileIds: string[] = [];
 
-interface ExtendedFolder extends Folder {
-  files: ExtendedFile[];
-  subfolders: ExtendedFolder[];
-  totalSize?: number;
-  totalFiles?: number;
-}
+//   for (const id of ids) {
+//     const isFolder = await db.folder.findUnique({ where: { id } });
+//     if (isFolder && !copiedItems.folderIds.includes(id)) {
+//       folderIds.push(id);
+//     } else {
+//       const isFile = await db.file.findUnique({ where: { id } });
+//       if (isFile && !copiedItems.fileIds.includes(id)) {
+//         fileIds.push(id);
+//       }
+//     }
+//   }
+//   revalidatePath('/dashboard');
 
-interface CopiedItems {
-  folderIds: string[];
-  fileIds: string[];
-}
+//   copiedItems.folderIds = [...copiedItems.folderIds, ...folderIds];
+//   copiedItems.fileIds = [...copiedItems.fileIds, ...fileIds];
 
-let copiedItems: CopiedItems = {
-  folderIds: [],
-  fileIds: [],
-};
+//   const set = setLocalStorage('copiedItems', copiedItems);
+//   console.log('Copied:', set);
+// }
 
-export async function copyItems(ids: string[]): Promise<void> {
-  const folderIds: string[] = [];
-  const fileIds: string[] = [];
+export async function pasteItems(
+  targetFolderId: string | null,
+  ids: string[]
+): Promise<void> {
+  console.log('IDs to paste:', ids);
+  console.log(targetFolderId === '');
+
+  if (targetFolderId === '') {
+    targetFolderId = null;
+  }
+
+  const user = await currentUser();
+  if (!user) {
+    console.log('User not found, aborting paste operation.');
+    return;
+  }
+
+  // Set basePath based on whether targetFolderId is the same as userId
+  let basePath =
+    user.id === targetFolderId ? `${user.id}` : `${user.id}/${targetFolderId}`;
 
   for (const id of ids) {
     const isFolder = await db.folder.findUnique({ where: { id } });
     if (isFolder) {
-      if (!copiedItems.folderIds.includes(id)) {
-        folderIds.push(id);
-      }
+      console.log(`Copying folder with ID: ${id}`);
+      const res = await copyFolder(id, targetFolderId, user.id, basePath);
+      console.log('Folder copied:', res);
     } else {
       const isFile = await db.file.findUnique({ where: { id } });
       if (isFile) {
-        if (!copiedItems.fileIds.includes(id)) {
-          fileIds.push(id);
-        }
+        console.log(`Copying file with ID: ${id}`);
+        const res = await copyFile(id, targetFolderId, user.id, basePath);
+        console.log('File copied:', res);
+      } else {
+        console.log(`No valid entry found for ID: ${id}`);
       }
     }
   }
+
   revalidatePath('/dashboard');
-
-  copiedItems = {
-    folderIds: [...copiedItems.folderIds, ...folderIds],
-    fileIds: [...copiedItems.fileIds, ...fileIds],
-  };
-}
-
-export async function pasteItems(
-  userId: string,
-  targetFolderId: string
-): Promise<void> {
-  const targetFolder = await db.folder.findUnique({
-    where: { id: targetFolderId },
-  });
-  if (!targetFolder) throw new Error('Target folder not found');
-
-  // Préparez le chemin de base pour les fichiers dans Firebase Storage
-  const basePath = `${userId}/${targetFolderId}`;
-
-  // Copiez les dossiers et les fichiers sélectionnés
-  for (const folderId of copiedItems.folderIds) {
-    await copyFolder(folderId, targetFolderId, userId, basePath);
-  }
-
-  for (const fileId of copiedItems.fileIds) {
-    await copyFile(fileId, targetFolderId, userId, basePath);
-  }
-
-  // Réinitialiser les éléments copiés après l'opération
-  revalidatePath('/dashboard');
-
-  copiedItems = { folderIds: [], fileIds: [] };
+  console.log('Paste operation completed.');
 }
 
 async function copyFolder(
   originalFolderId: string,
-  targetFolderId: string,
+  targetFolderId: string | null,
   userId: string,
   basePath: string
 ): Promise<void> {
@@ -93,19 +89,31 @@ async function copyFolder(
       subfolders: true,
     },
   });
+  console.log(targetFolderId);
+
+  let parentId = targetFolderId === userId ? null : targetFolderId;
 
   if (!originalFolder) throw new Error(`Folder not found: ${originalFolderId}`);
 
-  // Créez une copie du dossier dans Prisma
+  let copyName = originalFolder.name;
+  let duplicateCount = 0;
+  let newFolderName = `${copyName}`;
+  let folderExists = await checkFolderExists(newFolderName, parentId);
+
+  while (folderExists) {
+    duplicateCount++;
+    newFolderName = `${copyName} (${duplicateCount})`;
+    folderExists = await checkFolderExists(newFolderName, parentId);
+  }
+
   const copiedFolder = await db.folder.create({
     data: {
       userId: userId,
-      name: `${originalFolder.name} (copy)`,
-      parentId: targetFolderId,
+      name: newFolderName,
+      parentId: parentId,
     },
   });
 
-  // Pour chaque fichier du dossier original, copiez-le dans Firebase et créez une entrée dans Prisma
   for (const file of originalFolder.files) {
     await copyFile(
       file.id,
@@ -115,7 +123,6 @@ async function copyFolder(
     );
   }
 
-  // Répétez récursivement pour les sous-dossiers
   for (const subfolder of originalFolder.subfolders) {
     await copyFolder(
       subfolder.id,
@@ -126,55 +133,110 @@ async function copyFolder(
   }
 }
 
+// Helper function to check if a folder exists with a given name within a specific parent folder
+async function checkFolderExists(
+  folderName: string,
+  parentId: string | null
+): Promise<boolean> {
+  try {
+    const folder = await db.folder.findFirst({
+      where: {
+        name: folderName,
+        parentId: parentId,
+      },
+    });
+    return !!folder;
+  } catch (error) {
+    console.error('Failed to check folder existence:', error);
+    return false;
+  }
+}
+
 async function copyFile(
   fileId: string,
-  targetFolderId: string,
+  targetFolderId: string | null,
   userId: string,
   basePath: string
 ): Promise<void> {
   const originalFile = await db.file.findUnique({ where: { id: fileId } });
-  if (!originalFile) throw new Error(`File not found: ${fileId}`);
 
-  // Récupérer les informations de l'utilisateur
+  // Check if the file was retrieved and if it has a valid 'path'
+  if (!originalFile) {
+    console.error(`File with ID ${fileId} not found.`);
+    throw new Error(`File not found: ${fileId}`);
+  }
+
+  if (!originalFile.path) {
+    console.error(`File path is undefined for file with ID ${fileId}.`);
+    throw new Error(`Path is undefined for file: ${fileId}`);
+  }
+
   const user = await db.user.findUnique({ where: { id: userId } });
-  if (!user) throw new Error('User not found');
+  if (!user) {
+    console.error('User not found.');
+    throw new Error('User not found');
+  }
 
-  // Déterminer le nouveau chemin dans Firebase Storage pour le fichier copié
-  const newFilePath = `${basePath}/${originalFile.name}`;
+  let copyName = originalFile.name;
+  let newFilePath = `${basePath}/${copyName}`;
+  let fileExists = await checkFileExists(copyName, targetFolderId);
 
-  // Copier le fichier dans Firebase Storage
-  const originalFileRef = ref(storage, originalFile.path!);
+  let duplicateCount = 0;
+  while (fileExists) {
+    duplicateCount++;
+    copyName = `${originalFile.name} (${duplicateCount})`;
+    newFilePath = `${basePath}/${copyName}`;
+    fileExists = await checkFileExists(copyName, targetFolderId);
+  }
+
+  const originalFileRef = ref(storage, originalFile.path); // Ensure path is now guaranteed to be non-null
   const blob = await fetch(await getDownloadURL(originalFileRef)).then((res) =>
     res.blob()
   );
   const newFileRef = ref(storage, newFilePath);
 
-  // Avant d'uploader, vérifier si l'utilisateur dépasse sa limite de stockage
   if (user.storageUsed + blob.size > user.storageLimit) {
-    throw new Error('Limite de stockage dépassée');
+    throw new Error('Storage limit exceeded');
   }
-  // Uploadez le blob vers le nouvel emplacement dans Firebase Storage
+
   await uploadBytes(newFileRef, blob);
   const newFileDownloadURL = await getDownloadURL(newFileRef);
 
-  // Créez une nouvelle entrée dans la base de données Prisma pour le fichier copié
   await db.file.create({
     data: {
-      name: originalFile.name,
+      name: copyName,
       size: originalFile.size,
-      path: newFilePath, // Nouveau chemin dans Firebase Storage
-      firebaseUrl: newFileDownloadURL, // URL de téléchargement du fichier dans Firebase
-      folderId: targetFolderId, // ID du dossier cible où le fichier est "collé"
+      path: newFilePath,
+      firebaseUrl: newFileDownloadURL,
+      folderId: targetFolderId,
       userId: userId,
     },
   });
 }
+
+async function checkFileExists(
+  fileName: string,
+  folderId: string | null
+): Promise<boolean> {
+  try {
+    const file = await db.file.findFirst({
+      where: {
+        name: fileName,
+        folderId: folderId,
+      },
+    });
+    return !!file;
+  } catch (error) {
+    console.error('Failed to check file existence:', error);
+    return false;
+  }
+}
+
 export async function moveItems(
   folderIds: string[],
   fileIds: string[],
   targetFolderId: string
 ) {
-  // Move folders
   for (const folderId of folderIds) {
     await db.folder.update({
       where: { id: folderId },
@@ -182,7 +244,6 @@ export async function moveItems(
     });
   }
 
-  // Move files
   for (const fileId of fileIds) {
     await db.file.update({
       where: { id: fileId },

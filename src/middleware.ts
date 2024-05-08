@@ -1,5 +1,5 @@
 import NextAuth, { Session } from 'next-auth';
-import { NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
 import authConfig from './auth.config';
 import {
@@ -10,12 +10,13 @@ import {
 } from '@/routes';
 
 import createIntlMiddleware from 'next-intl/middleware';
-import { localePrefix, locales } from './navigation';
+import { pathnames, locales, localePrefix } from './config';
 
 const { auth: middleware } = NextAuth(authConfig);
 
 const intlMiddleware = createIntlMiddleware({
   locales,
+  pathnames,
   localePrefix,
   defaultLocale: 'fr',
 });
@@ -23,6 +24,7 @@ const intlMiddleware = createIntlMiddleware({
 export default middleware(
   (req: NextRequest & { auth: Session | null }): Response | void => {
     const response = intlMiddleware(req);
+
     if (response) return response;
     const { nextUrl } = req;
     const isLoggedIn = !!req.auth;
@@ -60,7 +62,10 @@ export default middleware(
       );
     }
 
-    return;
+    const res = NextResponse.next();
+    res.headers.set('Content-Type', 'true'); // Example header, adjust as necessary
+    res.headers.set('Content-Disposition', 'true'); // Example header, adjust as necessary
+    return res;
   }
 );
 
@@ -69,6 +74,6 @@ export const config = {
   matcher: [
     '/((?!api|_next/static|_next/image|images|favicon.ico).*)',
     '/',
-    '/(de|en)/:path*',
+    '/(fr|en|es)/:path*',
   ],
 };

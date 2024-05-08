@@ -73,37 +73,22 @@ export async function getFoldersFiles(
     // const folderPageCount = Math.ceil(folderCount / limit);
     // const filePageCount = Math.ceil(fileCount / limit);
 
-    const filesAggregate = await db.file.groupBy({
-      by: ['folderId'],
-      _sum: {
-        size: true,
-      },
-      _count: {
-        id: true,
-      },
-      where: {
-        folderId: {
-          in: folderIds,
-        },
-      },
-    });
-
-    const foldersWithData = folders.map((folder) => ({
-      ...folder,
-      filesAggregate: filesAggregate.find(
-        (agg) => agg.folderId === folder.id
-      ) || { _sum: { size: 0 }, _count: { id: 0 } },
-    }));
+    const foldersWithData = await Promise.all(
+      folders.map(async (folder) => ({
+        ...folder,
+        sizeFolder: await calculateFolderSize(folder.id),
+      }))
+    );
 
     return {
       folders: {
         data: foldersWithData,
-        totalCount: folderCount,
+        // totalCount: folderCount,
         // pageCount: folderPageCount,
       },
       files: {
         data: files,
-        totalCount: fileCount,
+        // totalCount: fileCount,
         // pageCount: filePageCount,
       },
     };
@@ -114,4 +99,25 @@ export async function getFoldersFiles(
       files: { data: [], totalCount: 0, pageCount: 0 },
     };
   }
+}
+
+async function calculateFolderSize(folderId: string): Promise<number> {
+  const files = await db.file.findMany({
+    where: { folderId },
+    select: { size: true },
+  });
+
+  const subfolders = await db.folder.findMany({
+    where: { parentId: folderId },
+    select: { id: true },
+  });
+
+  const subfolderSizes = await Promise.all(
+    subfolders.map((subfolder) => calculateFolderSize(subfolder.id))
+  );
+
+  return (
+    files.reduce((acc, file) => acc + file.size, 0) +
+    subfolderSizes.reduce((acc, size) => acc + size, 0)
+  );
 }

@@ -6,7 +6,13 @@ import { cn, nFormatter } from '@/lib/utils';
 import { Icons } from '@/components/shared/icons';
 import { env } from '@/env.mjs';
 
-export default async function IndexPage() {
+interface IndexPageProps {
+  params: { locale: never };
+}
+
+export default async function IndexPage({
+  params: { locale },
+}: IndexPageProps) {
   const { stargazers_count: stars } = await fetch(
     'https://api.github.com/repos/mickasmt/next-saas-stripe-starter',
     {
@@ -28,7 +34,7 @@ export default async function IndexPage() {
       <section className="space-y-6 pb-12 pt-16 lg:py-28">
         <div className="container flex max-w-[64rem] flex-col items-center gap-5 text-center">
           <Link
-            href="https://twitter.com/miickasmt/status/1719892161095745801"
+            href="https://www.youtube.com/watch?v=kwmHaXUAa0M&list=PLh_UnTlfzMSZ7PUk-IsgRuc0rswnJ2Sdg&index=22"
             className={cn(
               buttonVariants({ variant: 'outline', size: 'sm' }),
               'animate-fade-up opacity-0'

@@ -1,7 +1,6 @@
-"use client"
+'use client';
 
 import Link from 'next/link';
-import { LucideIcon } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 import { buttonVariants } from '@/components/ui/button';
@@ -14,7 +13,7 @@ import { usePathname } from 'next/navigation';
 
 interface INav {
   isCollapsed: boolean;
-  links: any
+  links: any;
 }
 
 export function Nav({ links, isCollapsed }: INav) {
@@ -34,12 +33,14 @@ export function Nav({ links, isCollapsed }: INav) {
                   href={link.href}
                   className={cn(
                     buttonVariants({
-                      variant: pathname.startsWith(link.href) ? 'default' : 'ghost',
+                      variant: pathname.startsWith(link.href)
+                        ? 'default'
+                        : 'ghost',
                       size: 'icon',
                     }),
                     'h-9 w-9',
                     pathname.startsWith(link.href) &&
-                    'dark:bg-muted dark:text-muted-foreground dark:hover:bg-muted dark:hover:text-white'
+                      'dark:bg-muted dark:text-muted-foreground dark:hover:bg-muted dark:hover:text-white'
                   )}
                 >
                   <link.icon className="h-4 w-4" />
@@ -64,9 +65,8 @@ export function Nav({ links, isCollapsed }: INav) {
                   variant: pathname.startsWith(link.href) ? 'default' : 'ghost',
                   size: 'sm',
                 }),
-                pathname.startsWith(link.href) &&
-                'dark:bg-muted dark:text-white dark:hover:bg-muted dark:hover:text-white',
-                'justify-start'
+                pathname.startsWith(link.href) && '',
+                'justify-start  hover:bg-primary  hover:text-background'
               )}
             >
               <link.icon className="mr-3 h-4 w-4" />
@@ -75,7 +75,8 @@ export function Nav({ links, isCollapsed }: INav) {
                 <span
                   className={cn(
                     'ml-auto',
-                    pathname.startsWith(link.href) && 'text-background dark:text-white'
+                    pathname.startsWith(link.href) &&
+                      'text-background hover:bg-background dark:text-white'
                   )}
                 >
                   {link.label}

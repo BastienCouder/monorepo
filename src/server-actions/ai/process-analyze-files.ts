@@ -91,7 +91,6 @@ async function analyzeAndOptionallyRenameFiles(
         continue;
     }
 
-    // Here, integrate content analysis to optionally rename and categorize files
     const analysisResult = await analyzeContent(firebaseFilePath, extension);
 
     if (options.rename && analysisResult.name) {
