@@ -17,25 +17,32 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { CardWrapper } from '@/components/auth/card-wrapper';
-import { login } from '@/server-actions/auth/login.action';
+import { login } from '@/server/auth/login.action';
 import { Button } from '../ui/button';
-import { FormError } from '../modal/form-error';
-import { FormSuccess } from '../modal/form-success';
-import { LoginSchema } from '@/schemas/auth';
-import { useTranslation } from 'next-i18next';
+import { LoginSchema } from '@/models/auth';
+import { toast } from '@/components/ui/use-toast';
+import { capitalizeFirstLetter } from '@/lib/utils';
+import { ToastAction } from '../ui/toast';
+import { useTranslations } from 'next-intl';
+import { catchError } from '@/lib/catch-error';
+
+const translateZodErrors = (errors: z.ZodError, t: (key: string) => string) => {
+  return errors.errors.map(error => ({
+    path: error.path,
+    message: t(error.message),
+  }));
+};
 
 export const LoginForm = () => {
-  const { t } = useTranslation('common');
+  const t = useTranslations('auth.client');
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get('callbackUrl');
+  const callbackUrl = searchParams?.get('callbackUrl');
   const urlError =
-    searchParams.get('error') === 'OAuthAccountNotLinked'
-      ? 'Email already used with another supplier !'
+    searchParams?.get('error') === 'OAuthAccountNotLinked'
+      ? t('oauth_account_not_linked')
       : '';
 
   const [showTwoFactor, setShowTwoFactor] = useState(false);
-  const [error, setError] = useState<string | undefined>('');
-  const [success, setSuccess] = useState<string | undefined>('');
   const [isPending, startTransition] = useTransition();
 
   const form = useForm<z.infer<typeof LoginSchema>>({
@@ -47,34 +54,52 @@ export const LoginForm = () => {
   });
 
   const onSubmit = (values: z.infer<typeof LoginSchema>) => {
-    setError('');
-    setSuccess('');
+
 
     startTransition(() => {
+      const result = LoginSchema.safeParse(values);
+      if (!result.success) {
+        const translatedErrors = translateZodErrors(result.error, t);
+        translatedErrors.forEach(error => {
+          toast({
+            title: t('error_title'),
+            description: capitalizeFirstLetter(error.message),
+            action: <ToastAction altText={t('try_again')}>{t('try_again')}</ToastAction>,
+          });
+        });
+        return;
+      }
+
       login(values, callbackUrl)
         .then((data) => {
           if (data?.error) {
             form.reset();
-            setError(data.error);
+            toast({
+              title: t('error_title'),
+              description: capitalizeFirstLetter(data.error),
+              action: <ToastAction altText={t('try_again')}>{t('try_again')}</ToastAction>,
+            });
           }
 
           if (data?.success) {
             form.reset();
-            setSuccess(data.success);
+            toast({
+              title: data.success,
+            });
           }
 
           if (data?.twoFactor) {
             setShowTwoFactor(true);
           }
         })
-        .catch(() => setError('Something went wrong'));
+        .catch(() => catchError(t('generic_error')));
     });
   };
 
   return (
     <CardWrapper
       headerLabel={t('login')}
-      backButtonLabel={t('dont-have-an-account')}
+      backButtonLabel={t('dont_have_an_account')}
       backButtonHref="/register"
       showSocial
     >
@@ -87,7 +112,7 @@ export const LoginForm = () => {
                 name="code"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t('two-factor-code')}</FormLabel>
+                    <FormLabel>{t('two_factor_code')}</FormLabel>
                     <FormControl>
                       <Input
                         {...field}
@@ -107,7 +132,7 @@ export const LoginForm = () => {
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Email</FormLabel>
+                      <FormLabel>{t('email')}</FormLabel>
                       <FormControl>
                         <Input
                           {...field}
@@ -125,7 +150,7 @@ export const LoginForm = () => {
                   name="password"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Password</FormLabel>
+                      <FormLabel>{t('password')}</FormLabel>
                       <FormControl>
                         <Input
                           {...field}
@@ -140,7 +165,7 @@ export const LoginForm = () => {
                         asChild
                         className="px-0 font-normal"
                       >
-                        <Link href="/reset">Forgot your password ?</Link>
+                        <Link href="/reset">{t('forgot_password')}</Link>
                       </Button>
                       <FormMessage />
                     </FormItem>
@@ -149,15 +174,13 @@ export const LoginForm = () => {
               </>
             )}
           </div>
-          <FormError message={error || urlError} />
-          <FormSuccess message={success} />
           <Button
             disabled={isPending}
-            data-testid
+            data-testid="submit-button"
             type="submit"
             className="w-full"
           >
-            {showTwoFactor ? 'Confirm' : 'Login'}
+            {showTwoFactor ? t('confirm') : t('login')}
           </Button>
         </form>
       </Form>

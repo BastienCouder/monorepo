@@ -9,7 +9,7 @@ import { FoldersFilesTable } from './_components/folders-files-table';
 import { getTranslations } from 'next-intl/server';
 import { currentUser } from '@/lib/authCheck';
 import { db } from '@/lib/prisma';
-import { User } from '@/schemas/db';
+import { User } from '@/models/db';
 
 export interface AIPageProps {
   searchParams: SearchParams;

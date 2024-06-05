@@ -50,7 +50,8 @@ interface DataTableToolbarProps<TData> {
   goBack?: () => void;
   basePath: string | undefined;
   isGridView?: boolean;
-  toggleView: () => void;
+  switchToGridView: () => void;
+  switchToTableView: () => void;
 }
 
 export function DataTableToolbar<TData>({
@@ -65,7 +66,8 @@ export function DataTableToolbar<TData>({
   goBack,
   basePath,
   isGridView,
-  toggleView,
+  switchToGridView,
+  switchToTableView
 }: DataTableToolbarProps<TData>) {
   const isFiltered = table.getState().columnFilters.length > 0;
   const [isPending, startTransition] = React.useTransition();
@@ -148,14 +150,14 @@ export function DataTableToolbar<TData>({
         )}
         <div className="w-[4.5rem] bg-primary rounded-md flex justify-center items-center gap-3 p-1">
           <button
-            onClick={toggleView}
-            className={` ${isGridView ? 'bg-muted text-primary' : 'bg-primary text-muted'} cc  p-1 rounded-sm  cursor-pointer`}
+            onClick={switchToGridView} // Set grid view explicitly
+            className={`${isGridView ? 'bg-muted text-primary' : 'bg-primary text-muted'} p-1 rounded-sm cursor-pointer`}
           >
             {<IoGrid size={13} />}
           </button>
           <button
-            onClick={toggleView}
-            className={` ${isGridView ? 'bg-primary text-muted' : 'bg-muted text-primary'} transition-all p-1 rounded-sm  cursor-pointer`}
+            onClick={switchToTableView} // Set table view explicitly
+            className={`${!isGridView ? 'bg-muted text-primary' : 'bg-primary text-muted'} p-1 rounded-sm cursor-pointer`}
           >
             {<TbLayoutList size={16} />}
           </button>

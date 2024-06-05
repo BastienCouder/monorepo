@@ -2,8 +2,9 @@
 
 import { Icons } from '@/components/shared/icons';
 import { Button } from '@/components/ui/button';
-import { generateUserStripe } from '@/server-actions/generate-user-stripe';
+import { generateUserStripe } from '@/server/generate-user-stripe';
 import { SubscriptionPlan, UserSubscriptionPlan } from '@/types';
+import { useTranslations } from 'next-intl';
 import { useTransition } from 'react';
 
 interface BillingFormButtonProps {
@@ -17,6 +18,7 @@ export function BillingFormButton({
   offer,
   subscriptionPlan,
 }: BillingFormButtonProps) {
+  const t = useTranslations('pricing');
   let [isPending, startTransition] = useTransition();
   const generateUserStripeSession = generateUserStripe.bind(
     null,
@@ -45,14 +47,14 @@ export function BillingFormButton({
     >
       {isPending ? (
         <>
-          <Icons.spinner className="mr-2 size-4 animate-spin" /> Loading...
+          <Icons.spinner className="mr-2 size-4 animate-spin" /> {t('loading')}
         </>
       ) : (
         <>
           {subscriptionPlan.stripePriceId ===
-          offer.stripeIds[year ? 'yearly' : 'monthly']
-            ? 'Manage Subscription'
-            : 'Get started'}
+            offer.stripeIds[year ? 'yearly' : 'monthly']
+            ? t('manage_subscription')
+            : t('get_started')}
         </>
       )}
     </Button>

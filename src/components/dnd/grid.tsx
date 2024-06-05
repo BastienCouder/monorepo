@@ -7,16 +7,19 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { deleteItem } from '@/server-actions/user/delete-item';
+import { deleteItem } from '@/server/user/delete-item';
 import { buttonVariants } from '@/components/ui/button';
 import { useSelection } from '../../app/[locale]/(dashboard)/dashboard/(routes)/ai/(route)/_context/select-item';
 import { cn, formatDate, formatStorage } from '@/lib/utils';
 import FileOrFolderIcon from '../../app/[locale]/(dashboard)/dashboard/(routes)/ai/(route)/_components/files-folders-icon';
-import CreateRenameModal from '../../app/[locale]/(dashboard)/dashboard/(routes)/ai/(route)/_components/create-rename-modal';
-import { boxesIntersect, useSelectionContainer } from '@air/react-drag-to-select';
+import {
+  boxesIntersect,
+  useSelectionContainer,
+} from '@air/react-drag-to-select';
 import MouseSelection from './mouse-selection';
-import { File, Folder } from '@/schemas/db';
+import { File, Folder } from '@/models/db';
 import { Checkbox } from '../ui/checkbox';
+import CreateRenameModal from '@/app/[locale]/(dashboard)/dashboard/(routes)/drive/(route)/[teamId]/_components/create-rename-modal';
 
 interface GridFoldersFilesProps {
   data:
@@ -152,7 +155,6 @@ export default function GridFoldersFiles({
     }
   };
 
-
   return (
     <>
       <div className="relative overflow-hidden p-1">
@@ -205,15 +207,9 @@ export default function GridFoldersFiles({
                     >
                       Download
                     </div>
-                    <div
-                      className={cn(
-                        `${buttonVariants({ variant: 'outline' })} 
-                        ${selectedIndexes.includes(i) ? 'bg-primary text-background  hover:bg-primary/80 hover:text-background/80' : ''}
-                        cursor-pointer px-2 py-1 h-auto flex gap-2  text-xs`
-                      )}
-                    >
-                      <CreateRenameModal itemId={item.id} type="icon" />
-                    </div>
+
+                    <CreateRenameModal itemId={item.id} type="icon" selectedIndexes={selectedIndexes} i={i} />
+
                     {/* 
                     <label
                       className="relative flex cursor-pointer"
@@ -248,11 +244,15 @@ export default function GridFoldersFiles({
                   <div className="flex gap-4 items-end w-full">
                     <div>
                       {item.size ? (
-                        <div className={`flex items-center py-0.5 px-2 bg-muted rounded-sm ${selectedIndexes.includes(i) ? 'bg-primary text-background  hover:bg-primary/80 hover:text-background/80' : ''}`}>
+                        <div
+                          className={`flex items-center py-0.5 px-2 bg-muted rounded-sm ${selectedIndexes.includes(i) ? 'bg-primary text-background  hover:bg-primary/80 hover:text-background/80' : ''}`}
+                        >
                           <p className="text-xs">{formatStorage(item.size)}</p>
                         </div>
                       ) : (
-                        <div className={`flex items-center py-0.5 px-2 bg-muted rounded-sm ${selectedIndexes.includes(i) ? 'bg-primary text-background  hover:bg-primary/80 hover:text-background/80' : ''}`}>
+                        <div
+                          className={`flex items-center py-0.5 px-2 bg-muted rounded-sm ${selectedIndexes.includes(i) ? 'bg-primary text-background  hover:bg-primary/80 hover:text-background/80' : ''}`}
+                        >
                           <p className="text-xs">
                             {formatStorage(item.sizeFolder)}
                           </p>

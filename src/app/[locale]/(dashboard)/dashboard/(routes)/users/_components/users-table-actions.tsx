@@ -5,7 +5,6 @@ import { SelectTrigger } from '@radix-ui/react-select';
 import { type Table } from '@tanstack/react-table';
 import { toast } from 'sonner';
 
-import { catchError } from '@/lib/catch-error';
 import { Button } from '@/components/ui/button';
 import {
   Select,
@@ -41,9 +40,9 @@ export function deleteSelectedRows(
       success: () => {
         return 'Utilisateurs supprimés avec succès.';
       },
-      error: (err: unknown) => {
-        return catchError(err);
-      },
+      // error: (err: any) => {
+      //   return console.log(err);
+      // },
     }
   );
 }
@@ -68,9 +67,9 @@ export function updateUsersRole(table: Table<User>, status: string) {
       success: () => {
         return 'Mise à jour réussie des utilisateurs.';
       },
-      error: (err: unknown) => {
-        return catchError(err);
-      },
+      // error: (err: unknown) => {
+      //   return catchError(err);
+      // },
     }
   );
 }

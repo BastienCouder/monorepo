@@ -10,6 +10,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { usePathname } from 'next/navigation';
+import { useRouteParam } from '@/providers/route-params-provider';
 
 interface INav {
   isCollapsed: boolean;
@@ -18,6 +19,12 @@ interface INav {
 
 export function Nav({ links, isCollapsed }: INav) {
   const pathname = usePathname();
+  const { setParam } = useRouteParam();
+
+
+  const handleBackClick = () => {
+    setParam(null);
+  };
 
   return (
     <div
@@ -30,17 +37,18 @@ export function Nav({ links, isCollapsed }: INav) {
             <Tooltip key={index} delayDuration={0}>
               <TooltipTrigger asChild>
                 <Link
+                  onClick={handleBackClick}
                   href={link.href}
                   className={cn(
                     buttonVariants({
-                      variant: pathname.startsWith(link.href)
+                      variant: pathname?.startsWith(link.href)
                         ? 'default'
                         : 'ghost',
                       size: 'icon',
                     }),
                     'h-9 w-9',
-                    pathname.startsWith(link.href) &&
-                      'dark:bg-muted dark:text-muted-foreground dark:hover:bg-muted dark:hover:text-white'
+                    pathname?.startsWith(link.href) &&
+                    'dark:bg-muted dark:text-muted-foreground dark:hover:bg-muted dark:hover:text-white'
                   )}
                 >
                   <link.icon className="h-4 w-4" />
@@ -60,12 +68,13 @@ export function Nav({ links, isCollapsed }: INav) {
             <Link
               key={index}
               href={link.href}
+              onClick={handleBackClick}
               className={cn(
                 buttonVariants({
-                  variant: pathname.startsWith(link.href) ? 'default' : 'ghost',
-                  size: 'sm',
+                  variant: pathname?.startsWith(link.href) ? 'default' : 'ghost',
+
                 }),
-                pathname.startsWith(link.href) && '',
+                pathname?.startsWith(link.href) && '',
                 'justify-start  hover:bg-primary  hover:text-background'
               )}
             >
@@ -75,8 +84,8 @@ export function Nav({ links, isCollapsed }: INav) {
                 <span
                   className={cn(
                     'ml-auto',
-                    pathname.startsWith(link.href) &&
-                      'text-background hover:bg-background dark:text-white'
+                    pathname?.startsWith(link.href) &&
+                    'text-background hover:bg-background dark:text-white'
                   )}
                 >
                   {link.label}

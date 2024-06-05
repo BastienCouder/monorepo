@@ -1,4 +1,4 @@
-import { getVerificationTokenByEmail } from '@/lib/data/verification-token';
+import { getVerificationTokenByEmail } from '@/lib/auth/verification-token';
 import { db } from '@/lib/prisma';
 
 jest.mock('@/lib/prisma', () => {

@@ -8,7 +8,7 @@ import { Loader2 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 
-import { updateUserSchema } from '@/schemas/user';
+import { updateUserSchema } from '@/models/user';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -27,7 +27,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { admin } from '@/server-actions/auth/admin.action';
+import { admin } from '@/server/auth/admin.action';
 
 type UserFormValues = z.infer<typeof updateUserSchema>;
 

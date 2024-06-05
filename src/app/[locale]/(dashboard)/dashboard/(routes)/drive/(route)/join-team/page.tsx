@@ -1,5 +1,5 @@
 'use client';
-import verificationAccess from '@/server-actions/team/verification-access';
+import verificationAccess from '@/server/team/verification-access';
 import { useSearchParams } from 'next/navigation';
 import React from 'react';
 

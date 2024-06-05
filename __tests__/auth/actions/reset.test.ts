@@ -10,11 +10,11 @@ jest.mock('@/lib/data/user', () => ({
     sendPasswordResetEmail: jest.fn(),
   }));
   
-import { getUserByEmail } from '@/lib/data/user';
+import { getUserByEmail } from '@/lib/auth/user';
 import { generatePasswordResetToken } from '@/lib/tokens';
 import { sendPasswordResetEmail } from '@/lib/email';
 import { User } from '@/schemas/db-schema';
-import { reset } from '@/server-actions/auth/reset.action';
+import { reset } from '@/server/auth/reset.action';
 
 const mockGetUserByEmail = getUserByEmail as jest.MockedFunction<typeof getUserByEmail>;
 const mockGeneratePasswordResetToken = generatePasswordResetToken as jest.MockedFunction<typeof generatePasswordResetToken>;

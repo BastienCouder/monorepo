@@ -4,7 +4,7 @@ import { revalidatePath } from 'next/cache';
 import type { z } from 'zod';
 import type { updateUserRoleSchema } from './validations';
 
-import { deleteUserSchema } from '@/schemas/user';
+import { deleteUserSchema } from '@/models/user';
 import { db } from '@/lib/prisma';
 import { currentUser } from '@/lib/authCheck';
 

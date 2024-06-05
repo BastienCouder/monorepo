@@ -15,13 +15,22 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
-import { FormError } from '@/components/modal/form-error';
-import { FormSuccess } from '@/components/modal/form-success';
-import { reset } from '@/server-actions/auth/reset.action';
+import { FormSuccess } from '@/components/form/form-success';
+import { reset } from '@/server/auth/reset.action';
 import { CardWrapper } from './card-wrapper';
-import { ResetSchema } from '@/schemas/auth';
+import { ResetSchema } from '@/models/auth';
+import { useTranslations } from 'next-intl';
+import { FormError } from '../form/form-error';
+
+const translateZodErrors = (errors: z.ZodError, t: (key: string) => string) => {
+  return errors.errors.map(error => ({
+    path: error.path,
+    message: t(error.message),
+  }));
+};
 
 export const ResetForm = () => {
+  const t = useTranslations('auth.client');
   const [error, setError] = useState<string | undefined>('');
   const [success, setSuccess] = useState<string | undefined>('');
   const [isPending, startTransition] = useTransition();
@@ -38,6 +47,15 @@ export const ResetForm = () => {
     setSuccess('');
 
     startTransition(() => {
+      const result = ResetSchema.safeParse(values);
+      if (!result.success) {
+        const translatedErrors = translateZodErrors(result.error, t);
+        translatedErrors.forEach(error => {
+          setError(error.message);
+        });
+        return;
+      }
+
       reset(values).then((data) => {
         setError(data?.error);
         setSuccess(data?.success);
@@ -47,8 +65,8 @@ export const ResetForm = () => {
 
   return (
     <CardWrapper
-      headerLabel="Forgot your password?"
-      backButtonLabel="Back to login"
+      headerLabel={t('forgot_password')}
+      backButtonLabel={t('back_to_login')}
       backButtonHref="/login"
     >
       <Form {...form}>
@@ -59,7 +77,7 @@ export const ResetForm = () => {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel>{t('email')}</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
@@ -76,7 +94,7 @@ export const ResetForm = () => {
           <FormError message={error} />
           <FormSuccess message={success} />
           <Button disabled={isPending} type="submit" className="w-full">
-            Send reset email
+            {t('send_reset_email')}
           </Button>
         </form>
       </Form>

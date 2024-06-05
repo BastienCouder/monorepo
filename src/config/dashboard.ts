@@ -3,52 +3,37 @@ import { DashboardConfig } from '@/types';
 import { useTranslations } from 'next-intl';
 
 export function useDashboardConfig() {
-  // const t = useTranslations('DashboardConfig');
+  const t = useTranslations('navbar');
 
   // Configuration object using translated strings
   const dashboardConfig: DashboardConfig = {
     mainNav: [
       {
-        title: 'Documentation',
+        title: t('main_nav.documentation'),
         href: '/docs',
       },
       {
-        title: 'support',
+        title: t('main_nav.support'),
         href: '/support',
         disabled: true,
       },
     ],
     sidebarNav: [
-      // {
-      //   title: t('My Files'),
-      //   href: '/dashboard/files',
-      //   icon: Icons.file,
-      // },
       {
-        title: 'Documentation',
+        title: t('sidebar_nav.documentation'),
         href: '/docs',
-        icon: Icons.spinner,
-      },
-      // {
-      //   title: 'Drive',
-      //   href: '/dashboard/drive',
-      //   icon: Icons.drive,
-      // },
-      {
-        title: 'AI',
-        href: '/dashboard/ai',
-        icon: Icons.spinner,
+        icon: Icons.document,
       },
       {
-        title: 'Upgrade',
+        title: t('sidebar_nav.upgrade'),
         href: '/pricing',
         icon: Icons.billing,
       },
-      // {
-      //   title: t('Settings'),
-      //   href: '/dashboard/settings',
-      //   icon: Icons.settings,
-      // },
+      {
+        title: t('sidebar_nav.settings'),
+        href: '/dashboard/settings',
+        icon: Icons.settings,
+      },
     ],
   };
 

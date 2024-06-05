@@ -1,5 +1,5 @@
-import { getPasswordResetTokenByEmail } from '@/lib/data/password-reset-token';
-import { getVerificationTokenByEmail } from '@/lib/data/verification-token';
+import { getPasswordResetTokenByEmail } from '@/lib/auth/password-reset-token';
+import { getVerificationTokenByEmail } from '@/lib/auth/verification-token';
 import { db } from '@/lib/prisma';
 import { generatePasswordResetToken, generateVerificationToken } from '@/lib/tokens';
 import { randomUUID } from 'crypto';

@@ -6,7 +6,7 @@ import { CreateTeamForm } from './create-team-form';
 import { CreateJoinTeamForm } from './join-team-form';
 import FolderTeamCard from './folder-team-card';
 import { SearchInput } from '@/components/search-input';
-import { Team } from '@/schemas/db';
+import { Team } from '@/models/db';
 import { Separator } from '@/components/ui/separator';
 import { BillingInfo } from '@/app/[locale]/(app)/(marketing)/pricing/_components/billing-info';
 

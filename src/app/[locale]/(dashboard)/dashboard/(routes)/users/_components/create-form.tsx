@@ -23,12 +23,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { createUserSchema } from '@/schemas/user';
+import { createUserSchema } from '@/models/user';
 import { useRouter } from 'next/navigation';
 
 import { toast } from '@/components/ui/use-toast';
-import { admin } from '@/server-actions/auth/admin.action';
-import { createUser } from '@/server-actions/auth/users.action';
+import { admin } from '@/server/auth/admin.action';
+import { createUser } from '@/server/auth/users.action';
 
 type UserFormValues = z.infer<typeof createUserSchema>;
 

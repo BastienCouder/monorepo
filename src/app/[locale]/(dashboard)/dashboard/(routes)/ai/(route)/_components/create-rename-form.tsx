@@ -19,9 +19,9 @@ import { Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { toast } from '@/components/ui/use-toast';
-import { renameItemSchema } from '@/schemas/validations/folder';
+import { renameItemSchema } from '@/models/validations/folder';
 import { capitalize } from '@/lib/utils';
-import { renameItem } from '@/server-actions/user/rename-item';
+import { renameItem } from '@/server/user/rename-item';
 
 type RenameItemFormValues = z.infer<typeof renameItemSchema>;
 

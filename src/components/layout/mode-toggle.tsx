@@ -13,15 +13,18 @@ import {
 import { Icons } from '@/components/shared/icons';
 import { BsMoonStarsFill } from 'react-icons/bs';
 import { Sun } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import { FaSun } from 'react-icons/fa';
 
 export function ModeToggle() {
   const { setTheme } = useTheme();
+  const t = useTranslations('navbar.mode_toggle');
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="sm" className="p-0">
-          <Sun
+        <Button variant="none" size="sm" className="p-0">
+          < FaSun
             size={17}
             className="rotate-0 transition-all dark:-rotate-90 dark:scale-0"
           />
@@ -29,17 +32,17 @@ export function ModeToggle() {
             size={17}
             className="absolute rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100"
           />
-          <span className="sr-only">Toggle theme</span>
+          <span className="sr-only">{t('toggle_theme')}</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuItem onClick={() => setTheme('light')}>
           <Icons.sun className="mr-2 size-4" />
-          <span>Light</span>
+          <span>{t('light')}</span>
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => setTheme('dark')}>
           <Icons.moon className="mr-2 size-4" />
-          <span>Dark</span>
+          <span>{t('dark')}</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

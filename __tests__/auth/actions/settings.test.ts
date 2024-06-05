@@ -1,12 +1,12 @@
 // settings.test.ts
 
-import * as userLib from '@/lib/data/user';
+import * as userLib from '@/lib/auth/user';
 import * as authCheck from '@/lib/authCheck';
 import * as emailLib from '@/lib/email';
 import * as tokensLib from '@/lib/tokens';
 import bcrypt from 'bcryptjs';
 import { db } from '@/lib/prisma';
-import { settings } from '@/server-actions/auth/settings';
+import { settings } from '@/server/auth/settings';
 import { User } from '@/schemas/db-schema';
 
 

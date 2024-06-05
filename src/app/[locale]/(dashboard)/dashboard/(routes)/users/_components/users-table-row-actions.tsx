@@ -11,7 +11,6 @@ import { DotsHorizontalIcon } from '@radix-ui/react-icons';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { deleteUser } from '../_lib/actions';
-import { catchError } from '@/lib/catch-error';
 import {
   Dialog,
   DialogContent,
@@ -67,7 +66,7 @@ function UserTableRowActions<TData extends WithId>({
                   {
                     loading: 'EN cours de suppression...',
                     success: () => "L'utilisateur a été supprimé avec succès.",
-                    error: (err: unknown) => catchError(err),
+                    // error: (err: unknown) => (err),
                   }
                 );
               });

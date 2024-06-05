@@ -1,6 +1,4 @@
-'use client';
-
-import { logout } from '@/server-actions/auth/logout.action';
+import { logout } from '@/server/auth/logout.action';
 import React from 'react';
 
 interface LogoutButtonProps {

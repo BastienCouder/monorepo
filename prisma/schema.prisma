@@ -112,6 +112,14 @@ model User {
   Action                 Action[]
 }
 
+model AnonymousUser {
+  id              String   @id @default(cuid())
+  originalUser    String
+  anonymizedEmail String
+  anonymizedName  String
+  createdAt       DateTime @default(now())
+}
+
 model TeamLimit {
   id     String @id @default(uuid())
   userId String @unique

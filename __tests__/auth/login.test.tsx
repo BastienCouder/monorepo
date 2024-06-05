@@ -1,6 +1,6 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import LoginPage from '@/app/(auth)/login/page';
-import * as loginAction from '@/server-actions/auth/login.action';
+import * as loginAction from '@/server/auth/login.action';
 
 // Mock pour la fonction login
 jest.mock('@/app/(auth)/actions/login.action', () => ({

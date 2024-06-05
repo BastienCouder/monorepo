@@ -33,6 +33,8 @@ export default async function IndexPage({
     <>
       <section className="space-y-6 pb-12 pt-16 lg:py-28">
         <div className="container flex max-w-[64rem] flex-col items-center gap-5 text-center">
+
+
           <Link
             href="https://www.youtube.com/watch?v=kwmHaXUAa0M&list=PLh_UnTlfzMSZ7PUk-IsgRuc0rswnJ2Sdg&index=22"
             className={cn(

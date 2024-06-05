@@ -1,10 +1,10 @@
 
 import * as z from 'zod';
 import bcrypt from 'bcryptjs';
-import * as passwordResetTokenData from '@/lib/data/password-reset-token';
-import * as userData from '@/lib/data/user';
+import * as passwordResetTokenData from '@/lib/auth/password-reset-token';
+import * as userData from '@/lib/auth/user';
 import { db } from '@/lib/prisma';
-import { newPassword } from '@/server-actions/auth/new-password.action';
+import { newPassword } from '@/server/auth/new-password.action';
 import { User } from '@/schemas/db-schema';
 
 jest.mock('bcryptjs', () => ({

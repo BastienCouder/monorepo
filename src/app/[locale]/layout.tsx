@@ -1,5 +1,4 @@
 import '@/styles/globals.css';
-
 import pick from 'lodash/pick';
 import { fontHeading, fontRaleway, fontSans, fontUrban } from '@/assets/fonts';
 import { Analytics } from '@/components/analytics';
@@ -11,9 +10,9 @@ import { cn } from '@/lib/utils';
 import { SessionProvider } from 'next-auth/react';
 import { auth } from '@/auth';
 import { NextIntlClientProvider } from 'next-intl';
-import { getMessages, unstable_setRequestLocale } from 'next-intl/server';
-import { headers } from 'next/headers';
-import { notFound } from 'next/navigation';
+import { getMessages } from 'next-intl/server';
+import { SocketProvider } from '@/providers/socket-provider';
+import { Viewport } from 'next';
 
 interface RootLayoutProps {
   children: React.ReactNode;
@@ -67,19 +66,21 @@ export const metadata = {
   manifest: `${siteConfig.url}/site.webmanifest`,
 };
 
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "white" },
+    { media: "(prefers-color-scheme: dark)", color: "black" },
+  ],
+}
+
 export default async function RootLayout({
   children,
   params: { locale },
 }: RootLayoutProps) {
-  unstable_setRequestLocale(locale);
-  const header = headers();
-  const localeHeader = header.get('x-next-intl-locale');
-  if (localeHeader === null) {
-    notFound();
-  }
+
   const session = await auth();
   const messages = await getMessages({ locale });
-  // console.log(`Locale: ${locale}`, messages);
+
   return (
     <SessionProvider session={session}>
       <html lang={locale} suppressHydrationWarning>
@@ -100,10 +101,13 @@ export default async function RootLayout({
             disableTransitionOnChange
           >
             <NextIntlClientProvider
-              locale={locale}
               messages={pick(messages, 'Error')}
             >
-              {children}
+
+              <SocketProvider>
+                {children}
+              </SocketProvider>
+
             </NextIntlClientProvider>
             <Analytics />
             <Toaster />

@@ -115,11 +115,17 @@ export function DataTable<TData, TValue>({
     // dataTable.getIsAllRowsSelected = [];:
   };
 
-  const toggleView = () => {
-    setIsGridView(!isGridView);
+  // These functions handle the switch between views
+  const switchToGridView = () => {
+    setIsGridView(true);
     clearSelection();
-    resetDataTableState();
   };
+
+  const switchToTableView = () => {
+    setIsGridView(false);
+    clearSelection();
+  };
+
   return (
     <div className="w-full space-y-2.5 overflow-auto">
       {advancedFilter ? (
@@ -134,7 +140,8 @@ export function DataTable<TData, TValue>({
           goBack={goBack}
           basePath={basePath}
           isGridView={isGridView}
-          toggleView={toggleView}
+          switchToGridView={switchToGridView}
+          switchToTableView={switchToTableView}
           teamId={teamId}
         />
       ) : (
@@ -149,12 +156,13 @@ export function DataTable<TData, TValue>({
           goBack={goBack}
           basePath={basePath}
           isGridView={isGridView}
-          toggleView={toggleView}
+          switchToGridView={switchToGridView}
+          switchToTableView={switchToTableView}
         />
       )}
       {isGridView ? (
         <>
-          {!isLoading ? (
+          {isLoading ? (
             <GridSkeleton />
           ) : (
             <>
@@ -175,9 +183,9 @@ export function DataTable<TData, TValue>({
                           {header.isPlaceholder
                             ? null
                             : flexRender(
-                                header.column.columnDef.header,
-                                header.getContext()
-                              )}
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
                         </TableHead>
                       );
                     })}

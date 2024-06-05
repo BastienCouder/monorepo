@@ -1,4 +1,4 @@
-import { getPasswordResetTokenByEmail, getPasswordResetTokenByToken } from '@/lib/data/password-reset-token';
+import { getPasswordResetTokenByEmail, getPasswordResetTokenByToken } from '@/lib/auth/password-reset-token';
 import { db } from '@/lib/prisma';
 
 jest.mock('@/lib/prisma', () => {

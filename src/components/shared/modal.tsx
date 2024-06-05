@@ -1,10 +1,13 @@
-'use client';
+"use client";
 
-import { cn } from '@/lib/utils';
-import { Drawer } from 'vaul';
+import { cn } from "@/lib/utils";
+import { Drawer } from "vaul";
 
-import { Dialog, DialogContent } from '@/components/ui/dialog';
-import { useMediaQuery } from '@/hooks/use-media-query';
+import {
+  Dialog,
+  DialogContent,
+} from "@/components/ui/dialog";
+import { useMediaQuery } from "@/hooks/use-media-query";
 
 interface ModalProps {
   children: React.ReactNode;
@@ -13,26 +16,18 @@ interface ModalProps {
   setShowModal: () => void;
 }
 
-export function Modal({
-  children,
-  className,
-  showModal,
-  setShowModal,
-}: ModalProps) {
+export function Modal({ children, className, showModal, setShowModal }: ModalProps) {
   const isMobile = useMediaQuery('(min-width: 768px)');
 
   if (isMobile) {
     return (
       <Drawer.Root open={showModal} onClose={setShowModal}>
-        <Drawer.Overlay
-          className="fixed inset-0 z-40 bg-background/80 backdrop-blur-sm"
-          onClick={setShowModal}
-        />
+        <Drawer.Overlay className="fixed inset-0 z-40 bg-background/80 backdrop-blur-sm" onClick={setShowModal} />
         <Drawer.Portal>
           <Drawer.Content
             className={cn(
-              'fixed inset-x-0 bottom-0 z-50 mt-24 overflow-hidden rounded-t-2xl border bg-background',
-              className
+              "fixed inset-x-0 bottom-0 z-50 mt-24 overflow-hidden rounded-t-2xl border bg-background",
+              className,
             )}
           >
             <div className="sticky top-0 z-20 flex w-full items-center justify-center bg-inherit">
@@ -51,5 +46,6 @@ export function Modal({
         {children}
       </DialogContent>
     </Dialog>
+
   );
 }

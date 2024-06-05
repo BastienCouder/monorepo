@@ -3,14 +3,14 @@
 import firebase from 'firebase/app';
 import 'firebase/auth';
 import { useCurrentUser } from '@/hooks/use-current-user';
-import { storage } from '@/lib/firebase';
+import { storage } from '@/libs/firebase';
 import { cn } from '@/lib/utils';
 import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
 import { useState } from 'react';
 import DropzoneComponent from 'react-dropzone';
 import { FcOpenedFolder } from 'react-icons/fc';
-import { File } from '@/schemas/db';
-import { updateDoc, uploads } from '@/server-actions/uploads/upload';
+import { File } from '@/models/db';
+import { updateDoc, uploads } from '@/server/uploads/upload';
 
 interface DropzoneProps {
   folderId: string;

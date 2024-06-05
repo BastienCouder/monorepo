@@ -1,3 +1,4 @@
+
 import {
   Accordion,
   AccordionContent,
@@ -38,24 +39,26 @@ const pricingFaqData = [
   },
 ];
 
+import { useTranslations } from 'next-intl';
+
 export function PricingFaq() {
+  const t = useTranslations('faq');
+
   return (
     <section className="container max-w-3xl py-2">
       <div className="mb-14 space-y-6 text-center">
         <h1 className="text-balance text-center font-heading text-3xl md:text-5xl">
-          Frequently Asked Questions
+          {t('title')}
         </h1>
         <p className="text-md text-balance text-muted-foreground">
-          Explore our comprehensive FAQ to find quick answers to common
-          inquiries. If you need further assistance, don&apos;t hesitate to
-          contact us for personalized help.
+          {t('description')}
         </p>
       </div>
       <Accordion type="single" collapsible className="w-full">
-        {pricingFaqData.map((faqItem) => (
+        {pricingFaqData.map((faqItem, index) => (
           <AccordionItem key={faqItem.id} value={faqItem.id}>
-            <AccordionTrigger>{faqItem.question}</AccordionTrigger>
-            <AccordionContent>{faqItem.answer}</AccordionContent>
+            <AccordionTrigger>{t(`question${index + 1}`)}</AccordionTrigger>
+            <AccordionContent>{t(`answer${index + 1}`)}</AccordionContent>
           </AccordionItem>
         ))}
       </Accordion>

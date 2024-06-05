@@ -1,15 +1,16 @@
 'use client';
 
 import { useState } from 'react';
-
 import { Icons } from '@/components/shared/icons';
-import { Modal } from '@/components/shared/modal';
 import { Button } from '@/components/ui/button';
 import { siteConfig } from '@/config/site';
 import { useSigninModal } from '@/hooks/use-signin-modal';
 import { signIn } from 'next-auth/react';
+import { useTranslations } from 'next-intl';
+import { Modal } from '../shared/modal';
 
 export const SignInModal = () => {
+  const t = useTranslations('navbar');
   const signInModal = useSigninModal();
   const [signInClicked, setSignInClicked] = useState(false);
 
@@ -20,8 +21,8 @@ export const SignInModal = () => {
           <a href={siteConfig.url}>
             <Icons.logo className="size-10" />
           </a>
-          <h3 className="font-urban text-2xl font-bold">Sign In</h3>
-          <p className="text-sm text-gray-500">Connect quickly with google.</p>
+          <h3 className="font-urban text-2xl font-bold">{t('sign_in')}</h3>
+          <p className="text-sm text-gray-500">{t('get_connected_quickly_with_google')}</p>
         </div>
 
         <div className="flex flex-col space-y-4 bg-secondary/50 px-4 py-8 md:px-16">
@@ -42,7 +43,7 @@ export const SignInModal = () => {
             ) : (
               <Icons.google className="mr-2 size-4" />
             )}{' '}
-            Sign In with Google
+            {t('sign_in_with_google')}
           </Button>
         </div>
       </div>

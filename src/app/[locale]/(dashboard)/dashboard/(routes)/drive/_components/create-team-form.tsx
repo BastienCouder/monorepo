@@ -19,8 +19,8 @@ import { Loader2, MinusCircle } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { toast } from '@/components/ui/use-toast';
-import { createTeamSchema } from '@/schemas/validations/team';
-import { createTeam } from '@/server-actions/team/create-team-with-invite';
+import { createTeamSchema } from '@/models/validations/team';
+import { createTeam } from '@/server/team/create-team-with-invite';
 
 type TeamFormValues = z.infer<typeof createTeamSchema>;
 

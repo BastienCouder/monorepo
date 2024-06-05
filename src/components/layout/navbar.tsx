@@ -10,6 +10,8 @@ import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { useSigninModal } from '@/hooks/use-signin-modal';
 import { ModeToggle } from './mode-toggle';
+import { useTranslations } from 'next-intl';
+import { LangSwitcher } from '../shared/language-switcher';
 
 interface NavBarProps {
   user: Pick<User, 'name' | 'image' | 'email'> | undefined;
@@ -26,33 +28,34 @@ export function NavBar({
   rightElements,
   scroll = false,
 }: NavBarProps) {
+  const t = useTranslations('navbar');
   const scrolled = useScroll(50);
   const signInModal = useSigninModal();
 
   return (
     <header
-      className={`sticky top-0 z-40 flex w-full justify-center bg-background/60 backdrop-blur-xl transition-all ${
-        scroll ? (scrolled ? 'border-b' : 'bg-background/0') : 'border-b'
-      }`}
+      className={`sticky top-0 z-40 flex w-full justify-center bg-background/60 backdrop-blur-xl transition-all ${scroll ? (scrolled ? 'border-b' : 'bg-background/0') : 'border-b'
+        }`}
     >
       <div className="container flex h-16 items-center justify-between py-4">
         <MainNav items={items}>{children}</MainNav>
-
         <div className="flex items-center space-x-3">
           {rightElements}
-
-          {!user ? (
-            <Link
-              href="/login"
-              className={cn(buttonVariants({ variant: 'outline', size: 'sm' }))}
-            >
-              Login Page
-            </Link>
-          ) : null}
           <div className="px-2">
             <ModeToggle />
           </div>
-          {user ? (
+          <div className="px-2">
+            <LangSwitcher />
+          </div>
+          {!user ? (
+            <Link
+              href="/login"
+              className={cn(buttonVariants({ variant: 'default', size: 'sm' }))}
+            >
+              {t('login_page')}
+            </Link>
+          ) : <UserAccountNav user={user} />}
+          {/* {user ? (
             <UserAccountNav user={user} />
           ) : (
             <Button
@@ -61,9 +64,9 @@ export function NavBar({
               size="sm"
               onClick={signInModal.onOpen}
             >
-              Sign In
+              {t('sign_in')}
             </Button>
-          )}
+          )} */}
         </div>
       </div>
     </header>

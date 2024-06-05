@@ -1,10 +1,10 @@
 
 import * as bcrypt from 'bcryptjs';
 import { db } from '@/lib/prisma';
-import * as userData from '@/lib/data/user';
+import * as userData from '@/lib/auth/user';
 import * as tokens from '@/lib/tokens';
 import * as email from '@/lib/email';
-import { register } from '@/server-actions/auth/register.action';
+import { register } from '@/server/auth/register.action';
 import { User } from '@/schemas/db-schema';
 
 jest.mock('bcryptjs', () => ({

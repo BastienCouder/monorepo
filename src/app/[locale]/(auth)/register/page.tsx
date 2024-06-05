@@ -1,18 +1,30 @@
 import { Metadata } from 'next';
-import { env } from '@/lib/env';
+import { getMessages, getTranslations } from 'next-intl/server';
 import { RegisterForm } from '@/components/auth/form-register';
 import { siteConfig } from '@/config/site';
+import { NextIntlClientProvider } from 'next-intl';
+import { pick } from 'lodash';
 
-export async function generateMetadata(): Promise<Metadata> {
+export async function generateMetadata({ params: { locale } }: { params: { locale: string } }): Promise<Metadata> {
+  const t = await getTranslations({ locale });
   return {
-    title: `Register at - ${siteConfig.name}`,
-    description: `Register at`,
+    title: `${t('metadata.auth.register_at')} - ${siteConfig.name}`,
+    description: t('metadata.auth.register_description'),
     robots: { index: false, follow: false, nocache: false },
   };
 }
 
-const RegisterPage = () => {
-  return <RegisterForm />;
+const RegisterPage = async () => {
+  const messages = await getMessages()
+
+  return (
+    <NextIntlClientProvider
+      messages={
+        pick(messages, 'auth.client')
+      }
+    >
+      <RegisterForm />
+    </NextIntlClientProvider>)
 };
 
 export default RegisterPage;

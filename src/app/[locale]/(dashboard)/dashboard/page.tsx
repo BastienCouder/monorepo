@@ -1,4 +1,5 @@
-import { env } from '@/lib/env';
+
+import { env } from '@/env.mjs';
 import { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 

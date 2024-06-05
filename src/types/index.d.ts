@@ -1,13 +1,5 @@
 // Site
 import React from 'react';
-export type SiteConfig = {
-  name: string;
-  description: string;
-  url: string;
-  ogImage: string;
-  links: { twitter: string; github: string };
-  mailSupport: string;
-};
 
 // Data Table
 export interface SearchParams {
@@ -69,7 +61,21 @@ export type SidebarNavItem = {
     }
 );
 
+
 export type SiteConfig = {
+  name: string;
+  description: string;
+  url: string;
+  ogImage: string;
+  mailSupport: string;
+  links: {
+    twitter: string;
+    github: string;
+  };
+};
+
+
+export type MarketingConfig = {
   name: string;
   description: string;
   url: string;

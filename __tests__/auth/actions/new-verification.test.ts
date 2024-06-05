@@ -1,6 +1,6 @@
-import { newVerification } from '@/server-actions/auth/new-verification';
-import { getUserByEmail } from '@/lib/data/user';
-import { getVerificationTokenByToken } from '@/lib/data/verification-token';
+import { newVerification } from '@/server/auth/new-verification';
+import { getUserByEmail } from '@/lib/auth/user';
+import { getVerificationTokenByToken } from '@/lib/auth/verification-token';
 import { db } from '@/lib/prisma';
 import { User } from '@/schemas/db-schema';
 

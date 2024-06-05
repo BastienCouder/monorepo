@@ -16,16 +16,16 @@ import { MobileNav } from './mobile-nav';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { ModeToggle } from '@/components/layout/mode-toggle';
 import { UserAccountNav } from '@/components/layout/user-account-nav';
-import { Button } from '@/components/ui/button';
-import { Icons } from '@/components/shared/icons';
 import Link from 'next/link';
 import { useDashboardConfig } from '@/config/dashboard';
-import LanguageSwitcher from '@/components/shared/language-switcher';
 import Logo from './logo';
-import { Team } from '@/schemas/db';
-import CreateModal from '@/components/modal/create-modal';
+import { Team } from '@/models/db';
 import { CreateTeamForm } from '../(routes)/drive/_components/create-team-form';
-import { PlusCircle } from 'lucide-react';
+import { useRouteParam } from '@/providers/route-params-provider';
+import { useSocket } from '@/providers/socket-provider';
+import { LangSwitcher } from '@/components/shared/language-switcher';
+import { Icons } from '@/components/shared/icons';
+import CreateModal from '../(routes)/users/_components/create-modal';
 
 interface IDashboardShell {
   defaultLayout: number[] | undefined;
@@ -34,6 +34,12 @@ interface IDashboardShell {
   children: React.ReactNode;
   teams: Team[];
 }
+
+type User = {
+  id: string;
+  name: string;
+  teamIds: string[];
+};
 
 export function DashboardShell({
   defaultLayout = [265, 440 + 655],
@@ -44,8 +50,17 @@ export function DashboardShell({
 }: IDashboardShell) {
   const [isCollapsed, setIsCollapsed] = React.useState(defaultCollapsed);
   const user = useCurrentUser();
+  const { setParam } = useRouteParam();
   const config = useDashboardConfig();
   const sidebarNav = config.sidebarNav;
+
+  const { connectedUsers } = useSocket();
+
+  // Filtrer les utilisateurs en ligne par équipe
+  // const filteredUsers = onlineUsers.filter(user => user.teamIds.includes(param!));
+  // setUsersInTeam(filteredUsers);
+  console.log('users connected :', connectedUsers);
+
 
   return (
     <TooltipProvider delayDuration={0}>
@@ -88,18 +103,25 @@ export function DashboardShell({
           </div>
           <div className="py-4 px-8 space-y-4">
             <div className="flex items-center">
+              <h2 className="font-semibold text-sm">Users</h2>
+
+
+            </div>
+            <ul>
+              {connectedUsers.map(user => (
+                <li key={user}>{user}</li>
+              ))}
+            </ul>
+          </div>
+          <div className="py-4 px-8 space-y-4">
+            <div className="flex items-center">
               <h2 className="font-semibold text-sm">Group</h2>
-              <CreateModal
-                title={<PlusCircle size={15} className="mt-[1px]" />}
-                dialogTitle="Create Team"
-                Component={CreateTeamForm}
-                variant={'ghost'}
-              />
+
             </div>
             <ul className="flex flex-col gap-2">
               {teams.map((team) => (
                 <li key={team.id} className="group">
-                  <Link href={`/dashboard/drive/${team.slug}`}>
+                  <Link href={`/dashboard/drive/${team.id}`}>
                     <div className="flex gap-4 items-center text-sm cursor-pointer">
                       <span>#</span>{' '}
                       <p className="first-letter:uppercase text-muted-foreground group-hover:text-foreground">
@@ -129,21 +151,9 @@ export function DashboardShell({
               <div className="block lg:hidden">
                 {/* <Logo isCollapsed={true} /> */}
               </div>
-              <div className="flex items-center space-x-8 lg:ml-auto">
-                <div className="flex items-center space-x-2">
-                  <LanguageSwitcher />
-                  <ModeToggle />
-                  <Link href={'/help'}>
-                    <Button variant={'ghost'} className="p-0">
-                      <Icons.help size={17} />
-                    </Button>
-                  </Link>
-                  <Link href={'/dashboard/settings'}>
-                    <Button variant={'ghost'} className="p-0">
-                      <Icons.settings size={17} />
-                    </Button>
-                  </Link>
-                </div>
+              <div className="flex items-center space-x-4 lg:ml-auto">
+                <ModeToggle />
+                <LangSwitcher />
                 <UserAccountNav
                   user={{
                     name: user?.name ?? 'N/A',

@@ -1,6 +1,6 @@
 'use server';
+import { env } from '@/env.mjs';
 import { Resend } from 'resend';
-import { env } from './env';
 
 const domainEmail = 'Acme <onboarding@resend.dev>';
 

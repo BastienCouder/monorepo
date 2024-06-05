@@ -1,4 +1,3 @@
-'use client';
 import { Input } from '@/components/ui/input';
 import { useState, useCallback } from 'react';
 import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';

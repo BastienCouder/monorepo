@@ -22,7 +22,7 @@ import { Row } from '@tanstack/react-table';
 
 import CreateRenameModal from './create-rename-modal';
 import { UpdateForm } from '../../../users/_components/update-form';
-import { deleteItem } from '@/server-actions/user/delete-item';
+import { deleteItem } from '@/server/user/delete-item';
 import { toast } from 'sonner';
 import { catchError } from '@/lib/catch-error';
 

@@ -3,12 +3,12 @@
 import * as React from 'react';
 import Link from 'next/link';
 import { useSelectedLayoutSegment } from 'next/navigation';
-
-import { MainNavItem } from 'types';
 import { siteConfig } from '@/config/site';
 import { cn } from '@/lib/utils';
 import { Icons } from '@/components/shared/icons';
 import { MobileNav } from '@/components/layout/mobile-nav';
+import { MainNavItem } from '@/types';
+import { useTranslations } from 'next-intl';
 
 interface MainNavProps {
   items?: MainNavItem[];
@@ -18,6 +18,7 @@ interface MainNavProps {
 export function MainNav({ items, children }: MainNavProps) {
   const segment = useSelectedLayoutSegment();
   const [showMobileMenu, setShowMobileMenu] = React.useState<boolean>(false);
+  const t = useTranslations('navbar');
 
   const toggleMobileMenu = () => {
     setShowMobileMenu(!showMobileMenu);
@@ -69,7 +70,7 @@ export function MainNav({ items, children }: MainNavProps) {
         onClick={toggleMobileMenu}
       >
         {showMobileMenu ? <Icons.close /> : <Icons.logo />}
-        <span className="font-bold">Menu</span>
+        <span className="font-bold">{t('menu')}</span>
       </button>
       {showMobileMenu && items && (
         <MobileNav items={items}>{children}</MobileNav>

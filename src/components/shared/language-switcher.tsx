@@ -1,51 +1,50 @@
-//LangSwitcher.tsx
+'use client';
 
-import React, { useState } from 'react';
-import Image from 'next/image';
-import { StaticImageData } from 'next/image';
-import { useRouter } from 'next/navigation';
-import { usePathname } from 'next/navigation';
-import { Button, buttonVariants } from '../ui/button';
-// import gbFlag from "../assets/img/bg_flag.png";
-// import geFlag from "../assets/img/german_flag.png";
-// import esFlag from "../assets/img/spain_flag.png";
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
-import { cn } from '@/lib/utils';
-import { Separator } from '../ui/separator';
-import { Settings } from 'lucide-react';
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { localeNames } from '@/config';
+import { usePathname, useRouter } from '@/navigation';
+import { useLocale } from 'next-intl';
 
-const LangSwitcher: React.FC = () => {
-  interface Option {
-    country: string;
-    code: string;
-    flag: StaticImageData | string;
-  }
-
+export const LangSwitcher = () => {
   const router = useRouter();
+  const locale = useLocale();
   const pathname = usePathname();
 
-  const [isOptionsExpanded, setIsOptionsExpanded] = useState(false);
-
-  const options: Option[] = [
-    { country: 'English', code: 'en', flag: 'gbFlag' },
-    { country: 'Deutsch', code: 'de', flag: 'geFlag' },
-    { country: 'French', code: 'fr', flag: 'frFlag' },
-  ];
-
-  const setOption = (option: Option) => {
-    setIsOptionsExpanded(false);
-    router.push(`/${option.code}`);
+  const handleSwitchLanguage = (value: string) => {
+    router.push(pathname, { locale: value });
   };
 
-  return (
-    <>
+  const SelectedFlag = localeNames[locale]?.flag;
 
-    </>
+  return (
+    <Select value={locale} onValueChange={handleSwitchLanguage}>
+      <SelectTrigger aria-label="select language" className="w-fit space-x-2">
+        {SelectedFlag && <SelectedFlag width={20} height={20} className="w-5 h-5" />}
+      </SelectTrigger>
+      <SelectContent className='min-w-[7rem]'>
+        {Object.keys(localeNames).map((key: string) => {
+          const { name, flag: Flag } = localeNames[key];
+          return (
+            <SelectItem
+              aria-label={key}
+              className="cursor-pointer flex flex-row items-center space-x-2"
+              key={key}
+              value={key}
+            >
+              <div className='flex flex-row'>
+                <Flag width={20} height={20} className="w-5 h-5 mr-2" />
+                <p>{name}</p>
+              </div>
+            </SelectItem>
+          );
+        })}
+      </SelectContent>
+    </Select>
   );
 };
-
-export default LangSwitcher;

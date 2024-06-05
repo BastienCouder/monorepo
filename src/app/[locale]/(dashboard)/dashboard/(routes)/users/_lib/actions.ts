@@ -4,9 +4,9 @@ import { revalidatePath } from 'next/cache';
 import type { z } from 'zod';
 import type { updateUserRoleSchema } from './validations';
 
-import { deleteUserSchema } from '@/schemas/user';
+import { deleteUserSchema } from '@/models/user';
 import { db } from '@/lib/prisma';
-import { currentUser } from '@/lib/authCheck';
+import { currentUser } from '@/lib/auth';
 
 export async function updateUserRole({
   id,
@@ -14,10 +14,10 @@ export async function updateUserRole({
 }: z.infer<typeof updateUserRoleSchema>) {
   await db.user.update({
     where: {
-      id: id,
+      id,
     },
     data: {
-      role: role,
+      role,
     },
   });
 

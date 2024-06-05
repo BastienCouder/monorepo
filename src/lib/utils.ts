@@ -19,6 +19,42 @@ export function replaceEncodedSpaces(str: string) {
   return str.replace(/%20/g, ' ');
 }
 
+// Function to capitalize the first letter
+export const capitalizeFirstLetter = (string: string): string => {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+};
+
+// Function to lowercase the first letter
+export const lowercaseFirstLetter = (string: string): string => {
+  return string.charAt(0).toLowerCase() + string.slice(1);
+};
+
+export const sentenceCase = (str: string): string => {
+  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+};
+
+export const lowerCase = (str: string): string => {
+  return str.charAt(0).toLowerCase() + str.slice(1).toLowerCase();
+};
+
+export const titleCase = (str: string): string => {
+  return str
+    .toLowerCase()
+    .split(' ')
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+};
+
+export function formatPrice(
+  value: number,
+  locale: string,
+  currency: string
+): string {
+  return new Intl.NumberFormat(locale, { style: 'currency', currency }).format(
+    value
+  );
+}
+
 export const validateString = (value: unknown, maxLength: number) => {
   if (!value || typeof value !== 'string' || value.length > maxLength) {
     return false;
@@ -133,3 +169,42 @@ export const formatStorage = (bytes: number) => {
     return `${bytesToKB(bytes)} KB`;
   }
 };
+
+export function formatBytes(
+  bytes: number,
+  opts: {
+    decimals?: number;
+    sizeType?: 'accurate' | 'normal';
+  } = {}
+) {
+  const { decimals = 0, sizeType = 'normal' } = opts;
+
+  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+  const accurateSizes = ['Bytes', 'KiB', 'MiB', 'GiB', 'TiB'];
+  if (bytes === 0) return '0 Byte';
+  const i = Math.floor(Math.log(bytes) / Math.log(1024));
+  return `${(bytes / Math.pow(1024, i)).toFixed(decimals)} ${
+    sizeType === 'accurate' ? accurateSizes[i] ?? 'Bytest' : sizes[i] ?? 'Bytes'
+  }`;
+}
+
+/**
+ * Stole this from the @radix-ui/primitive
+ * @see https://github.com/radix-ui/primitives/blob/main/packages/core/primitive/src/primitive.tsx
+ */
+export function composeEventHandlers<E>(
+  originalEventHandler?: (event: E) => void,
+  ourEventHandler?: (event: E) => void,
+  { checkForDefaultPrevented = true } = {}
+) {
+  return function handleEvent(event: E) {
+    originalEventHandler?.(event);
+
+    if (
+      checkForDefaultPrevented === false ||
+      !(event as unknown as Event).defaultPrevented
+    ) {
+      return ourEventHandler?.(event);
+    }
+  };
+}

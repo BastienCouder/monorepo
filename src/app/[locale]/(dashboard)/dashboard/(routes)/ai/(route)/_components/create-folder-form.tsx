@@ -18,10 +18,10 @@ import { useState } from 'react';
 import { Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useCurrentUser } from '@/hooks/use-current-user';
-import { admin } from '@/server-actions/auth/admin.action';
+import { admin } from '@/server/auth/admin.action';
 import { toast } from '@/components/ui/use-toast';
-import { createFolderSchema } from '@/schemas/validations/folder';
-import { createFolder } from '@/server-actions/user/create-folder';
+import { createFolderSchema } from '@/models/validations/folder';
+import { createFolder } from '@/server/user/create-folder';
 import { capitalize } from '@/lib/utils';
 
 type FolderFormValues = z.infer<typeof createFolderSchema>;

@@ -1,18 +1,31 @@
 import { LoginForm } from '@/components/auth/form-login';
 import { siteConfig } from '@/config/site';
-import { env } from '@/lib/env';
+import { pick } from 'lodash';
 import { Metadata } from 'next';
+import { NextIntlClientProvider } from 'next-intl';
+import { getMessages, getTranslations } from 'next-intl/server';
 
-export async function generateMetadata(): Promise<Metadata> {
+export async function generateMetadata({ params: { locale } }: { params: { locale: string } }): Promise<Metadata> {
+  const t = await getTranslations({ locale });
+
   return {
-    title: `Login - ${siteConfig.name}`,
-    description: `Login`,
+    title: `${t('metadata.auth.login')} - ${siteConfig.name}`,
+    description: t('metadata.auth.login_description'),
     robots: { index: false, follow: false, nocache: false },
   };
 }
 
-const LoginPage = () => {
-  return <LoginForm />;
+const LoginPage = async () => {
+  const messages = await getMessages()
+
+  return (
+    <NextIntlClientProvider
+      messages={
+        pick(messages, 'auth.client')
+      }
+    >
+      <LoginForm />
+    </NextIntlClientProvider>)
 };
 
 export default LoginPage;

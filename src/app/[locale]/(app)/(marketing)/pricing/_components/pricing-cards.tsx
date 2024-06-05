@@ -1,17 +1,17 @@
 'use client';
 
 import Link from 'next/link';
-import { Suspense, useState } from 'react';
+import { useState } from 'react';
 
 import { Icons } from '@/components/shared/icons';
 import { Button, buttonVariants } from '@/components/ui/button';
-import { Switch } from '@/components/ui/switch';
-import { pricingData } from '@/config/subscriptions';
+
 import { useSigninModal } from '@/hooks/use-signin-modal';
 import { UserSubscriptionPlan } from '@/types';
 import { Separator } from '@/components/ui/separator';
 import { BillingFormButton } from './billing-form-button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useTranslations } from 'next-intl';
+import { pricingData } from '@/config/subscriptions';
 
 interface PricingCardsProps {
   userId?: string;
@@ -19,6 +19,9 @@ interface PricingCardsProps {
 }
 
 export function PricingCards({ userId, subscriptionPlan }: PricingCardsProps) {
+  const t = useTranslations('pricing');
+
+
   const isYearlyDefault =
     !subscriptionPlan?.interval || subscriptionPlan.interval === 'year'
       ? false //true
@@ -34,21 +37,12 @@ export function PricingCards({ userId, subscriptionPlan }: PricingCardsProps) {
     <section className="container flex flex-col items-center text-center">
       <div className="mx-auto mb-6 flex w-full flex-col gap-5">
         <p className="font-medium uppercase tracking-widest text-primary">
-          Pricing
+          {t('pricing')}
         </p>
         <h2 className="relative first-letter:uppercase font-heading text-3xl leading-[1.1] md:text-5xl">
-          plans that fit your scale
+          {t('plans_fit_scale')}
         </h2>
       </div>
-      {/* <div className="mb-4 flex items-center gap-5">
-        <Tabs defaultValue="month" className="w-[400px]">
-          <TabsList>
-            <TabsTrigger value="month" onClick={() => toggleBilling('month')}>Monthly Billing</TabsTrigger>
-            <TabsTrigger value="year" onClick={() => toggleBilling('year')}>Annual Billing</TabsTrigger>
-          </TabsList>
-        </Tabs>
-
-      </div> */}
 
       <div className="mx-auto grid max-w-screen gap-5 bg-inherit py-5 md:grid-cols-3 lg:grid-cols-3">
         {pricingData.map((offer) => (
@@ -70,22 +64,21 @@ export function PricingCards({ userId, subscriptionPlan }: PricingCardsProps) {
                   <div className="flex flex-col font-semibold leading-2">
                     {isYearly && offer.prices.monthly > 0 ? (
                       <>
-                        <span className="mr-2 text-muted-foreground line-through">
+                        <span className="mr-2 text-lg text-muted-foreground line-through">
                           ${offer.prices.monthly}
                         </span>
-                        <span className="text-sm">
+                        <span className="text-base">
                           ${offer.prices.yearly / 12}
                         </span>
                       </>
                     ) : (
                       <div className="flex items-start">
-                        <span className="text-2xl">$</span>
-                        <p className="text-5xl">{offer.prices.monthly}</p>
+                        <span className="text-4xl">${offer.prices.monthly}</span>
                       </div>
                     )}
                   </div>
                   <div className="-mb-1 ml-2 text-left text-muted-foreground text-sm font-medium">
-                    <div>per month</div>
+                    <div>{t('per_month')}</div>
                   </div>
                 </div>
               </div>
@@ -103,7 +96,7 @@ export function PricingCards({ userId, subscriptionPlan }: PricingCardsProps) {
                       variant: 'default',
                     })}
                   >
-                    Go to dashboard
+                    {t('go_to_dashboard')}
                   </Link>
                 ) : (
                   <BillingFormButton
@@ -113,13 +106,13 @@ export function PricingCards({ userId, subscriptionPlan }: PricingCardsProps) {
                   />
                 )
               ) : (
-                <Button onClick={signInModal.onOpen}>Sign in</Button>
+                <Button onClick={signInModal.onOpen}>{t('sign_in')}</Button>
               )}
             </div>
             <div className="flex w-full px-4 pt-4 flex-col items-start">
-              <p className="font-semibold first-letter:uppercase">features</p>
+              <p className="font-semibold first-letter:uppercase">{t('features')}</p>
               <p className="text-sm text-muted-foreground first-letter:uppercase">
-                everything in our {offer.title} plan...
+                {t('everything_in_plan', { plan: offer.title })}
               </p>
             </div>
 
@@ -131,17 +124,6 @@ export function PricingCards({ userId, subscriptionPlan }: PricingCardsProps) {
                     <p>{feature}</p>
                   </li>
                 ))}
-
-                {/* {offer.limitations.length > 0 &&
-                  offer.limitations.map((feature) => (
-                    <li
-                      className="flex items-start text-muted-foreground"
-                      key={feature}
-                    >
-                      <Icons.close className="mr-3 size-5 shrink-0 text-muted-foreground" />
-                      <p>{feature}</p>
-                    </li>
-                  ))} */}
               </ul>
             </div>
           </div>
@@ -149,15 +131,7 @@ export function PricingCards({ userId, subscriptionPlan }: PricingCardsProps) {
       </div>
 
       <p className="mt-3 text-balance text-center text-base text-muted-foreground">
-        Email{' '}
-        <a
-          className="font-medium text-primary hover:underline"
-          href="mailto:couderbastien@gmail.com"
-        >
-          couderbastien@gmail.com
-        </a>{' '}
-        for to contact our support team.
-        <br />
+        {t('contact_support', { email: 'couderbastien@gmail.com' })}
       </p>
     </section>
   );

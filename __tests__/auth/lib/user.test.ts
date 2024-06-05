@@ -1,4 +1,4 @@
-import { getUserByEmail, getUserById } from '@/lib/data/user';
+import { getUserByEmail, getUserById } from '@/lib/auth/user';
 import { db } from '@/lib/prisma';
 
 jest.mock('@/lib/prisma', () => {

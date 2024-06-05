@@ -36,7 +36,9 @@ export function DataTableColumnHeader<TData, TValue>({
           className={`text-xs rounded-md flex text-background px-3 py-2 ${cn(className)}`}
         >
           {' '}
-          <p className="text-foreground font-semibold text-[0.8rem]">{title}</p>{' '}
+          <p className="text-foreground font-semibold text-[0.8rem]">
+            {title}
+          </p>{' '}
         </div>
       </div>
     );

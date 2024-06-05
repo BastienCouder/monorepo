@@ -2,7 +2,7 @@
 
 import { signOut } from 'next-auth/react';
 import Link from 'next/link';
-
+import { useTranslations } from 'next-intl';
 import { UserAvatar } from '@/components/shared/user-avatar';
 import {
   DropdownMenu,
@@ -13,17 +13,20 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { CreditCard, LayoutDashboard, LogOut, Settings } from 'lucide-react';
 import type { User } from 'next-auth';
+import { Icons } from '../shared/icons';
 
 interface UserAccountNavProps extends React.HTMLAttributes<HTMLDivElement> {
   user: Pick<User, 'name' | 'image' | 'email'>;
 }
 
 export function UserAccountNav({ user }: UserAccountNavProps) {
+  const t = useTranslations('navbar.user_account');
+
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger>
+      <DropdownMenuTrigger className='outline-none ring-0'>
         <UserAvatar
-          user={{ name: user?.name || null, image: user?.image || null }}
+          user={{ name: user?.name || '', image: user?.image || '', email: user?.email || '' }}
           className="size-8"
         />
       </DropdownMenuTrigger>
@@ -44,14 +47,14 @@ export function UserAccountNav({ user }: UserAccountNavProps) {
             href="/dashboard/drive"
             className="flex items-center space-x-2.5"
           >
-            <LayoutDashboard className="size-4" />
-            <p className="text-sm">Dashboard</p>
+            <Icons.dashboard className="size-4" />
+            <p className="text-sm">{t('dashboard')}</p>
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
           <Link href="/pricing" className="flex items-center space-x-2.5">
-            <CreditCard className="size-4" />
-            <p className="text-sm">Upgrade</p>
+            <Icons.billing className="size-4" />
+            <p className="text-sm">{t('upgrade')}</p>
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
@@ -59,8 +62,8 @@ export function UserAccountNav({ user }: UserAccountNavProps) {
             href="/dashboard/settings"
             className="flex items-center space-x-2.5"
           >
-            <Settings className="size-4" />
-            <p className="text-sm">Settings</p>
+            <Icons.settings className="size-4" />
+            <p className="text-sm">{t('settings')}</p>
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
@@ -75,7 +78,7 @@ export function UserAccountNav({ user }: UserAccountNavProps) {
         >
           <div className="flex items-center space-x-2.5">
             <LogOut className="size-4" />
-            <p className="text-sm">Log out </p>
+            <p className="text-sm">{t('logout')}</p>
           </div>
         </DropdownMenuItem>
       </DropdownMenuContent>

@@ -4,10 +4,10 @@ import { unstable_noStore as noStore } from 'next/cache';
 import { db } from '@/lib/prisma';
 import type { SearchParams } from '@/types';
 
-import { filterColumn } from '@/lib/filter-column';
+import { filterColumn } from '@/libs/filter-column';
 
 import { User } from '@prisma/client';
-import { searchParamsSchema } from '@/schemas/page-params';
+import { searchParamsSchema } from '@/models/page-params';
 
 export async function getUsers(searchParams: SearchParams) {
   noStore();

@@ -231,6 +231,7 @@ export function useDataTable<TData, TValue>({
       }
     }
 
+
     // Remove deleted values
     for (const key of searchParams.keys()) {
       if (

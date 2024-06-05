@@ -32,7 +32,8 @@
     ".next/types/**/*.ts",
     "jest.setup.jsxx",
     "jest.config.js",
-    "src/navigation.jsx"
+    "src/navigation.jsx",
+    "tailwind.config.ts"
   ],
   "exclude": ["node_modules"]
 }

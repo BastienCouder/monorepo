@@ -13,7 +13,7 @@ import { ChoiceCheckbox } from './choice-checkbox';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import Dropzone from './dropzone';
 import UserStorageInfo from './user-progress-info';
-import { User } from '@/schemas/db';
+import { User } from '@/models/db';
 import { Icons } from '@/components/shared/icons';
 
 interface InterfaceMultiDropzoneProps {

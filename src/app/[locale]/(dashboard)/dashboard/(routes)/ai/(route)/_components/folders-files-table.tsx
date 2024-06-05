@@ -17,7 +17,7 @@ import {
 } from './folders-files-table-actions';
 import InterfaceMultiDropzone from './interface-multi-dropzone';
 import { useSelection } from '../_context/select-item';
-import { Folder, File, User } from '@/schemas/db';
+import { Folder, File, User } from '@/models/db';
 
 export function FoldersFilesTable({
   searchParams,

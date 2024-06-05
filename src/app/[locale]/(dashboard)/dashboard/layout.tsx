@@ -1,20 +1,22 @@
 import React from 'react';
 import { DashboardShell } from './_components/dashboard-shell';
 import { cookies } from 'next/headers';
-
-import { userInfoTeam } from '@/server-actions/team/user-info-team';
 import { SelectionProvider } from './(routes)/ai/(route)/_context/select-item';
-import { getUserTeams } from '@/server-actions/user/get-user-team';
-import { currentUser } from '@/lib/authCheck';
+import { getUserTeams } from '@/server/user/get-user-team';
+import { currentUser } from '@/lib/auth';
 import { redirect } from 'next/navigation';
-import { Team } from '@/schemas/db';
-import ActiveStatus from '@/components/shared/active-status';
+import { Team } from '@/models/db';
+import { RouteParamProvider } from '@/providers/route-params-provider';
+import { NextIntlClientProvider } from 'next-intl';
+import { pick } from 'lodash';
+import { getMessages } from 'next-intl/server';
 
 interface DashboardLayoutProps {
   children?: React.ReactNode;
 }
 
 const DashboardLayout = async ({ children }: DashboardLayoutProps) => {
+
   const layout = cookies().get('react-resizable-panels:layout');
   const collapsed = cookies().get('react-resizable-panels:collapsed');
   const defaultLayout =
@@ -31,24 +33,34 @@ const DashboardLayout = async ({ children }: DashboardLayoutProps) => {
     redirect('/');
   }
   const teams: Team[] = await getUserTeams(user.id);
+  const messages = await getMessages()
 
   return (
     <>
-      <DashboardShell
-        defaultLayout={defaultLayout}
-        defaultCollapsed={defaultCollapsed}
-        teams={teams}
-      >
-        <main
-          className="flex w-full bg-muted overflow-y-auto"
-          style={{ minHeight: `calc(100vh - 3.5rem)` }}
+      <RouteParamProvider>
+        <NextIntlClientProvider
+          messages={pick(messages, 'navbar')}
         >
-          {/* <ActiveStatus /> */}
-          <SelectionProvider>
-            <div className="w-full  px-4">{children}</div>
-          </SelectionProvider>
-        </main>
-      </DashboardShell>
+          <DashboardShell
+            defaultLayout={defaultLayout}
+            defaultCollapsed={defaultCollapsed}
+            teams={teams}
+          >
+
+            <main
+              className="flex w-full bg-muted overflow-y-auto"
+              style={{ minHeight: `calc(100vh - 3.5rem)` }}
+            >
+              {/* <ActiveStatus /> */}
+              <SelectionProvider>
+                <div className="w-full  px-4">
+                  {children}</div>
+              </SelectionProvider>
+            </main>
+
+          </DashboardShell>
+        </NextIntlClientProvider>
+      </RouteParamProvider >
     </>
   );
 };
