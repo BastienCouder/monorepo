@@ -6,8 +6,8 @@ import crypto from 'crypto';
 import { getUserByEmail } from '@/lib/auth/user';
 import { db } from '@/lib/prisma';
 import { currentUser } from '@/lib/auth';
-import { createUserSchema, deleteUserSchema } from '@/models/user';
 import { getTranslations } from 'next-intl/server';
+import { createUserSchema, deleteUserSchema } from '@/models/validations/user';
 
 type Response = {
   error?: string;
@@ -81,11 +81,13 @@ export const deleteUser = async (values: z.infer<typeof deleteUserSchema>) => {
   const anonymizedName = `Anonymous ${hashedId}`;
 
   // Create anonymous user record
-  await db.anonymousUser.create({
+  await db.user.update({
+    where: {
+      id: userToDelete.id,
+    },
     data: {
-      originalUser: userToDelete.id,
-      anonymizedEmail,
-      anonymizedName,
+      email: anonymizedEmail,
+      name: anonymizedName,
     },
   });
 

@@ -1,11 +1,32 @@
 'use server';
 
+import { currentUser } from '@/lib/auth';
 import { db } from '@/lib/prisma';
+
+interface JoinTeamWithKeyResponse {
+  success?: string;
+  error?: string;
+}
 
 export async function joinTeamWithKey(
   userId: string,
   teamKey: string
-): Promise<string> {
+): Promise<JoinTeamWithKeyResponse> {
+  const user = await currentUser();
+
+  if (!user) {
+    return {
+      error: 'You are not authorized to perform this action.',
+    };
+  }
+
+  if (user.id !== userId && user.role !== 'OWNER') {
+    return {
+      error:
+        'You do not have the necessary permissions to perform this action.',
+    };
+  }
+
   const team = await db.team.findUnique({
     where: {
       key: teamKey,
@@ -13,7 +34,9 @@ export async function joinTeamWithKey(
   });
 
   if (!team) {
-    throw new Error('Invalid team key. Please check the key and try again.');
+    return {
+      error: 'Invalid team key. Please check the key and try again.',
+    };
   }
 
   const existingMember = await db.teamMember.findFirst({
@@ -24,7 +47,9 @@ export async function joinTeamWithKey(
   });
 
   if (existingMember) {
-    throw new Error('You are already a member of this team.');
+    return {
+      error: 'You are already a member of this team.',
+    };
   }
 
   await db.teamMember.create({
@@ -34,5 +59,7 @@ export async function joinTeamWithKey(
     },
   });
 
-  return 'You have successfully joined the team.';
+  return {
+    success: 'You have successfully joined the team.',
+  };
 }

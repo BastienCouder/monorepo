@@ -6,7 +6,6 @@ import { useState } from 'react';
 import DropzoneComponent from 'react-dropzone';
 import { FcOpenedFolder } from 'react-icons/fc';
 import { File } from '@/models/db';
-import { updateDoc } from '@/server/uploads/upload';
 import { uploadsTeam } from '@/server/drive/upload-team';
 import Loading from '@/app/[locale]/loading';
 
@@ -91,12 +90,12 @@ export default function Dropzone({ folderId, teamId }: DropzoneProps) {
           fileRejections.length > 0 && fileRejections[0].file.size > maxSize;
 
         return (
-          <section>
+          <section className="p-5">
             {loading && <Loading />}
             <div
               {...getRootProps()}
               className={cn(
-                'bg-background relative rounded-md p-4 w-full max-w-[calc(100vw-1rem)] transition-all hover:bg-card flex justify-center items-center flex-col cursor-pointer border-primary dark:border-gray-300 transition-colors duration-200 ease-in-out',
+                'bg-card border relative border-dashed rounded-md p-4 w-full max-w-[calc(100vw-1rem)] transition-all hover:bg-card flex justify-center items-center flex-col cursor-pointer border-primary dark:border-gray-300 transition-colors duration-200 ease-in-out',
                 isDragActive ? 'bg-primary' : ''
               )}
             >

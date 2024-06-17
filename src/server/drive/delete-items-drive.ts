@@ -1,6 +1,14 @@
 'use server';
+
+import { currentUser } from '@/lib/auth';
 import { db } from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
+
+interface DeleteItemsResponse {
+  id?: string;
+  success?: string;
+  error?: string;
+}
 
 async function deleteFolderRecursively(
   folderId: string,
@@ -39,13 +47,43 @@ export async function deleteItems(
   itemIds: string[],
   teamId: string | undefined,
   userId: string | undefined
-) {
-  if (!teamId || !userId) {
-    return;
+): Promise<DeleteItemsResponse[]> {
+  const user = await currentUser();
+
+  if (!user) {
+    return [
+      {
+        error: 'You are not authorized to perform this action.',
+      },
+    ];
   }
 
-  const results = [];
-  let totalSizeDeleted = 0;
+  if (user.id !== userId) {
+    return [
+      {
+        error:
+          'You do not have the necessary permissions to perform this action.',
+      },
+    ];
+  }
+
+  if (!teamId) {
+    return [
+      {
+        error: 'Team ID is required.',
+      },
+    ];
+  }
+
+  const team = await db.team.findUnique({ where: { id: teamId } });
+
+  if (!team) {
+    return [
+      {
+        error: 'Team not found.',
+      },
+    ];
+  }
 
   const member = await db.teamMember.findUnique({
     where: {
@@ -56,15 +94,22 @@ export async function deleteItems(
     },
   });
 
-  // if (
-  //   !member ||
-  //   (member.role !== 'ADMINISTRATOR' && member.role !== 'EDITOR')
-  // ) {
-  //   return {
-  //     error:
-  //       'You do not have the necessary permissions to perform this operation.',
-  //   };
-  // }
+  if (
+    !member ||
+    (member.role !== 'ADMINISTRATOR' &&
+      member.role !== 'EDITOR' &&
+      member.role !== 'OWNER')
+  ) {
+    return [
+      {
+        error:
+          'You do not have the necessary permissions to perform this operation.',
+      },
+    ];
+  }
+
+  const results: DeleteItemsResponse[] = [];
+  let totalSizeDeleted = 0;
 
   for (const itemId of itemIds) {
     try {

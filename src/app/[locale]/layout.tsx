@@ -68,16 +68,15 @@ export const metadata = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "white" },
-    { media: "(prefers-color-scheme: dark)", color: "black" },
+    { media: '(prefers-color-scheme: light)', color: 'white' },
+    { media: '(prefers-color-scheme: dark)', color: 'black' },
   ],
-}
+};
 
-export default async function RootLayout({
+const RootLayout = async ({
   children,
   params: { locale },
-}: RootLayoutProps) {
-
+}: RootLayoutProps) => {
   const session = await auth();
   const messages = await getMessages({ locale });
 
@@ -100,14 +99,8 @@ export default async function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <NextIntlClientProvider
-              messages={pick(messages, 'Error')}
-            >
-
-              <SocketProvider>
-                {children}
-              </SocketProvider>
-
+            <NextIntlClientProvider messages={pick(messages, 'Error')}>
+              <SocketProvider>{children}</SocketProvider>
             </NextIntlClientProvider>
             <Analytics />
             <Toaster />
@@ -117,4 +110,6 @@ export default async function RootLayout({
       </html>
     </SessionProvider>
   );
-}
+};
+
+export default RootLayout;

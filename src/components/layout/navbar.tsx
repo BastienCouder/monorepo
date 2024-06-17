@@ -5,7 +5,7 @@ import { MainNavItem } from '@/types';
 import { User } from 'next-auth';
 import { MainNav } from './main-nav';
 import { UserAccountNav } from './user-account-nav';
-import { Button, buttonVariants } from '@/components/ui/button';
+import { buttonVariants } from '@/components/ui/button';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { useSigninModal } from '@/hooks/use-signin-modal';
@@ -34,8 +34,9 @@ export function NavBar({
 
   return (
     <header
-      className={`sticky top-0 z-40 flex w-full justify-center bg-background/60 backdrop-blur-xl transition-all ${scroll ? (scrolled ? 'border-b' : 'bg-background/0') : 'border-b'
-        }`}
+      className={`sticky top-0 z-40 flex w-full justify-center bg-background/60 backdrop-blur-xl transition-all ${
+        scroll ? (scrolled ? 'border-b' : 'bg-background/0') : 'border-b'
+      }`}
     >
       <div className="container flex h-16 items-center justify-between py-4">
         <MainNav items={items}>{children}</MainNav>
@@ -54,7 +55,9 @@ export function NavBar({
             >
               {t('login_page')}
             </Link>
-          ) : <UserAccountNav user={user} />}
+          ) : (
+            <UserAccountNav user={user} />
+          )}
           {/* {user ? (
             <UserAccountNav user={user} />
           ) : (

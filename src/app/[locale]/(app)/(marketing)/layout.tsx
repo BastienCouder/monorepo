@@ -14,16 +14,12 @@ export default async function MarketingLayout({
   children,
 }: MarketingLayoutProps) {
   const user = await currentUser();
-  const messages = await getMessages()
+  const messages = await getMessages();
 
   return (
     <div className="flex min-h-screen flex-col">
       <Suspense fallback="">
-        <NextIntlClientProvider
-          messages={
-            pick(messages, 'navbar')
-          }
-        >
+        <NextIntlClientProvider messages={pick(messages, 'navbar')}>
           <NavBar user={user} items={marketingConfig.mainNav} scroll={true} />
         </NextIntlClientProvider>
       </Suspense>

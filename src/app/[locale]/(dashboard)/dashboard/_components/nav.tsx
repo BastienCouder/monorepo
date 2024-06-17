@@ -21,7 +21,6 @@ export function Nav({ links, isCollapsed }: INav) {
   const pathname = usePathname();
   const { setParam } = useRouteParam();
 
-
   const handleBackClick = () => {
     setParam(null);
   };
@@ -29,7 +28,7 @@ export function Nav({ links, isCollapsed }: INav) {
   return (
     <div
       data-collapsed={isCollapsed}
-      className="group flex flex-col gap-4 px-4 py-2 data-[collapsed=true]:py-2"
+      className="group flex flex-col data-[collapsed=true]:py-2"
     >
       <nav className="grid gap-2 px-2 group-[[data-collapsed=true]]:justify-center group-[[data-collapsed=true]]:px-2">
         {links.map((link: any, index: number) =>
@@ -48,7 +47,7 @@ export function Nav({ links, isCollapsed }: INav) {
                     }),
                     'h-9 w-9',
                     pathname?.startsWith(link.href) &&
-                    'dark:bg-muted dark:text-muted-foreground dark:hover:bg-muted dark:hover:text-white'
+                      'dark:bg-muted dark:text-muted-foreground dark:hover:bg-muted dark:hover:text-white'
                   )}
                 >
                   <link.icon className="h-4 w-4" />
@@ -71,8 +70,9 @@ export function Nav({ links, isCollapsed }: INav) {
               onClick={handleBackClick}
               className={cn(
                 buttonVariants({
-                  variant: pathname?.startsWith(link.href) ? 'default' : 'ghost',
-
+                  variant: pathname?.startsWith(link.href)
+                    ? 'default'
+                    : 'ghost',
                 }),
                 pathname?.startsWith(link.href) && '',
                 'justify-start  hover:bg-primary  hover:text-background'
@@ -85,7 +85,7 @@ export function Nav({ links, isCollapsed }: INav) {
                   className={cn(
                     'ml-auto',
                     pathname?.startsWith(link.href) &&
-                    'text-background hover:bg-background dark:text-white'
+                      'text-background hover:bg-background dark:text-white'
                   )}
                 >
                   {link.label}

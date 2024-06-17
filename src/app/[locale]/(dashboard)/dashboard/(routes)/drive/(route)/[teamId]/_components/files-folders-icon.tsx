@@ -9,7 +9,7 @@ const FileOrFolderIcon: FC<{ item: Folder | File }> = ({ item }) => {
   } else {
     const { Icon } = getFileDetails(item.mimeType);
     return (
-      <div className="w-12 h-12">
+      <div className="w-6 h-6">
         <Icon color="hsl(var(--primary))" />
       </div>
     );

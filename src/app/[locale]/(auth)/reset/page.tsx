@@ -1,12 +1,15 @@
-import { ResetForm } from '@/components/auth/form-reset';
+import { ResetForm } from '@/app/[locale]/(auth)/_components/form-reset';
 import { siteConfig } from '@/config/site';
 import { pick } from 'lodash';
 import { Metadata } from 'next';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, getTranslations } from 'next-intl/server';
 
-
-export async function generateMetadata({ params: { locale } }: { params: { locale: string } }): Promise<Metadata> {
+export async function generateMetadata({
+  params: { locale },
+}: {
+  params: { locale: string };
+}): Promise<Metadata> {
   const t = await getTranslations({ locale });
   return {
     title: `${t('metadata.auth.reset_password')} - ${siteConfig.name}`,
@@ -16,17 +19,13 @@ export async function generateMetadata({ params: { locale } }: { params: { local
 }
 
 const ResetPage = async () => {
-  const messages = await getMessages()
+  const messages = await getMessages();
 
   return (
-    <NextIntlClientProvider
-      messages={
-        pick(messages, 'auth.client')
-      }
-    >
+    <NextIntlClientProvider messages={pick(messages, 'auth.client')}>
       <ResetForm />
-    </NextIntlClientProvider>)
-
+    </NextIntlClientProvider>
+  );
 };
 
 export default ResetPage;

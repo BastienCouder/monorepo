@@ -6,19 +6,8 @@ import type {
   DataTableFilterableColumn,
   DataTableSearchableColumn,
 } from '@/types';
-import {
-  CaretLeftIcon,
-  Cross2Icon,
-  PlusCircledIcon,
-  TrashIcon,
-} from '@radix-ui/react-icons';
+import { Cross2Icon, PlusCircledIcon, TrashIcon } from '@radix-ui/react-icons';
 import type { Table } from '@tanstack/react-table';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -30,9 +19,17 @@ import {
 } from 'lucide-react';
 import { TbLayoutList } from 'react-icons/tb';
 import { IoGrid, IoReturnDownBackOutline } from 'react-icons/io5';
-import { useSelection } from '@/app/[locale]/(dashboard)/dashboard/(routes)/ai/(route)/_context/select-item';
-import { VscActivateBreakpoints } from 'react-icons/vsc';
-import CreateFolderTeamModal from '@/components/modal/create-folder-team-modal';
+import { useSelection } from '@/providers/select-item-provider';
+import { useModal } from '@/hooks/use-modal-store';
+import { useCurrentUser } from '@/hooks/use-current-user';
+import { CreateFolderTeamModal } from '@/components/modal/create-folder-team-modal';
+import { Icons } from '@/components/shared/icons';
+import { DropzoneModal } from '@/components/modal/dropzone-modal';
+import { Card, Popover, PopoverContent, PopoverTrigger } from '@/components/ui';
+import { CreateFolder } from './create-folder';
+import { useMediaQuery } from '@/hooks/use-media-query';
+import { Text } from '@/components/container';
+import ViewSwitcher from './view-switcher';
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;
@@ -40,7 +37,6 @@ interface DataTableToolbarProps<TData> {
   searchableColumns?: DataTableSearchableColumn<TData>[];
   newRowLink?: string;
   deleteRowsAction?: React.MouseEventHandler<HTMLButtonElement>;
-  operateRowsAction?: React.MouseEventHandler<HTMLButtonElement>;
   copyRowsAction?: () => void;
   pasteRowsAction?: () => void;
   goBack?: () => void;
@@ -58,7 +54,6 @@ export function DataTableAdvancedToolbar<TData>({
   newRowLink,
   deleteRowsAction,
   copyRowsAction,
-  operateRowsAction,
   pasteRowsAction,
   goBack,
   basePath,
@@ -70,7 +65,9 @@ export function DataTableAdvancedToolbar<TData>({
   const isFiltered = table.getState().columnFilters.length > 0;
   const [isPending, startTransition] = React.useTransition();
   const { selectedItems } = useSelection();
-
+  const { onOpen } = useModal();
+  const user = useCurrentUser();
+  const isDesktop = useMediaQuery('(min-width: 768px)');
   const hasTableSelectedItems = table.getSelectedRowModel().rows.length > 0;
   const hasContextSelectedItems = selectedItems.length > 0;
   const disableActions = !hasTableSelectedItems && !hasContextSelectedItems;
@@ -98,159 +95,229 @@ export function DataTableAdvancedToolbar<TData>({
     table.resetColumnFilters();
   }, [basePath, searchableColumns, table]);
 
+  const resetSearchInputs = () => {
+    const resetInputs = searchableColumns.reduce(
+      (acc, column) => ({
+        ...acc,
+        [column.id ? String(column.id) : '']: '',
+      }),
+      {}
+    );
+    setSearchInputs(resetInputs);
+    table.resetColumnFilters();
+  };
+
+  React.useEffect(() => {
+    resetSearchInputs();
+  }, [basePath, searchableColumns, table]);
+
+  const handleDropzone = () => {
+    onOpen('dropzone');
+  };
+
+  const handleCreateFolder = (
+    userId: string | undefined,
+    teamId: string | undefined,
+    basePath: string | undefined
+  ) => {
+    onOpen('create-folder-team', { userId, teamId, parentFolderId: basePath });
+  };
+
   return (
-    <div className="flex w-full items-center justify-between space-x-2 overflow-auto p-1">
-      <div className="flex flex-1 items-center space-x-2">
-        {searchableColumns.length > 0 &&
-          searchableColumns.map((column) => {
-            const columnId = String(column.id || '');
-            return (
-              table.getColumn(columnId) && (
-                <Input
-                  key={columnId}
-                  placeholder={`Rechercher...`}
-                  value={searchInputs[columnId]}
-                  onChange={(event) => {
-                    const value = event.target.value;
-                    setSearchInputs((prev) => ({
-                      ...prev,
-                      [columnId]: value,
-                    }));
-                    table.getColumn(columnId)?.setFilterValue(value);
-                  }}
-                  className="h-7 w-[150px] lg:w-[250px]"
-                />
-              )
-            );
-          })}
-        {filterableColumns.length > 0 &&
-          filterableColumns.map(
-            (column) =>
-              table.getColumn(column.id ? String(column.id) : '') && (
-                <DataTableFacetedFilter
-                  key={String(column.id)}
-                  column={table.getColumn(column.id ? String(column.id) : '')}
-                  title={column.title}
-                  options={column.options}
-                />
-              )
-          )}
-        {isFiltered && (
-          <Button
-            aria-label="Réinitialiser les filtres"
-            variant="default"
-            className="h-7 px-4"
-            onClick={() => table.resetColumnFilters()}
-          >
-            Reset
-            <Cross2Icon className="ml-2 size-4" aria-hidden="true" />
-          </Button>
-        )}
-        <div className="w-[4.5rem] bg-primary rounded-md flex justify-center items-center gap-3 p-1">
-          <button
-            onClick={switchToGridView}
-            className={`${isGridView ? 'bg-muted text-primary' : 'bg-primary text-muted'} p-1 rounded-sm cursor-pointer`}
-          >
-            {<IoGrid size={13} />}
-          </button>
-          <button
-            onClick={switchToTableView}
-            className={`${!isGridView ? 'bg-muted text-primary' : 'bg-primary text-muted'} p-1 rounded-sm cursor-pointer`}
-          >
-            {<TbLayoutList size={16} />}
-          </button>
-        </div>
-        {/* <Popover>
-          <PopoverTrigger className='ms-2'>
-            <div>
-              <Icons.help size={18} color='hsl(var(--primary))' />
-            </div>
-          </PopoverTrigger>
-          <PopoverContent>Place content for the popover here.</PopoverContent>
-        </Popover> */}
-      </div>
-
-      <div className="flex items-center space-x-2">
-        <CreateFolderTeamModal basePath={basePath} teamId={teamId} />
-        {copyRowsAction && (
-          <Button
-            aria-label="Copier les lignes sélectionnées"
-            variant="outline"
-            size="sm"
-            className="h-8 transition-all"
-            onClick={copyRowsAction}
-            disabled={isPending || disableActions}
-          >
-            <ClipboardCopyIcon className="mr-2 size-4" aria-hidden="true" />
-            Copier
-          </Button>
-        )}
-
-        {pasteRowsAction && (
-          <Button
-            aria-label="Coller les éléments"
-            variant="outline"
-            size="sm"
-            className="h-8 transition-all"
-            onClick={pasteRowsAction}
-            disabled={isPending}
-          >
-            <ClipboardIcon className="mr-2 size-4" aria-hidden="true" />
-            Coller
-          </Button>
-        )}
-        {/* Bouton de suppression et création de nouvelle ligne existant */}
-        {deleteRowsAction ? (
-          <Button
-            aria-label="Supprimer les lignes sélectionnées"
-            variant="outline"
-            size="sm"
-            className="h-8 transition-all"
-            onClick={(event) => {
-              startTransition(() => {
-                table.toggleAllPageRowsSelected(false);
-                deleteRowsAction(event);
-              });
-            }}
-            disabled={isPending || disableActions}
-          >
-            <TrashIcon className="mr-2 size-4" aria-hidden="true" />
-            Delete
-          </Button>
-        ) : newRowLink ? (
-          <Link aria-label="Créer une nouvelle ligne" href={newRowLink}>
-            <div
-              className={cn(
-                buttonVariants({
-                  variant: 'outline',
-                  size: 'sm',
-                  className: 'h-8 transition-all',
-                })
-              )}
+    <>
+      <Card
+        className={` ${isDesktop ? 'overflow-x-auto' : ''} flex w-full flex-col md:flex-row px-4 border-none md:items-center py-3 rounded-t-none shadow-none md:justify-between md:space-x-12 space-y-4 md:space-y-0 custom-scrollbar`}
+      >
+        <div className="flex flex-1 items-center space-x-2">
+          {searchableColumns.length > 0 &&
+            searchableColumns.map((column) => {
+              const columnId = String(column.id || '');
+              return (
+                table.getColumn(columnId) && (
+                  <Input
+                    key={columnId}
+                    placeholder={`Rechercher...`}
+                    value={searchInputs[columnId]}
+                    onChange={(event) => {
+                      const value = event.target.value;
+                      setSearchInputs((prev) => ({
+                        ...prev,
+                        [columnId]: value,
+                      }));
+                      table.getColumn(columnId)?.setFilterValue(value);
+                    }}
+                    className="h-7 w-[150px] lg:w-[250px]"
+                  />
+                )
+              );
+            })}
+          {filterableColumns.length > 0 &&
+            filterableColumns.map(
+              (column) =>
+                table.getColumn(column.id ? String(column.id) : '') && (
+                  <DataTableFacetedFilter
+                    key={String(column.id)}
+                    column={table.getColumn(column.id ? String(column.id) : '')}
+                    title={column.title}
+                    options={column.options}
+                  />
+                )
+            )}
+          {isFiltered && (
+            <Button
+              aria-label="Réinitialiser les filtres"
+              variant="default"
+              className="h-7 px-4"
+              size={'sm'}
+              onClick={resetSearchInputs}
             >
-              <PlusCircledIcon className="mr-2 size-4" aria-hidden="true" />
-              Nouveau
-            </div>
-          </Link>
-        ) : null}
-        {goBack && (
-          <Button
-            aria-label="Coller les éléments"
-            variant="default"
-            size="sm"
-            className="h-8 transition-all"
-            onClick={goBack}
-            disabled={isPending}
-          >
-            <IoReturnDownBackOutline
-              className="mr-2 size-4"
-              aria-hidden="true"
-            />
-            Back
-          </Button>
-        )}
-        {/* <DataTableViewOptions table={table} /> */}
-      </div>
-    </div>
+              Reset
+              <Cross2Icon className="ml-2 size-4" aria-hidden="true" />
+            </Button>
+          )}
+          <ViewSwitcher
+            isGridView={isGridView}
+            switchToGridView={switchToGridView}
+            switchToTableView={switchToTableView}
+          />
+        </div>
+
+        <div
+          className={` ${isDesktop ? '' : 'overflow-x-auto'} flex items-center space-x-2 custom-scrollbar`}
+        >
+          <DropzoneModal>
+            <Button
+              aria-label="Uploads"
+              variant="default"
+              size={'sm'}
+              className="gap-2"
+              onClick={() => handleDropzone()}
+            >
+              <Icons.uploads className="size-4" aria-hidden="true" /> Uploads
+            </Button>
+          </DropzoneModal>
+          {teamId && (
+            <>
+              {isDesktop ? (
+                <Popover>
+                  <PopoverTrigger
+                    className={`px-2 py-0 gap-2 ${cn(buttonVariants({ variant: 'default', size: 'sm' }))}`}
+                  >
+                    {' '}
+                    <Icons.plus size={17} /> Create Folder
+                  </PopoverTrigger>
+                  <PopoverContent className="w-[350px]">
+                    <CreateFolder
+                      isDesktop={isDesktop}
+                      userId={user?.id}
+                      teamId={teamId}
+                      parentFolderId={basePath}
+                    />
+                  </PopoverContent>
+                </Popover>
+              ) : (
+                <CreateFolder
+                  isDesktop={isDesktop}
+                  userId={user?.id}
+                  teamId={teamId}
+                  parentFolderId={basePath}
+                >
+                  <Button
+                    aria-label="Create Folder"
+                    variant="default"
+                    size={'sm'}
+                    className="gap-2"
+                    onClick={() =>
+                      handleCreateFolder(user?.id, teamId, basePath)
+                    }
+                  >
+                    <Icons.plus className="size-4" aria-hidden="true" /> Create
+                    Folder
+                  </Button>
+                </CreateFolder>
+              )}
+            </>
+          )}
+          {copyRowsAction && (
+            <Button
+              aria-label="Copier les lignes sélectionnées"
+              variant="outline"
+              size="sm"
+              className="h-8 transition-all"
+              onClick={copyRowsAction}
+              disabled={isPending || disableActions}
+            >
+              <ClipboardCopyIcon className="mr-2 size-4" aria-hidden="true" />
+              Copier
+            </Button>
+          )}
+
+          {pasteRowsAction && (
+            <Button
+              aria-label="Coller les éléments"
+              variant="outline"
+              size="sm"
+              className="h-8 transition-all"
+              onClick={pasteRowsAction}
+              disabled={isPending}
+            >
+              <ClipboardIcon className="mr-2 size-4" aria-hidden="true" />
+              Coller
+            </Button>
+          )}
+          {/* Bouton de suppression et création de nouvelle ligne existant */}
+          {deleteRowsAction ? (
+            <Button
+              aria-label="Supprimer les lignes sélectionnées"
+              variant="outline"
+              size="sm"
+              className="h-8 transition-all"
+              onClick={(event) => {
+                startTransition(() => {
+                  table.toggleAllPageRowsSelected(false);
+                  deleteRowsAction(event);
+                });
+              }}
+              disabled={isPending || disableActions}
+            >
+              <TrashIcon className="mr-2 size-4" aria-hidden="true" />
+              Delete
+            </Button>
+          ) : newRowLink ? (
+            <Link aria-label="Créer une nouvelle ligne" href={newRowLink}>
+              <div
+                className={cn(
+                  buttonVariants({
+                    variant: 'outline',
+                    size: 'sm',
+                    className: 'h-8 transition-all',
+                  })
+                )}
+              >
+                <PlusCircledIcon className="mr-2 size-4" aria-hidden="true" />
+                Nouveau
+              </div>
+            </Link>
+          ) : null}
+          {goBack && (
+            <Button
+              aria-label="Coller les éléments"
+              variant="default"
+              size="sm"
+              className="h-8 transition-all"
+              onClick={goBack}
+              disabled={isPending || basePath === ''}
+            >
+              <IoReturnDownBackOutline
+                className="mr-2 size-4"
+                aria-hidden="true"
+              />
+              Back
+            </Button>
+          )}
+          {/* <DataTableViewOptions table={table} /> */}
+        </div>
+      </Card>
+    </>
   );
 }

@@ -2,7 +2,6 @@
 
 import * as React from 'react';
 import { useTheme } from 'next-themes';
-
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -11,10 +10,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Icons } from '@/components/shared/icons';
-import { BsMoonStarsFill } from 'react-icons/bs';
-import { Sun } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { FaSun } from 'react-icons/fa';
 
 export function ModeToggle() {
   const { setTheme } = useTheme();
@@ -24,11 +20,11 @@ export function ModeToggle() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="none" size="sm" className="p-0">
-          < FaSun
+          <Icons.sun
             size={17}
             className="rotate-0 transition-all dark:-rotate-90 dark:scale-0"
           />
-          <BsMoonStarsFill
+          <Icons.moon
             size={17}
             className="absolute rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100"
           />

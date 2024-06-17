@@ -23,7 +23,7 @@ export function UserAvatar({ user, ...props }: UserAvatarProps) {
           />
         ) : (
           <AvatarFallback>
-            <FaUserCircle size={30} />
+            <FaUserCircle size={15} />
           </AvatarFallback>
         )}
         <SocketIndicator />

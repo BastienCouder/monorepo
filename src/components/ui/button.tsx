@@ -9,26 +9,25 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default:
-          'bg-primary text-primary-foreground shadow hover:bg-primary/90',
+        default: 'bg-primary text-primary-foreground hover:bg-primary',
         destructive:
-          'bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90',
+          'bg-destructive text-destructive-foreground hover:bg-destructive/90',
         outline:
-          'border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground',
-        secondary:
-          'bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80',
-        ghost: 'hover:bg-accent hover:text-accent-foreground focus-visible:ring-0',
+          'border border-input bg-card hover:bg-muted hover:text-accent-foreground',
+        secondary: 'bg-secondary text-secondary-foreground',
+        ghost:
+          'hover:bg-accent hover:text-accent-foreground focus-visible:ring-0',
         none: 'hover:bg-none hover:text-accent-foreground  focus-visible:ring-0',
-        link: "text-primary underline-offset-4 hover:underline",
-        grey: "bg-accent/30 text-accent-foreground shadow-sm hover:bg-accent/80",
+        link: 'text-primary underline-offset-4 hover:underline',
+        grey: 'bg-accent/30 text-accent-foreground hover:bg-accent/80',
         success: 'bg-emerald-600 text-white hover:bg-emerald-600/80',
       },
       size: {
         default: 'h-9 px-4 py-2',
-        sm: 'h-8 rounded-md px-3 text-xs',
-        lg: 'h-10 rounded-md px-8',
+        sm: 'h-8 rounded-sm px-3 text-xs',
+        lg: 'h-10 rounded-sm px-8',
         icon: 'h-9 w-9',
-        xl: "h-16 rounded-md px-5 "
+        xl: 'h-16 rounded-sm px-5 ',
       },
     },
     defaultVariants: {
@@ -40,7 +39,7 @@ const buttonVariants = cva(
 
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-  VariantProps<typeof buttonVariants> {
+    VariantProps<typeof buttonVariants> {
   asChild?: boolean;
 }
 

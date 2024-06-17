@@ -1,9 +1,5 @@
 'use server';
-import { currentUser } from '@/lib/authCheck';
-import { storage } from '@/libs/firebase';
-import { db } from '@/lib/prisma';
-import { File } from '@/models/db';
-import { deleteObject, ref } from 'firebase/storage';
+import { currentUser } from '@/lib/auth';
 import { revalidatePath } from 'next/cache';
 
 async function deleteFolderRecursively(
@@ -52,7 +48,6 @@ async function deleteFileFromFirebase(firebaseUrl: string) {
 export async function deleteItems(itemIds: string[]) {
   const user = await currentUser();
   const userId = user?.id;
-  console.log('items: ', itemIds);
 
   if (!userId) {
     return;

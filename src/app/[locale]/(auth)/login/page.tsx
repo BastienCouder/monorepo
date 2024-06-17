@@ -1,11 +1,15 @@
-import { LoginForm } from '@/components/auth/form-login';
+import { LoginForm } from '@/app/[locale]/(auth)/_components/form-login';
 import { siteConfig } from '@/config/site';
 import { pick } from 'lodash';
 import { Metadata } from 'next';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, getTranslations } from 'next-intl/server';
 
-export async function generateMetadata({ params: { locale } }: { params: { locale: string } }): Promise<Metadata> {
+export async function generateMetadata({
+  params: { locale },
+}: {
+  params: { locale: string };
+}): Promise<Metadata> {
   const t = await getTranslations({ locale });
 
   return {
@@ -16,16 +20,13 @@ export async function generateMetadata({ params: { locale } }: { params: { local
 }
 
 const LoginPage = async () => {
-  const messages = await getMessages()
+  const messages = await getMessages();
 
   return (
-    <NextIntlClientProvider
-      messages={
-        pick(messages, 'auth.client')
-      }
-    >
+    <NextIntlClientProvider messages={pick(messages, 'auth.client')}>
       <LoginForm />
-    </NextIntlClientProvider>)
+    </NextIntlClientProvider>
+  );
 };
 
 export default LoginPage;

@@ -52,7 +52,7 @@ export function BillingFormButton({
       ) : (
         <>
           {subscriptionPlan.stripePriceId ===
-            offer.stripeIds[year ? 'yearly' : 'monthly']
+          offer.stripeIds[year ? 'yearly' : 'monthly']
             ? t('manage_subscription')
             : t('get_started')}
         </>

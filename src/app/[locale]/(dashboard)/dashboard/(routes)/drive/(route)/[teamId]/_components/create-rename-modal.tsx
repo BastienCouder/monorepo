@@ -43,8 +43,10 @@ const CreateRenameModal = ({
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogTrigger
           className={cn(
-            `${buttonVariants({ variant: 'outline' })} 
-  ${selectedIndexes.includes(i) ? 'bg-primary text-background  hover:bg-primary/80 hover:text-background/80' : ''} cursor-pointer px-2 py-1 h-auto flex gap-2  text-xs`)}>
+            `${buttonVariants({ variant: 'secondary' })} 
+  ${selectedIndexes.includes(i) ? 'bg-primary text-background  hover:bg-primary/80 hover:text-background/80' : ''} cursor-pointer px-2 py-1 h-auto flex gap-2  text-xs`
+          )}
+        >
           {type === 'name' && 'Rename'}
           {type === 'icon' && <Pencil size={14} />}
         </DialogTrigger>
@@ -62,9 +64,12 @@ const CreateRenameModal = ({
 
   return (
     <Drawer open={isOpen} onOpenChange={setIsOpen}>
-      <DrawerTrigger className={cn(
-        `${buttonVariants({ variant: 'outline' })} 
-  ${selectedIndexes.includes(i) ? 'bg-primary text-background  hover:bg-primary/80 hover:text-background/80' : ''} cursor-pointer px-2 py-1 h-auto flex gap-2  text-xs`)}>
+      <DrawerTrigger
+        className={cn(
+          `${buttonVariants({ variant: 'secondary' })} 
+  ${selectedIndexes.includes(i) ? 'bg-primary text-background  hover:bg-primary/80 hover:text-background/80' : ''} cursor-pointer px-2 py-1 h-auto flex gap-2  text-xs`
+        )}
+      >
         {type === 'name' && 'Rename'}
         {type === 'icon' && <Pencil size={14} />}
       </DrawerTrigger>

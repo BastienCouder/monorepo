@@ -3,7 +3,7 @@ import * as React from 'react';
 import { cn } from '@/lib/utils';
 import { Icons } from '@/components/shared/icons';
 
-interface EmptyPlaceholderProps extends React.HTMLAttributes<HTMLDivElement> { }
+interface EmptyPlaceholderProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 export function EmptyPlaceholder({
   className,
@@ -29,9 +29,9 @@ interface EmptyPlaceholderIconProps
   extends Partial<React.SVGProps<SVGSVGElement>> {
   name: keyof typeof Icons;
   ref?:
-  | ((instance: SVGSVGElement | null) => void)
-  | React.RefObject<SVGSVGElement>
-  | null;
+    | ((instance: SVGSVGElement | null) => void)
+    | React.RefObject<SVGSVGElement>
+    | null;
 }
 
 EmptyPlaceholder.Icon = function EmptyPlaceHolderIcon({
@@ -53,7 +53,7 @@ EmptyPlaceholder.Icon = function EmptyPlaceHolderIcon({
 };
 
 interface EmptyPlacholderTitleProps
-  extends React.HTMLAttributes<HTMLHeadingElement> { }
+  extends React.HTMLAttributes<HTMLHeadingElement> {}
 
 EmptyPlaceholder.Title = function EmptyPlaceholderTitle({
   className,
@@ -65,7 +65,7 @@ EmptyPlaceholder.Title = function EmptyPlaceholderTitle({
 };
 
 interface EmptyPlaceholderDescriptionProps
-  extends React.HTMLAttributes<HTMLParagraphElement> { }
+  extends React.HTMLAttributes<HTMLParagraphElement> {}
 
 EmptyPlaceholder.Description = function EmptyPlaceholderDescription({
   className,

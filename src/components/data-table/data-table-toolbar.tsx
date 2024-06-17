@@ -6,37 +6,19 @@ import type {
   DataTableFilterableColumn,
   DataTableSearchableColumn,
 } from '@/types';
-import {
-  CaretLeftIcon,
-  Cross2Icon,
-  PlusCircledIcon,
-  TrashIcon,
-} from '@radix-ui/react-icons';
+import { Cross2Icon, PlusCircledIcon, TrashIcon } from '@radix-ui/react-icons';
 import type { Table } from '@tanstack/react-table';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { DataTableFacetedFilter } from '@/components/data-table/data-table-faceted-filter';
-import {
-  ClipboardCopyIcon,
-  ClipboardIcon,
-  Table as TableIcon,
-} from 'lucide-react';
+import { ClipboardCopyIcon, ClipboardIcon } from 'lucide-react';
 import { TbLayoutList } from 'react-icons/tb';
 import { IoGrid, IoReturnDownBackOutline } from 'react-icons/io5';
 
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
-import CreateFolderModal from '@/app/[locale]/(dashboard)/dashboard/(routes)/ai/(route)/_components/create-folder-modal';
-import { ChoiceCheckbox } from '@/app/[locale]/(dashboard)/dashboard/(routes)/ai/(route)/_components/choice-checkbox';
-import { useSelection } from '@/app/[locale]/(dashboard)/dashboard/(routes)/ai/(route)/_context/select-item';
-import { VscActivateBreakpoints } from 'react-icons/vsc';
 import { Icons } from '../shared/icons';
+import { useSelection } from '@/providers/select-item-provider';
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;
@@ -44,7 +26,6 @@ interface DataTableToolbarProps<TData> {
   searchableColumns?: DataTableSearchableColumn<TData>[];
   newRowLink?: string;
   deleteRowsAction?: React.MouseEventHandler<HTMLButtonElement>;
-  operateRowsAction?: React.MouseEventHandler<HTMLButtonElement>;
   copyRowsAction?: () => void;
   pasteRowsAction?: () => void;
   goBack?: () => void;
@@ -60,19 +41,17 @@ export function DataTableToolbar<TData>({
   searchableColumns = [],
   newRowLink,
   deleteRowsAction,
-  operateRowsAction,
   copyRowsAction,
   pasteRowsAction,
   goBack,
   basePath,
   isGridView,
   switchToGridView,
-  switchToTableView
+  switchToTableView,
 }: DataTableToolbarProps<TData>) {
   const isFiltered = table.getState().columnFilters.length > 0;
   const [isPending, startTransition] = React.useTransition();
   const { selectedItems } = useSelection();
-
   const hasTableSelectedItems = table.getSelectedRowModel().rows.length > 0;
   const hasContextSelectedItems = selectedItems.length > 0;
   const disableActions = !hasTableSelectedItems && !hasContextSelectedItems;
@@ -162,32 +141,6 @@ export function DataTableToolbar<TData>({
             {<TbLayoutList size={16} />}
           </button>
         </div>
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger>
-              {' '}
-              {operateRowsAction && (
-                <Button
-                  aria-label="Activer les lignes sélectionnées"
-                  variant="outline"
-                  size="sm"
-                  className="h-8 transition-all"
-                  onClick={operateRowsAction}
-                  disabled={isPending || disableActions}
-                >
-                  <VscActivateBreakpoints
-                    className="mr-2 size-4"
-                    aria-hidden="true"
-                  />
-                  Activate / desactivate
-                </Button>
-              )}
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Activate or desactivate item to sort</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
         <Popover>
           <PopoverTrigger className="ms-2">
             <div>
@@ -199,8 +152,6 @@ export function DataTableToolbar<TData>({
       </div>
 
       <div className="flex items-center space-x-2">
-        <CreateFolderModal basePath={basePath} />
-
         {copyRowsAction && (
           <Button
             aria-label="Copier les lignes sélectionnées"

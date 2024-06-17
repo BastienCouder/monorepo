@@ -1,14 +1,52 @@
 'use server';
 
+import { currentUser } from '@/lib/auth';
 import { db } from '@/lib/prisma';
+import { renameTeamSchema } from '@/models/validations/team';
+import { getTranslations } from 'next-intl/server';
+import { revalidatePath } from 'next/cache';
+import { z } from 'zod';
 
-export const renameTeam = async (
-  teamId: string,
+interface RenameTeamResponse {
+  success?: string;
+  error?: string;
+}
+
+export async function renameTeam(
   userId: string,
-  newName: string
-) => {
+  teamId: string,
+  values: z.infer<typeof renameTeamSchema>
+): Promise<RenameTeamResponse> {
+  const t = await getTranslations('auth.server');
+  const validatedFields = renameTeamSchema.safeParse(values);
+
+  if (!validatedFields.success) {
+    return { error: t('invalid_fields') };
+  }
+
+  const { name } = validatedFields.data;
+
+  const user = await currentUser();
+
+  if (!user) {
+    return {
+      error: 'You are not authorized to delete this team.',
+    };
+  }
+
+  if (user.id !== userId && user.role !== 'OWNER') {
+    return {
+      error: 'You are not authorized to delete this team.',
+    };
+  }
+
   const team = await db.team.findUnique({ where: { id: teamId } });
-  if (!team) throw new Error('Team not found.');
+
+  if (!team) {
+    return {
+      error: 'Team not found.',
+    };
+  }
 
   const teamMember = await db.teamMember.findUnique({
     where: {
@@ -25,13 +63,19 @@ export const renameTeam = async (
       teamMember.role !== 'OWNER' &&
       teamMember.userId !== team.creatorId)
   ) {
-    throw new Error('You are not authorized to rename this team.');
+    return {
+      error: 'You are not authorized to rename this team.',
+    };
   }
 
-  const updatedTeam = await db.team.update({
+  await db.team.update({
     where: { id: teamId },
-    data: { name: newName },
+    data: { name },
   });
 
-  return updatedTeam;
-};
+  revalidatePath('/dashboard');
+
+  return {
+    success: 'Update successful.',
+  };
+}

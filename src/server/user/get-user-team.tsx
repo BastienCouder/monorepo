@@ -2,8 +2,6 @@
 import { db } from '@/lib/prisma';
 import { Team } from '@/models/db';
 
-
-
 interface ExtendedTeam extends Team {
   totalStorageUsed: number;
   totalFileCount: number;

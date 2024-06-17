@@ -14,7 +14,7 @@ export default function FolderTeamCard({ team, index }: FolderTeamCardProps) {
   return (
     <li
       key={index}
-      className="bg-background drop-shadow-sm  w-full sm:w-1/2 lg:w-1/4 p-4 rounded-md"
+      className="bg-background drop-shadow-sm  w-full p-4 rounded-md"
     >
       <Link href={`/dashboard/drive/${team.id}`}>
         <div className="space-y-2">

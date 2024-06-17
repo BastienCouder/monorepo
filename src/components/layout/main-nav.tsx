@@ -1,7 +1,6 @@
 'use client';
 
 import * as React from 'react';
-import Link from 'next/link';
 import { useSelectedLayoutSegment } from 'next/navigation';
 import { siteConfig } from '@/config/site';
 import { cn } from '@/lib/utils';
@@ -9,6 +8,7 @@ import { Icons } from '@/components/shared/icons';
 import { MobileNav } from '@/components/layout/mobile-nav';
 import { MainNavItem } from '@/types';
 import { useTranslations } from 'next-intl';
+import { Container, Link } from '@/components/container';
 
 interface MainNavProps {
   items?: MainNavItem[];
@@ -39,7 +39,7 @@ export function MainNav({ items, children }: MainNavProps) {
   }, [showMobileMenu]);
 
   return (
-    <div className="flex gap-6 md:gap-10">
+    <Container.Div className="flex gap-6 md:gap-10">
       <Link href="/" className="hidden items-center space-x-2 md:flex">
         <Icons.logo />
         <span className="hidden font-urban text-xl font-bold sm:inline-block">
@@ -75,6 +75,6 @@ export function MainNav({ items, children }: MainNavProps) {
       {showMobileMenu && items && (
         <MobileNav items={items}>{children}</MobileNav>
       )}
-    </div>
+    </Container.Div>
   );
 }

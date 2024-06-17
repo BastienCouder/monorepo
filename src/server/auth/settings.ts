@@ -18,9 +18,9 @@ type Response = {
   success?: string;
 };
 
-export const settings = async (
+export async function settings(
   values: z.infer<typeof SettingsSchema>
-): Promise<Response> => {
+): Promise<Response> {
   const user = await currentUser();
   const t = await getTranslations('auth.server');
 
@@ -89,4 +89,4 @@ export const settings = async (
   });
 
   return { success: t('settings_updated') };
-};
+}

@@ -1,13 +1,16 @@
-import { NewVerificationForm } from '@/components/auth/form-new-verification';
+import { NewVerificationForm } from '@/app/[locale]/(auth)/_components/form-new-verification';
 import { siteConfig } from '@/config/site';
 import { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import pick from 'lodash/pick';
-import { NextIntlClientProvider, } from 'next-intl';
+import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 
-
-export async function generateMetadata({ params: { locale } }: { params: { locale: string } }): Promise<Metadata> {
+export async function generateMetadata({
+  params: { locale },
+}: {
+  params: { locale: string };
+}): Promise<Metadata> {
   const t = await getTranslations({ locale });
   return {
     title: `${t('metadata.auth.check_auth')} - ${siteConfig.name}`,
@@ -17,16 +20,12 @@ export async function generateMetadata({ params: { locale } }: { params: { local
 }
 
 const NewVerificationPage = async () => {
-  const messages = await getMessages()
+  const messages = await getMessages();
   return (
-    <NextIntlClientProvider
-      messages={
-        pick(messages, 'auth.client')
-      }
-    >
+    <NextIntlClientProvider messages={pick(messages, 'auth.client')}>
       <NewVerificationForm />
     </NextIntlClientProvider>
-  )
+  );
 };
 
 export default NewVerificationPage;

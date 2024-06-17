@@ -21,7 +21,6 @@ interface PricingCardsProps {
 export function PricingCards({ userId, subscriptionPlan }: PricingCardsProps) {
   const t = useTranslations('pricing');
 
-
   const isYearlyDefault =
     !subscriptionPlan?.interval || subscriptionPlan.interval === 'year'
       ? false //true
@@ -73,7 +72,9 @@ export function PricingCards({ userId, subscriptionPlan }: PricingCardsProps) {
                       </>
                     ) : (
                       <div className="flex items-start">
-                        <span className="text-4xl">${offer.prices.monthly}</span>
+                        <span className="text-4xl">
+                          ${offer.prices.monthly}
+                        </span>
                       </div>
                     )}
                   </div>
@@ -110,7 +111,9 @@ export function PricingCards({ userId, subscriptionPlan }: PricingCardsProps) {
               )}
             </div>
             <div className="flex w-full px-4 pt-4 flex-col items-start">
-              <p className="font-semibold first-letter:uppercase">{t('features')}</p>
+              <p className="font-semibold first-letter:uppercase">
+                {t('features')}
+              </p>
               <p className="text-sm text-muted-foreground first-letter:uppercase">
                 {t('everything_in_plan', { plan: offer.title })}
               </p>

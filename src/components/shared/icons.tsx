@@ -4,7 +4,6 @@ import {
   Check,
   ChevronLeft,
   ChevronRight,
-  CreditCard,
   File,
   FileText,
   HelpCircle,
@@ -13,13 +12,11 @@ import {
   FileMinus,
   Loader2,
   LucideProps,
-  Moon,
   Gauge,
   MoreVertical,
   Plus,
   Puzzle,
   Search,
-  SunMedium,
   Trash,
   User,
   X,
@@ -27,14 +24,19 @@ import {
   ScanEye,
   Aperture,
 } from 'lucide-react';
-import { FaSun } from "react-icons/fa";
-import { RiSettings4Fill } from "react-icons/ri";
-import { IoDocumentText } from "react-icons/io5";
-import { IoCard } from "react-icons/io5";
-import { HiMiniPlusCircle } from "react-icons/hi2";
-import { IoMoon } from "react-icons/io5";
-import { IoSunny } from "react-icons/io5";
-import { RiDashboardFill } from "react-icons/ri";
+import { FaSun } from 'react-icons/fa';
+import { RiSettings4Fill } from 'react-icons/ri';
+import { IoDocumentText } from 'react-icons/io5';
+import { IoCard } from 'react-icons/io5';
+import { HiMiniPlusCircle } from 'react-icons/hi2';
+import { IoMoon } from 'react-icons/io5';
+import { IoSunny } from 'react-icons/io5';
+import { RiDashboardFill } from 'react-icons/ri';
+import { FaKey } from 'react-icons/fa6';
+import { IoIosMail } from 'react-icons/io';
+import { BiSolidEditAlt } from 'react-icons/bi';
+import { FiUpload } from 'react-icons/fi';
+import { FaUserCircle } from 'react-icons/fa';
 
 export type Icon = LucideIcon;
 
@@ -48,6 +50,7 @@ export const Icons = {
   close: X,
   dashboard: RiDashboardFill,
   document: IoDocumentText,
+  edit: BiSolidEditAlt,
   ellipsis: MoreVertical,
   gitHub: ({ ...props }: LucideProps) => (
     <svg
@@ -84,8 +87,10 @@ export const Icons = {
     </svg>
   ),
   help: HelpCircle,
+  key: FaKey,
   laptop: Laptop,
   logo: Puzzle,
+  mail: IoIosMail,
   media: Image,
   moon: IoMoon,
   page: File,
@@ -118,6 +123,8 @@ export const Icons = {
     </svg>
   ),
   user: User,
+  circleUser: FaUserCircle,
+  uploads: FiUpload,
   warning: AlertTriangle,
   drive: ({ ...props }: LucideProps) => (
     <svg
@@ -177,5 +184,5 @@ export const Icons = {
       />
     </svg>
   ),
-  light: FaSun
+  light: FaSun,
 };

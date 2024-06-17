@@ -25,6 +25,11 @@ export function useDashboardConfig() {
         icon: Icons.document,
       },
       {
+        title: t('sidebar_nav.documentation'),
+        href: '/dashboard/drive',
+        icon: Icons.drive,
+      },
+      {
         title: t('sidebar_nav.upgrade'),
         href: '/pricing',
         icon: Icons.billing,

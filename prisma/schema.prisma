@@ -93,7 +93,7 @@ model User {
   updatedAt             DateTime               @updatedAt
   isTwoFactorEnabled    Boolean                @default(false)
   deleteAt              DateTime?
-  storageLimit          Int                    @default(500000000)
+  storageLimit          Int                    @default(10000000000)
   storageUsed           Int                    @default(0)
   accounts              Account[]
   Session               Session[]
@@ -112,14 +112,6 @@ model User {
   Action                 Action[]
 }
 
-model AnonymousUser {
-  id              String   @id @default(cuid())
-  originalUser    String
-  anonymizedEmail String
-  anonymizedName  String
-  createdAt       DateTime @default(now())
-}
-
 model TeamLimit {
   id     String @id @default(uuid())
   userId String @unique
@@ -133,8 +125,9 @@ model TeamLimit {
 model Team {
   id           String       @id @default(uuid())
   name         String
-  slug         String       @unique
+  slug         String
   key          String       @unique
+  isKeyActive  Boolean      @default(true)
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @default(now())
   storageLimit Int          @default(1000000000)
@@ -195,7 +188,6 @@ model Folder {
   updatedAt  DateTime @updatedAt
   User       User?    @relation(fields: [userId], references: [id])
   userId     String?
-  operate    Boolean  @default(true)
 
   @@index([parentId, teamId, userId])
 }
@@ -215,7 +207,6 @@ model File {
   userId      String?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
-  operate     Boolean   @default(true)
   tags        FileTag[]
 
   @@index([folderId, teamId, userId])

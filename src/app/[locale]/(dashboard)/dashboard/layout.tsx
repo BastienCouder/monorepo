@@ -1,7 +1,7 @@
 import React from 'react';
 import { DashboardShell } from './_components/dashboard-shell';
 import { cookies } from 'next/headers';
-import { SelectionProvider } from './(routes)/ai/(route)/_context/select-item';
+import { SelectionProvider } from '../../../../providers/select-item-provider';
 import { getUserTeams } from '@/server/user/get-user-team';
 import { currentUser } from '@/lib/auth';
 import { redirect } from 'next/navigation';
@@ -16,7 +16,6 @@ interface DashboardLayoutProps {
 }
 
 const DashboardLayout = async ({ children }: DashboardLayoutProps) => {
-
   const layout = cookies().get('react-resizable-panels:layout');
   const collapsed = cookies().get('react-resizable-panels:collapsed');
   const defaultLayout =
@@ -33,34 +32,29 @@ const DashboardLayout = async ({ children }: DashboardLayoutProps) => {
     redirect('/');
   }
   const teams: Team[] = await getUserTeams(user.id);
-  const messages = await getMessages()
+  const messages = await getMessages();
 
   return (
     <>
       <RouteParamProvider>
-        <NextIntlClientProvider
-          messages={pick(messages, 'navbar')}
-        >
+        <NextIntlClientProvider messages={pick(messages, 'navbar')}>
           <DashboardShell
             defaultLayout={defaultLayout}
             defaultCollapsed={defaultCollapsed}
             teams={teams}
           >
-
             <main
-              className="flex w-full bg-muted overflow-y-auto"
+              className="flex w-full overflow-y-auto"
               style={{ minHeight: `calc(100vh - 3.5rem)` }}
             >
               {/* <ActiveStatus /> */}
               <SelectionProvider>
-                <div className="w-full  px-4">
-                  {children}</div>
+                <div className="w-full px-4">{children}</div>
               </SelectionProvider>
             </main>
-
           </DashboardShell>
         </NextIntlClientProvider>
-      </RouteParamProvider >
+      </RouteParamProvider>
     </>
   );
 };

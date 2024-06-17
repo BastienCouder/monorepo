@@ -40,11 +40,11 @@ export function BillingInfo({ subscriptionPlan }: BillingInfoProps) {
           <p className="rounded-full text-xs font-medium">
             {subscriptionPlan.isCanceled
               ? t('plan_will_be_canceled_on', {
-                date: formatDate(subscriptionPlan.stripeCurrentPeriodEnd),
-              })
+                  date: formatDate(subscriptionPlan.stripeCurrentPeriodEnd),
+                })
               : t('plan_renews_on', {
-                date: formatDate(subscriptionPlan.stripeCurrentPeriodEnd),
-              })}
+                  date: formatDate(subscriptionPlan.stripeCurrentPeriodEnd),
+                })}
           </p>
         ) : null}
       </CardFooter>

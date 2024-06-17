@@ -1,6 +1,6 @@
 'use server';
 
-import { currentUser } from '@/lib/authCheck';
+import { currentUser } from '@/lib/auth';
 import { db } from '@/lib/prisma';
 import { Team, TeamMember, File } from '@/models/db';
 

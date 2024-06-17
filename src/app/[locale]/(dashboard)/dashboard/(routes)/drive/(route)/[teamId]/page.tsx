@@ -1,19 +1,15 @@
 import * as React from 'react';
 import type { SearchParams } from '@/types';
-
 import { DataTableSkeleton } from '@/components/data-table/data-table-skeleton';
-
 import { Metadata } from 'next';
-import { DriveTable } from './_components/drive-table';
+import DriveTable from './_components/drive-table';
 import { db } from '@/lib/prisma';
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
 import { currentUser } from '@/lib/auth';
-import { SettingsTeam } from './_components/settings-team';
-import { getUserRoleInTeam } from '@/server/team/get-user-role-team';
 import { siteConfig } from '@/config/site';
-import { unstable_setRequestLocale } from 'next-intl/server';
-import ActionsTeam from './_components/actions-team';
+import { getTeamMembers } from '@/server/team/get-team-members';
+import Error from './error';
+import { getTranslations } from 'next-intl/server';
+import { getTreeTeam } from '@/server/drive/get-folders-files-team';
 
 export interface UsersPageProps {
   searchParams: SearchParams;
@@ -32,45 +28,46 @@ export default async function DriveTeamPage({
   searchParams,
   params,
 }: UsersPageProps) {
+  const t = await getTranslations('DriveTeamPage');
   const user = await currentUser();
-  unstable_setRequestLocale(params.locale);
+  console.log(user);
 
-  const team = await db.team.findUnique({
-    where: {
-      id: params.teamId,
-    },
-  });
-
-  if (!team || !user) {
-    return;
+  if (!user) {
+    return <Error message={t('no_user_found')} />;
   }
 
-  const role = await getUserRoleInTeam(team.id, user.id);
+  const team = await db.team.findUnique({ where: { id: params.teamId } });
+  if (!team) {
+    return <Error message={t('team_not_found')} />;
+  }
+  const tree = await getTreeTeam(team.id)
+  console.log(JSON.stringify(tree));
+
+  const res = await getTeamMembers(team.id, user.id);
+  if (res.error) {
+    return <Error message={res.error} />;
+  }
+
+  if (
+    !res.userDetails ||
+    !res.userDetails.some((member) => member.user.id === user.id)
+  ) {
+    return <Error message={t('not_a_team_member')} />;
+  }
 
   return (
-    <>
-      <div className="h-full flex-1 flex-col space-y-4">
-        <React.Suspense
-          fallback={
-            <DataTableSkeleton columnCount={4} filterableColumnCount={2} />
-          }
-        >
-          {/**
-           * The `UsersTable` component is used to render the `DataTable` component within it.
-           * This is done because the table columns need to be memoized, and the `useDataTable` hook needs to be called in a client component.
-           * By encapsulating the `DataTable` component within the `usertable` component, we can ensure that the necessary logic and state management is handled correctly.
-           */}
-          <section className="w-full space-y-2">
-            {/* <div className="w-full flex justify-between"> */}
-            {/* <h1 className="font-bold text-xl first-letter:uppercase">
-                {team?.name}
-              </h1>
-              <ActionsTeam role={role} user={user} team={team} />
-            </div> */}
-            <DriveTable searchParams={searchParams} team={team} params={params} />
-          </section>
-        </React.Suspense>
-      </div>
-    </>
+    <React.Suspense
+      fallback={<DataTableSkeleton columnCount={4} filterableColumnCount={2} />}
+    >
+      <section className="w-full">
+        <DriveTable
+          searchParams={searchParams}
+          team={team}
+          params={params}
+          teamMembers={res.userDetails}
+          tree={tree}
+        />
+      </section>
+    </React.Suspense>
   );
 }
