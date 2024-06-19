@@ -27,12 +27,12 @@ export function UserAccountNav({ user, isCollapsed }: UserAccountNavProps) {
     <DropdownMenu>
       <DropdownMenuTrigger className="outline-none ring-0">
         <UserAvatar
+          isCollapsed={isCollapsed}
           user={{
             name: user?.name || '',
             image: user?.image || '',
             email: user?.email || '',
           }}
-          className=""
         />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="center">
@@ -48,31 +48,6 @@ export function UserAccountNav({ user, isCollapsed }: UserAccountNavProps) {
             )}
           </Container.Div>
         </Container.Div>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem asChild>
-          <Link
-            href="/dashboard/drive"
-            className="flex items-center space-x-2.5"
-          >
-            <Icons.dashboard className="size-4" />
-            <Text.Small>{t('dashboard')}</Text.Small>
-          </Link>
-        </DropdownMenuItem>
-        <DropdownMenuItem asChild>
-          <Link href="/pricing" className="flex items-center space-x-2.5">
-            <Icons.billing className="size-4" />
-            <Text.Small>{t('uTextgrade')}</Text.Small>
-          </Link>
-        </DropdownMenuItem>
-        <DropdownMenuItem asChild>
-          <Link
-            href="/dashboard/settings"
-            className="flex items-center space-x-2.5"
-          >
-            <Icons.settings className="size-4" />
-            <Text.Small>{t('settings')}</Text.Small>
-          </Link>
-        </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem
           className="cursor-pointer"

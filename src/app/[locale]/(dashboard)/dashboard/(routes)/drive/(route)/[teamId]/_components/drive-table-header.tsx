@@ -31,6 +31,7 @@ import {
     BreadcrumbSeparator,
     Card,
     BreadcrumbEllipsis,
+    Button,
 } from '@/components/ui/';
 import { Text } from '@/components/container';
 import { ChevronDown } from 'lucide-react';
@@ -181,9 +182,9 @@ const DriveTableHeader = ({
 
     return (
         <div className="w-full flex justify-between">
-            <Card className="px-4 pt-3 flex items-center gap-2 rounded-b-none rounded-tr-none md:rounded-tr-md border-none shadow-none transition-all">
-                <Text.H1 className="first-letter:uppercase">{team?.name}</Text.H1>
-                {pathHistory.length > 0 && <div>{renderBreadcrumb()}</div>}
+            <Card className="px-4 pr-5 pt-3 flex items-center gap-2 rounded-b-none rounded-tr-none md:rounded-tr-md border-none shadow-none transition-all">
+                <Text.H1 className="text-3xl first-letter:uppercase">{team?.name}</Text.H1>
+                {/* {pathHistory.length > 0 && <div>{renderBreadcrumb()}</div>} */}
             </Card>
             <div className="relative flex-1 bg-card">
                 <div className="z-50 flex-1 h-full md:bg-background md:rounded-t-none rounded-md" />
@@ -195,7 +196,7 @@ const DriveTableHeader = ({
                             <>
                                 <Popover>
                                     <PopoverTrigger
-                                        className={`px-2 py-0 gap-2 opacity-80 ${cn(buttonVariants({ variant: 'none', size: 'sm' }))}`}
+                                        className={`px-2 py-0 gap-2 ${cn(buttonVariants({ variant: 'none', size: 'sm' }))}`}
                                     >
                                         Membre de la team <ChevronDown size={10} />
                                     </PopoverTrigger>
@@ -204,20 +205,39 @@ const DriveTableHeader = ({
                                             isDesktop={isDesktop}
                                             team={team}
                                             user={user}
-                                            teamMembers={fakeTeamMembers}
+                                            teamMembers={teamMembers}
                                         />
                                     </PopoverContent>
                                 </Popover>
-                                <Popover>
-                                    <PopoverTrigger
-                                        className={`px-2 py-0 gap-2 opacity-80 ${cn(buttonVariants({ variant: 'none', size: 'sm' }))}`}
-                                    >
-                                        Voir l'arbre <ChevronDown size={10} />{' '}
-                                    </PopoverTrigger>
-                                    <PopoverContent className="min-w-[300px]">
-                                        <Tree data={data} />
-                                    </PopoverContent>
-                                </Popover>
+
+                                {/* <RenameTeamModal>
+                                    <Button
+                                        onClick={() =>
+                                            handleRenameTeam(user.id, team.id, team.name)
+                                        }
+                                        variant={'outline'}
+                                        className='py-1 px-4 text-sm rounded-sm cursor-pointer'
+                                        size={'sm'}>
+                                        <Text.Small
+                                            className="flex items-center gap-x-2.5"
+                                        >
+                                            <Icons.edit /> RenameTeam
+                                        </Text.Small>
+                                    </Button>
+                                </RenameTeamModal>
+                                <DeleteTeamModal>
+                                    <Button
+                                        onClick={() => handleDeleteTeam(user.id, team.id)}
+                                        variant={'destructive'}
+                                        className='py-1 px-4 text-sm rounded-sm cursor-pointer'
+                                        size={'sm'}>
+                                        <Text.Small
+                                            className="flex items-center gap-x-2.5"
+                                        >
+                                            <Icons.trash size={14} /> Delete Team
+                                        </Text.Small>
+                                    </Button>
+                                </DeleteTeamModal> */}
                                 {/* <AddUserToTeamModal>
                                     <Button
                                         className='px-2 py-0 gap-2'
@@ -228,41 +248,6 @@ const DriveTableHeader = ({
                                         Ajouter Users via Email
                                     </Button> */}
                                 {/* </AddUserToTeamModal> */}
-                                <DropdownMenu>
-                                    <DropdownMenuTrigger
-                                        className={cn(
-                                            buttonVariants({ variant: 'default', size: 'sm' })
-                                        )}
-                                    >
-                                        Settings Team
-                                    </DropdownMenuTrigger>
-                                    <DropdownMenuContent align="end" className="space-y-1">
-                                        <DropdownMenuItem asChild>
-                                            {user && (
-                                                <>
-                                                    <RenameTeamModal>
-                                                        <Text.Small
-                                                            className="flex items-center gap-x-2.5 py-1 px-2 text-sm rounded-sm cursor-pointer hover:bg-muted"
-                                                            onClick={() =>
-                                                                handleRenameTeam(user.id, team.id, team.name)
-                                                            }
-                                                        >
-                                                            <Icons.edit /> RenameTeam
-                                                        </Text.Small>
-                                                    </RenameTeamModal>
-                                                    <DeleteTeamModal>
-                                                        <Text.Small
-                                                            className="flex items-center gap-x-2.5 py-1 px-2 text-sm rounded-sm cursor-pointer hover:bg-muted"
-                                                            onClick={() => handleDeleteTeam(user.id, team.id)}
-                                                        >
-                                                            <Icons.trash size={14} /> Delete Team
-                                                        </Text.Small>
-                                                    </DeleteTeamModal>
-                                                </>
-                                            )}
-                                        </DropdownMenuItem>
-                                    </DropdownMenuContent>
-                                </DropdownMenu>
                             </>
                         )}
                     </div>

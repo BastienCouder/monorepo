@@ -27,6 +27,7 @@ import GridFoldersFiles from '@/components/dnd/grid';
 import { GridSkeleton } from '../skeleton/grid-skeleton';
 import { useSelection } from '@/providers/select-item-provider';
 import Dropzone from '@/app/[locale]/(dashboard)/dashboard/(routes)/drive/(route)/[teamId]/_components/dropzone';
+import DataTableSecondToolbar from './advanced/data-table-second-toolbar';
 
 interface DataTableProps<TData, TValue> {
   /**
@@ -80,7 +81,7 @@ interface DataTableProps<TData, TValue> {
    * @type React.MouseEventHandler<HTMLButtonElement> | undefined
    * @example deleteRowsAction={(event) => deleteSelectedRows(dataTable, event)}
    */
-  deleteRowsAction?: React.MouseEventHandler<HTMLButtonElement>;
+  deleteRowsAction?: (() => void) | undefined;
   copyRowsAction?: (() => void) | undefined;
   pasteRowsAction?: (() => void) | undefined;
   goBack?: (() => void) | undefined;
@@ -89,10 +90,14 @@ interface DataTableProps<TData, TValue> {
   currentPath: (path: { id: string; name: string }) => void;
   teamId?: string | undefined;
   isLoading: boolean;
+  tree: any;
   isFirstFetch: boolean;
+  sortOrder: 'alpha' | 'reverse-alpha' | 'date-asc' | 'date-desc';
+  setSortOrder: (order: 'alpha' | 'reverse-alpha' | 'date-asc' | 'date-desc') => void;
 }
 
 export function DataTable<TData, TValue>({
+  tree,
   dataTable,
   columns,
   searchableColumns = [],
@@ -108,6 +113,8 @@ export function DataTable<TData, TValue>({
   teamId,
   isLoading,
   isFirstFetch,
+  sortOrder,
+  setSortOrder
 }: DataTableProps<TData, TValue>) {
   const [isGridView, setIsGridView] = React.useState(true);
   const { clearSelection } = useSelection();
@@ -134,15 +141,13 @@ export function DataTable<TData, TValue>({
           table={dataTable}
           filterableColumns={filterableColumns}
           searchableColumns={searchableColumns}
-          deleteRowsAction={deleteRowsAction}
-          copyRowsAction={copyRowsAction}
-          pasteRowsAction={pasteRowsAction}
-          goBack={goBack}
+          data={tree}
+          sortOrder={sortOrder}
+          setSortOrder={setSortOrder}
           basePath={basePath}
           isGridView={isGridView}
           switchToGridView={switchToGridView}
           switchToTableView={switchToTableView}
-          teamId={teamId}
         />
       ) : (
         <DataTableToolbar
@@ -159,8 +164,19 @@ export function DataTable<TData, TValue>({
           switchToTableView={switchToTableView}
         />
       )}
+      <>
+        <DataTableSecondToolbar
+          table={dataTable}
+          deleteRowsAction={deleteRowsAction}
+          copyRowsAction={copyRowsAction}
+          pasteRowsAction={pasteRowsAction}
+          goBack={goBack}
+          basePath={basePath}
+          teamId={teamId}
+        />
+      </>
       <Card className="p-4">
-        <div className="max-h-[500px] overflow-y-auto pr-4 scrollbar-custom">
+        <div className="md:max-h-[450px] md:overflow-y-auto md:pr-4 scrollbar-custom">
           {isGridView ? (
             <>
               {isLoading && isFirstFetch ? (
@@ -173,7 +189,7 @@ export function DataTable<TData, TValue>({
             </>
           ) : (
             <>
-              {data?.files.length! > 0 && data?.folders.length! > 0 ? (
+              {!data ? (
                 <Dropzone folderId={''} teamId={''} />
               ) : (
                 <>

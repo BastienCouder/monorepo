@@ -18,10 +18,10 @@ import { useState } from 'react';
 import { Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useCurrentUser } from '@/hooks/use-current-user';
-import { toast } from '@/components/ui/use-toast';
 import { renameItemSchema } from '@/models/validations/folder';
 import { capitalize } from '@/lib/utils';
 import { renameItem } from '@/server/user/rename-item';
+import { toast } from 'sonner';
 
 type RenameItemFormValues = z.infer<typeof renameItemSchema>;
 
@@ -51,16 +51,11 @@ export function CreateRenameForm({ setIsOpen, itemId }: FormType) {
       if (userId && itemId) {
         await renameItem(itemId, userId, capitalize(data.name));
       }
-      toast({
-        title: 'Folder created',
-      });
+      toast('Folder created');
       router.refresh();
       setIsOpen(false);
     } catch (error) {
-      console.error(error);
-      toast({
-        title: 'Something went wrong',
-      });
+      toast('Something went wrong');
     } finally {
       setLoading(false);
     }

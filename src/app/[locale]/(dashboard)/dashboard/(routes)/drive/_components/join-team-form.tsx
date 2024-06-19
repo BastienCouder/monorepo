@@ -19,7 +19,6 @@ import { useState } from 'react';
 import { Loader2, MinusCircle } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useCurrentUser } from '@/hooks/use-current-user';
-import { toast } from '@/components/ui/use-toast';
 import { createJoinTeamSchema } from '@/models/validations/team';
 import { joinTeamWithKey } from '@/server/team/join-with-key';
 
@@ -50,17 +49,17 @@ export function CreateJoinTeamForm({ setIsOpen }: FormType) {
       if (userId) {
         await joinTeamWithKey(userId, data.key);
 
-        toast({
-          title: 'JoinTeam created',
-        });
+        // toast({
+        //   title: 'JoinTeam created',
+        // });
         router.refresh();
         setIsOpen(false);
       }
     } catch (error) {
       console.error(error);
-      toast({
-        title: 'Something went wrong',
-      });
+      // toast({
+      //   title: 'Something went wrong',
+      // });
     } finally {
       setLoading(false);
     }

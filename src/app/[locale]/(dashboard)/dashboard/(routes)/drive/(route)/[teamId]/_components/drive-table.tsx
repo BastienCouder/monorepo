@@ -64,6 +64,7 @@ const DriveTable = ({
   const [isPending, startTransition] = React.useTransition();
   const [isLoading, setIsLoading] = useState(true);
   const [isFirstFetch, setIsFirstFetch] = useState(true);
+  const [sortOrder, setSortOrder] = useState<'alpha' | 'reverse-alpha' | 'date-asc' | 'date-desc'>('alpha');
 
   const fetchData = useCallback(async () => {
     setIsLoading(true);
@@ -84,7 +85,7 @@ const DriveTable = ({
 
   useEffect(() => {
     setParam(params.teamId);
-  }, [params.teamId, setParam]);
+  }, [params.teamId, setParam, currentPath]);
 
   useEffect(() => {
     fetchData();
@@ -107,8 +108,38 @@ const DriveTable = ({
     );
   }, [setCurrentPath, isFirstFetch, isPending, startTransition]);
 
+  const sortedData = useMemo(() => {
+    let sortedFolders = [...data.folders];
+    let sortedFiles = [...data.files];
+
+    switch (sortOrder) {
+      case 'alpha':
+        sortedFolders.sort((a, b) => a.name.localeCompare(b.name));
+        sortedFiles.sort((a, b) => a.name.localeCompare(b.name));
+        break;
+      case 'reverse-alpha':
+        sortedFolders.sort((a, b) => b.name.localeCompare(a.name));
+        sortedFiles.sort((a, b) => b.name.localeCompare(a.name));
+        break;
+      case 'date-asc':
+        sortedFolders.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+        sortedFiles.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+        break;
+      case 'date-desc':
+        sortedFolders.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+        sortedFiles.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+        break;
+      default:
+        break;
+    }
+
+    return { folders: sortedFolders, files: sortedFiles };
+  }, [data, sortOrder]);
+
+  console.log(sortedData);
+
   const { dataTable } = useDataTable<any, unknown>({
-    data: [...data.folders, ...data.files],
+    data: [...sortedData.folders, ...sortedData.files],
     columns,
     searchableColumns,
     filterableColumns,
@@ -142,28 +173,30 @@ const DriveTable = ({
       <Container.Div className="space-y-4 overflow-hidden mb-10">
         <DataTable
           teamId={team.id}
+          tree={tree}
           advancedFilter
           dataTable={dataTable}
           columns={columns}
           searchableColumns={searchableColumns}
           filterableColumns={filterableColumns}
           basePath={currentPath.id}
-          data={data}
+          data={sortedData}
           isLoading={isLoading}
           isFirstFetch={isFirstFetch}
           deleteRowsAction={() =>
             deleteSelectedRows(
               selectedItems,
-              dataTable,
               clearSelection,
               team.id,
               user?.id
             )
           }
-          copyRowsAction={() => copySelectedRows(selectedItems, dataTable)}
+          copyRowsAction={() => copySelectedRows(clearSelection, selectedItems)}
           pasteRowsAction={() => pasteSelectedRows(currentPath.id)}
           goBack={goBack}
           currentPath={setCurrentPath}
+          sortOrder={sortOrder}
+          setSortOrder={setSortOrder}
         />
       </Container.Div>
     </>

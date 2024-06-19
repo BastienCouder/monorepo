@@ -8,6 +8,7 @@ import { User } from '@/models/db';
 
 interface UserAvatarProps extends AvatarProps {
   user: Pick<User, 'image' | 'name' | 'email'>;
+  isCollapsed?: boolean;
 }
 
 export function UserAvatar({ user, ...props }: UserAvatarProps) {
@@ -19,14 +20,13 @@ export function UserAvatar({ user, ...props }: UserAvatarProps) {
             alt="Picture"
             src={user.image}
             referrerPolicy="no-referrer"
-
           />
         ) : (
           <AvatarFallback>
-            <FaUserCircle size={15} />
+            {props.isCollapsed ? <FaUserCircle size={10} /> : <FaUserCircle size={15} />}
           </AvatarFallback>
         )}
-        <SocketIndicator />
+        {/* <SocketIndicator /> */}
       </Avatar>
     </>
   );

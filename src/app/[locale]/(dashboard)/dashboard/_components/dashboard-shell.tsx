@@ -32,6 +32,7 @@ import { UserAvatar } from '@/components/shared/user-avatar';
 import { LogoutButton } from '@/app/[locale]/(auth)/_components';
 import { LogOut } from 'lucide-react';
 import { signOut } from 'next-auth/react';
+import { UserAccountNav } from '@/components/layout/user-account-nav';
 
 interface IDashboardShell {
   defaultLayout: number[] | undefined;
@@ -126,6 +127,16 @@ export const DashboardShell = ({
                     </span>
                   </TooltipContent>
                 </Tooltip> */}
+
+              </Card>
+              <Card className='p-2 flex justify-center items-center'>
+                <UserAccountNav
+                  isCollapsed={isCollapsed}
+                  user={{
+                    name: user?.name ?? 'N/A',
+                    image: user?.image ?? 'N/A',
+                    email: user?.email ?? 'N/A',
+                  }} />
               </Card>
             </>
           ) : (

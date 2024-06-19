@@ -13,20 +13,24 @@ const Tree: React.FC<FileTreeProps> = ({ data }) => {
 
     return (
 
-        <div className='max-h-[250px] p-1'>
+        <div className='max-h-[250px]'>
             <Container.Div className="flex flex-col gap-0 mb-2">
                 <Text.H3>Arbre</Text.H3>
                 <Text.Small>cet arbre represente tout les dossier et fichiers du groupe</Text.Small>
             </Container.Div>
-            <div className='overflow-auto scrollbar-custom-small max-h-[170px]'>
-                {rootFolders.map((folder: any) => (
-                    <FileNode
-                        key={folder.id}
-                        node={folder}
-                        files={data.files.data}
-                    />
-                ))}
-            </div>
+            {rootFolders.length > 0 ? (
+                <div className='overflow-auto scrollbar-custom-small max-h-[170px]'>
+                    {rootFolders.map((folder: any) => (
+                        <FileNode
+                            key={folder.id}
+                            node={folder}
+                            files={data.files.data}
+                        />
+                    ))}
+                </div>
+            ) : (
+                <Text.Small>Il n'y a pas de dossier</Text.Small>
+            )}
         </div>
     );
 };

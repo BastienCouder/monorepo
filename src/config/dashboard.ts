@@ -27,7 +27,7 @@ export function useDashboardConfig() {
       {
         title: t('sidebar_nav.documentation'),
         href: '/dashboard/drive',
-        icon: Icons.drive,
+        icon: Icons.laptop,
       },
       {
         title: t('sidebar_nav.upgrade'),

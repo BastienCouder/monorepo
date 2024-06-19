@@ -15,8 +15,6 @@ import {
   FormLabel,
   FormMessage,
   Input,
-  ToastAction,
-  toast,
 } from '@/components/ui';
 import { CardWrapper } from '../_components';
 import { register } from '@/server/auth/register.action';
@@ -24,6 +22,7 @@ import { RegisterSchema } from '@/models/auth';
 import { capitalizeFirstLetter } from '@/lib/utils';
 import { useTranslations } from 'next-intl';
 import { Container, Form } from '@/components/container';
+import { toast } from 'sonner';
 
 const translateZodErrors = (errors: z.ZodError, t: (key: string) => string) => {
   return errors.errors.map((error) => ({
@@ -52,14 +51,12 @@ export const RegisterForm = () => {
       if (!result.success) {
         const translatedErrors = translateZodErrors(result.error, t);
         translatedErrors.forEach((error) => {
-          toast({
-            title: t('error_title'),
+          toast(t('error_title'), {
             description: capitalizeFirstLetter(error.message),
-            action: (
-              <ToastAction altText={t('try_again')}>
-                {t('try_again')}
-              </ToastAction>
-            ),
+            action: {
+              label: t('try_again'),
+              onClick: () => onSubmit(values),
+            },
           });
         });
         return;
@@ -67,19 +64,21 @@ export const RegisterForm = () => {
 
       register(values).then((data) => {
         if (data.error) {
-          toast({
-            title: t('error_title'),
+          toast(t('error_title'), {
             description: capitalizeFirstLetter(data.error),
-            action: (
-              <ToastAction altText={t('try_again')}>
-                {t('try_again')}
-              </ToastAction>
-            ),
+            action: {
+              label: t('try_again'),
+              onClick: () => onSubmit(values),
+            },
           });
         }
         if (data.success) {
-          toast({
-            title: capitalizeFirstLetter(data.success),
+          toast(t('error_title'), {
+            description: capitalizeFirstLetter(data.success),
+            action: {
+              label: t('try_again'),
+              onClick: () => onSubmit(values),
+            },
           });
         }
       });

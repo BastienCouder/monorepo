@@ -4,7 +4,6 @@ import { fontHeading, fontRaleway, fontSans, fontUrban } from '@/assets/fonts';
 import { Analytics } from '@/components/analytics';
 import { ThemeProvider } from '@/components/providers';
 import { TailwindIndicator } from '@/components/tailwind-indicator';
-import { Toaster } from '@/components/ui/toaster';
 import { siteConfig } from '@/config/site';
 import { cn } from '@/lib/utils';
 import { SessionProvider } from 'next-auth/react';
@@ -103,7 +102,7 @@ const RootLayout = async ({
               <SocketProvider>{children}</SocketProvider>
             </NextIntlClientProvider>
             <Analytics />
-            <Toaster />
+            {/* <Toaster /> */}
             <TailwindIndicator />
           </ThemeProvider>
         </body>

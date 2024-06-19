@@ -12,11 +12,11 @@ interface FolderTeamCardProps {
 
 export default function FolderTeamCard({ team, index }: FolderTeamCardProps) {
   return (
-    <li
-      key={index}
-      className="bg-background drop-shadow-sm  w-full p-4 rounded-md"
-    >
-      <Link href={`/dashboard/drive/${team.id}`}>
+    <Link href={`/dashboard/drive/${team.id}`}>
+      <li
+        key={index}
+        className="bg-card drop-shadow-sm  w-full p-4 rounded-md"
+      >
         <div className="space-y-2">
           <AiFillFolder size={55} className="text-primary -ml-1" />
           <h2 className="text-xl font-bold first-letter:uppercase">
@@ -27,7 +27,7 @@ export default function FolderTeamCard({ team, index }: FolderTeamCardProps) {
             <p>{member.name}</p>
           ))}
         </div>
-      </Link>
-    </li>
+      </li>
+    </Link>
   );
 }

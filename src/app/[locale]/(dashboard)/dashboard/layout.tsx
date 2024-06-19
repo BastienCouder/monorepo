@@ -22,10 +22,10 @@ const DashboardLayout = async ({ children }: DashboardLayoutProps) => {
     layout && layout.value !== 'undefined'
       ? JSON.parse(layout.value)
       : undefined;
-  const defaultCollapsed =
-    collapsed && collapsed.value !== 'undefined'
-      ? JSON.parse(collapsed.value)
-      : undefined;
+  // const defaultCollapsed =
+  //   collapsed && collapsed.value !== 'undefined'
+  //     ? JSON.parse(collapsed.value)
+  //     : undefined;
 
   const user = await currentUser();
   if (!user) {
@@ -40,7 +40,7 @@ const DashboardLayout = async ({ children }: DashboardLayoutProps) => {
         <NextIntlClientProvider messages={pick(messages, 'navbar')}>
           <DashboardShell
             defaultLayout={defaultLayout}
-            defaultCollapsed={defaultCollapsed}
+            defaultCollapsed={true}
             teams={teams}
           >
             <main

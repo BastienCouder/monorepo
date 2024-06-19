@@ -1,4 +1,5 @@
 import React from 'react';
+import { Toaster } from 'sonner';
 
 interface DriveLayoutProps {
   children?: React.ReactNode;
@@ -12,6 +13,7 @@ const DriveLayout = async ({ children }: DriveLayoutProps) => {
       >
         <div className="w-full">{children}</div>
       </main>
+      <Toaster />
     </>
   );
 };

@@ -2,7 +2,6 @@
 
 import React, { useState, useTransition, useEffect } from 'react';
 import { Drawer, DrawerContent, DrawerTrigger } from '@/components/ui/drawer';
-import { toast } from '@/components/ui/use-toast';
 import { useTranslations } from 'next-intl';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { useModal } from '@/hooks/use-modal-store';
@@ -26,10 +25,10 @@ import {
     Slider,
 } from '@/components/ui';
 import { capitalizeFirstLetter } from '@/lib/utils';
-import { ToastAction } from '../ui/toast';
 import { createGroup } from '@/server/team/create-group';
 import { createGroupSchema } from '@/models/validations/team';
 import { Container, Text } from '@/components/container';
+import { toast } from 'sonner';
 
 interface CreateGroupModalProps {
     children: React.ReactNode;
@@ -69,10 +68,12 @@ export function CreateGroupModal({ children }: CreateGroupModalProps) {
         const userId = data.userId;
 
         if (!userId) {
-            toast({
-                title: t('error_title'),
+            toast(t('error_title'), {
                 description: t('validation.missing_user_or_team_id'),
-                variant: 'destructive',
+                action: {
+                    label: t('try_again'),
+                    onClick: () => onSubmit(values),
+                },
             });
             return;
         }
@@ -86,14 +87,12 @@ export function CreateGroupModal({ children }: CreateGroupModalProps) {
                         tValidation
                     );
                     translatedErrors.forEach((error) => {
-                        toast({
-                            title: t('error_title'),
+                        toast(t('error_title'), {
                             description: capitalizeFirstLetter(error.message),
-                            action: (
-                                <ToastAction altText={t('try_again')}>
-                                    {t('try_again')}
-                                </ToastAction>
-                            ),
+                            action: {
+                                label: t('try_again'),
+                                onClick: () => onSubmit(values),
+                            },
                         });
                     });
                     return;
@@ -103,22 +102,24 @@ export function CreateGroupModal({ children }: CreateGroupModalProps) {
                 const res = await createGroup(userId, { ...values, storageLimit: 8000 });
 
                 if (res.error) {
-                    toast({
-                        title: res.error,
-                        variant: 'destructive',
+                    toast(res.error, {
+                        action: {
+                            label: t('try_again'),
+                            onClick: () => onSubmit(values),
+                        },
                     });
                 } else {
-                    toast({
-                        title: res.success,
-                    });
+                    toast(res.success);
                     onClose();
                     form.reset();
                     setIsOpen(false);
                 }
             } catch (error) {
-                toast({
-                    title: t('generic_error'),
-                    variant: 'destructive',
+                toast(t('generic_error'), {
+                    action: {
+                        label: t('try_again'),
+                        onClick: () => onSubmit(values),
+                    },
                 });
             }
         });

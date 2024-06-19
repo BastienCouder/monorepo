@@ -15,7 +15,7 @@ export interface DirectoryCardProps {
 
 const DirectoryCard = ({ key }: DirectoryCardProps) => {
   return (
-    <li key={key} className="bg-background p-4 rounded-md w-full space-y-4">
+    <li key={key} className="bg-card p-4 rounded-md w-full space-y-4">
       <div className="w-full flex justify-between">
         <Popover>
           <PopoverTrigger asChild>
@@ -44,7 +44,7 @@ const DirectoryCard = ({ key }: DirectoryCardProps) => {
           <div className="bg-[#e0e0e0] rounded-lg w-full h-[4px]">
             <div
               className="rounded-lg h-full"
-              // style={{ width: `${usedPercentage}%`, backgroundColor: color }}
+            // style={{ width: `${usedPercentage}%`, backgroundColor: color }}
             ></div>
           </div>
           <p className="flex text-sm font-bold justify-between">

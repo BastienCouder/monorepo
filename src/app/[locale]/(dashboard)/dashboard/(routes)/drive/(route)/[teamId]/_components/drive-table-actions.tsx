@@ -4,41 +4,30 @@ import { type Table } from '@tanstack/react-table';
 import { Folder, File } from '@/models/db';
 import { pasteItems } from '@/server/uploads/copy-paste';
 import { deleteItems } from '@/server/drive/delete-items-drive';
-
-type Item = Folder | File;
+import { toast } from 'sonner';
 
 export const copySelectedRows = (
+    clearSelection: () => void,
     selectedItems?: string[],
-    table?: Table<Item>
 ) => {
-    let folderIds: string[] = [];
-    let fileIds: string[] = [];
-
-    if (table) {
-        const selectedRows = table
-            .getFilteredSelectedRowModel()
-            .rows.map((row) => row.original);
-        folderIds = selectedRows
-            .filter((item) => 'subfolders' in item)
-            .map((folder) => folder.id);
-        fileIds = selectedRows
-            .filter((item) => !('subfolders' in item))
-            .map((file) => file.id);
-    }
+    let ids: string[] = [];
 
     if (selectedItems) {
         selectedItems.forEach((id) => {
-            folderIds.push(id);
+            ids.push(id);
         });
-    }
 
-    if (folderIds.length || fileIds.length) {
-        const allIds = [...folderIds, ...fileIds];
-        console.log('Éléments copiez avec succès.', allIds);
-
-        // const set = setLocalStorage('copiedItems', { allIds });
+        const allIds = [...ids];
+        // deleteItems(allIds, teamId, userId).then(() => {
+        clearSelection();
+        toast('Éléments sélectionnés copiés avec succès.');
+        // })
+        // .catch((err) => {
+        //     toast(`Erreur lors de la suppression des éléments: ${err}`);
+        // });
     } else {
-        // toast.error("Aucun élément n'est sélectionné pour la copie.");
+        toast("Aucun fichier selectionnées.");
+
     }
 }
 
@@ -84,45 +73,29 @@ export const renameSelectedItem = (
 
 export const deleteSelectedRows = (
     selectedItems?: string[],
-    table?: Table<Item>,
     clearSelection?: () => void,
     teamId?: string,
     userId?: string
 ) => {
-    let folderIds: string[] = [];
-    let fileIds: string[] = [];
-
-    if (table) {
-        const selectedRows = table
-            .getFilteredSelectedRowModel()
-            .rows.map((row) => row.original);
-        folderIds = selectedRows
-            .filter((item) => 'subfolders' in item)
-            .map((folder) => folder.id);
-        fileIds = selectedRows
-            .filter((item) => !('subfolders' in item))
-            .map((file) => file.id);
-    }
+    let ids: string[] = [];
 
     if (selectedItems) {
         selectedItems.forEach((id) => {
-            folderIds.push(id);
+            ids.push(id);
         });
     }
 
-    if (folderIds.length || fileIds.length) {
-        const allIds = [...folderIds, ...fileIds];
+    if (ids.length !== 0 && clearSelection) {
+        const allIds = [...ids];
 
         deleteItems(allIds, teamId, userId).then(() => {
-            clearSelection!();
-            // toast.success(
-            //   'Les éléments sélectionnés ont été supprimés avec succès.'
-            // );
-        });
-        //   .catch((err) => {
-        //     toast.error(`Erreur lors de la suppression des éléments: ${err}`);
-        //   });
+            clearSelection();
+            toast('Éléments sélectionnés supprimés avec succès.');
+        })
+            .catch((err) => {
+                toast(`Erreur lors de la suppression des éléments: ${err}`);
+            });
     } else {
-        // toast.error("Aucun élément n'est sélectionné pour la copie.");
+        toast("Aucun fichier selectionnées.");
     }
 }

@@ -10,7 +10,6 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Drawer, DrawerContent, DrawerTrigger } from '@/components/ui/drawer';
-import { toast } from '@/components/ui/use-toast';
 import { useTranslations } from 'next-intl';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { useModal } from '@/hooks/use-modal-store';
@@ -29,7 +28,7 @@ import {
 import { renameTeamSchema } from '@/models/validations/team';
 import { renameTeam } from '@/server/team/rename-team';
 import { capitalizeFirstLetter } from '@/lib/utils';
-import { ToastAction } from '../ui/toast';
+import { toast } from 'sonner';
 
 interface RenameTeamModalProps {
   children: React.ReactNode;
@@ -67,10 +66,12 @@ export function RenameTeamModal({ children }: RenameTeamModalProps) {
     const teamId = data.teamId;
 
     if (!userId || !teamId) {
-      toast({
-        title: t('error_title'),
+      toast(t('error_title'), {
         description: t('validation.missing_user_or_team_id'),
-        variant: 'destructive',
+        action: {
+          label: t('try_again'),
+          onClick: () => onSubmit(values),
+        },
       });
       return;
     }
@@ -84,14 +85,12 @@ export function RenameTeamModal({ children }: RenameTeamModalProps) {
             tValidation
           );
           translatedErrors.forEach((error) => {
-            toast({
-              title: t('error_title'),
+            toast(t('error_title'), {
               description: capitalizeFirstLetter(error.message),
-              action: (
-                <ToastAction altText={t('try_again')}>
-                  {t('try_again')}
-                </ToastAction>
-              ),
+              action: {
+                label: t('try_again'),
+                onClick: () => onSubmit(values),
+              },
             });
           });
           return;
@@ -100,22 +99,24 @@ export function RenameTeamModal({ children }: RenameTeamModalProps) {
         if (userId && teamId) {
           const res = await renameTeam(userId, teamId, values);
           if (res.error) {
-            toast({
-              title: res.error,
-              variant: 'destructive',
+            toast(res.error, {
+              action: {
+                label: t('try_again'),
+                onClick: () => onSubmit(values),
+              },
             });
           } else {
-            toast({
-              title: res.success,
-            });
+            toast(res.success);
             onClose();
             setIsOpen(false);
           }
         }
       } catch (error) {
-        toast({
-          title: t('generic_error'),
-          variant: 'destructive',
+        toast(t('generic_error'), {
+          action: {
+            label: t('try_again'),
+            onClick: () => onSubmit(values),
+          },
         });
       }
     });

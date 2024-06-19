@@ -1,6 +1,7 @@
 "use client";
 
 import { Text } from '@/components/container';
+import { Icons } from '@/components/shared/icons';
 import React, { useState } from 'react';
 
 type FileNodeProps = {
@@ -39,10 +40,13 @@ const FileNode: React.FC<FileNodeProps> = ({ node, files }) => {
     return (
         <div className="">
             <div onClick={handleToggle} className="cursor-pointer flex items-center">
-                {isOpen ? '📂' : '📁'} <Text.Span className="ml-1">{node.name}</Text.Span>
+                {isOpen ? <Icons.treeChevronBottom size={12} /> : <Icons.treeChevronRight size={12} />}
+                {isOpen ? '📂' : '📁'}
+                <Text.Span className="ml-1">{node.name}</Text.Span>
             </div>
             {isOpen && renderChildren()}
         </div>
+
     );
 };
 

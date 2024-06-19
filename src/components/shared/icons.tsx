@@ -24,6 +24,7 @@ import {
   ScanEye,
   Aperture,
 } from 'lucide-react';
+import { MdOutlineArrowDropDown, MdOutlineArrowRight } from "react-icons/md";
 import { FaSun } from 'react-icons/fa';
 import { RiSettings4Fill } from 'react-icons/ri';
 import { IoDocumentText } from 'react-icons/io5';
@@ -105,6 +106,8 @@ export const Icons = {
   spinner: Loader2,
   sun: IoSunny,
   trash: Trash,
+  treeChevronRight: MdOutlineArrowRight,
+  treeChevronBottom: MdOutlineArrowDropDown,
   twitter: ({ ...props }: LucideProps) => (
     <svg
       xmlns="http://www.w3.org/2000/svg"

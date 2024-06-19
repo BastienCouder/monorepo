@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/tooltip';
 import { usePathname } from 'next/navigation';
 import { useRouteParam } from '@/providers/route-params-provider';
+import { Separator } from '@/components/ui';
 
 interface INav {
   isCollapsed: boolean;
@@ -30,7 +31,7 @@ export function Nav({ links, isCollapsed }: INav) {
       data-collapsed={isCollapsed}
       className="group flex flex-col data-[collapsed=true]:py-2"
     >
-      <nav className="grid gap-2 px-2 group-[[data-collapsed=true]]:justify-center group-[[data-collapsed=true]]:px-2">
+      <nav className={`${isCollapsed ? 'gap-4' : 'gap-4'} grid px-2 group-[[data-collapsed=true]]:justify-center group-[[data-collapsed=true]]:px-2`}>
         {links.map((link: any, index: number) =>
           isCollapsed ? (
             <Tooltip key={index} delayDuration={0}>
@@ -42,18 +43,19 @@ export function Nav({ links, isCollapsed }: INav) {
                     buttonVariants({
                       variant: pathname?.startsWith(link.href)
                         ? 'default'
-                        : 'ghost',
+                        : 'icon',
                       size: 'icon',
                     }),
-                    'h-9 w-9',
+                    'h-9 w-9 rounded-full',
                     pathname?.startsWith(link.href) &&
-                      'dark:bg-muted dark:text-muted-foreground dark:hover:bg-muted dark:hover:text-white'
+                    'rounded-full'
                   )}
                 >
                   <link.icon className="h-4 w-4" />
                   <span className="sr-only">{link.title}</span>
                 </Link>
               </TooltipTrigger>
+              <Separator />
               <TooltipContent side="right" className="flex items-center gap-4">
                 {link.title}
                 {link.label && (
@@ -85,7 +87,7 @@ export function Nav({ links, isCollapsed }: INav) {
                   className={cn(
                     'ml-auto',
                     pathname?.startsWith(link.href) &&
-                      'text-background hover:bg-background dark:text-white'
+                    'text-background hover:bg-background dark:text-white'
                   )}
                 >
                   {link.label}

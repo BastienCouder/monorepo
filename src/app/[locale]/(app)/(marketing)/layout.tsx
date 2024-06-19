@@ -17,7 +17,7 @@ export default async function MarketingLayout({
   const messages = await getMessages();
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen bg-card flex-col">
       <Suspense fallback="">
         <NextIntlClientProvider messages={pick(messages, 'navbar')}>
           <NavBar user={user} items={marketingConfig.mainNav} scroll={true} />

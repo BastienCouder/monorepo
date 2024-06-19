@@ -130,8 +130,7 @@ import { Textarea } from './textarea';
 
 import { Slider } from './slider';
 
-import { ToastAction } from './toast';
-import { toast } from './use-toast';
+import { Toaster } from './sonner';
 
 import {
   Tooltip,
@@ -234,8 +233,7 @@ export {
   TabsList,
   TabsTrigger,
   Textarea,
-  toast,
-  ToastAction,
+  Toaster,
   Tooltip,
   TooltipContent,
   TooltipProvider,

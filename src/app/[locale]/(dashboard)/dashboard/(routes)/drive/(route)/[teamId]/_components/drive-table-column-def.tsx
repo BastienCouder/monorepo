@@ -4,8 +4,6 @@ import React from 'react';
 import { type ColumnDef } from '@tanstack/react-table';
 import { Checkbox } from '@/components/ui/checkbox';
 import { DataTableColumnHeader } from '@/components/data-table/data-table-column-header';
-// import FolderTableRowActions from './folder-table-row-actions';
-// import FileTableRowActions from './file-table-row-actions';
 import { formatStorage } from '@/lib/utils';
 import type {
   DataTableFilterableColumn,
@@ -14,6 +12,7 @@ import type {
 import FolderFileTableRowActions from './drive-table-row-actions';
 import { MdFolder } from 'react-icons/md';
 import { FaFile } from 'react-icons/fa6';
+import { useSelection } from '@/providers/select-item-provider';
 
 interface Folder {
   id: string;
@@ -37,6 +36,10 @@ const fetchItemsTableColumnDefs = (
   isPending: boolean,
   startTransition: React.TransitionStartFunction
 ): ColumnDef<Folder | File, unknown>[] => {
+
+  const { selectedItems, toggleItem, clearSelection } = useSelection();
+  console.log(selectedItems);
+
   const baseColumns: ColumnDef<Folder | File, unknown>[] = [
     {
       id: 'select',
@@ -45,6 +48,12 @@ const fetchItemsTableColumnDefs = (
           checked={table.getIsAllPageRowsSelected()}
           onCheckedChange={(value) => {
             table.toggleAllPageRowsSelected(!!value);
+            if (value) {
+              const allIds = table.getRowModel().rows.map(row => row.original.id);
+              allIds.forEach(id => toggleItem(id));
+            } else {
+              clearSelection();
+            }
           }}
           aria-label="Select all"
           className="translate-y-[2px]"
@@ -53,10 +62,8 @@ const fetchItemsTableColumnDefs = (
       cell: ({ row }) => (
         <div className="flex gap-4">
           <Checkbox
-            checked={row.getIsSelected()}
-            onCheckedChange={(value) => {
-              row.toggleSelected(!!value);
-            }}
+            checked={row.original.id in selectedItems}
+            onCheckedChange={() => toggleItem(row.original.id)}
             aria-label="Select row"
             className="translate-y-[2px]"
           />
@@ -136,4 +143,4 @@ export const searchableColumns: DataTableSearchableColumn<Folder | File>[] = [
   },
 ];
 
-export default fetchItemsTableColumnDefs
+export default fetchItemsTableColumnDefs;

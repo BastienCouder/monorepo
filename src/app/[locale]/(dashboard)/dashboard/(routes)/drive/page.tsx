@@ -5,6 +5,7 @@ import { getUserTeams } from '@/server/user/get-user-team';
 import FolderTeamCard from './_components/folder-team-card';
 import { Separator } from '@/components/ui/separator';
 import RecentFiles from './_components/recent-folder-team';
+import ActionDrive from './_components/action-drive';
 
 export default async function drive() {
   const user = await currentUser();
@@ -17,7 +18,7 @@ export default async function drive() {
   return (
     <section className="w-full flex gap-4">
       <div className="w-full space-y-4">
-        <h1 className="font-bold text-2xl">My groups</h1>
+        <ActionDrive />
         <ul className="flex justify-start gap-4 w-full flex-wrap grid grid-cols-3">
           {teams.length > 0 ? (
             teams.map((team, index) => (
