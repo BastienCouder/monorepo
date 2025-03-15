@@ -28,7 +28,6 @@ export function NavBar({
   rightElements,
   scroll = false,
 }: NavBarProps) {
-  const t = useTranslations('navbar');
   const scrolled = useScroll(50);
   const signInModal = useSigninModal();
 
@@ -42,18 +41,14 @@ export function NavBar({
         <MainNav items={items}>{children}</MainNav>
         <div className="flex items-center space-x-3">
           {rightElements}
-          <div className="px-2">
-            <ModeToggle />
-          </div>
-          <div className="px-2">
-            <LangSwitcher />
-          </div>
+          <div className="px-2">{/* <ModeToggle /> */}</div>
+          <div className="px-2">{/* <LangSwitcher /> */}</div>
           {!user ? (
             <Link
               href="/login"
               className={cn(buttonVariants({ variant: 'default', size: 'sm' }))}
             >
-              {t('login_page')}
+              login Page
             </Link>
           ) : (
             <UserAccountNav user={user} />

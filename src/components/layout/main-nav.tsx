@@ -18,7 +18,6 @@ interface MainNavProps {
 export function MainNav({ items, children }: MainNavProps) {
   const segment = useSelectedLayoutSegment();
   const [showMobileMenu, setShowMobileMenu] = React.useState<boolean>(false);
-  const t = useTranslations('navbar');
 
   const toggleMobileMenu = () => {
     setShowMobileMenu(!showMobileMenu);
@@ -70,7 +69,7 @@ export function MainNav({ items, children }: MainNavProps) {
         onClick={toggleMobileMenu}
       >
         {showMobileMenu ? <Icons.close /> : <Icons.logo />}
-        <span className="font-bold">{t('menu')}</span>
+        <span className="font-bold">menu</span>
       </button>
       {showMobileMenu && items && (
         <MobileNav items={items}>{children}</MobileNav>

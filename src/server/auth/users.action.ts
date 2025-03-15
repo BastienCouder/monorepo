@@ -7,7 +7,7 @@ import { getUserByEmail } from '@/lib/auth/user';
 import { db } from '@/lib/prisma';
 import { currentUser } from '@/lib/auth';
 import { getTranslations } from 'next-intl/server';
-import { createUserSchema, deleteUserSchema } from '@/models/validations/user';
+import { createUserSchema, deleteUserSchema } from '@/models/user';
 
 type Response = {
   error?: string;

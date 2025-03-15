@@ -6,7 +6,6 @@ import {
   SelectItem,
   SelectTrigger,
 } from '@/components/ui/select';
-import { localeNames } from '@/config';
 import { cn } from '@/lib/utils';
 import { usePathname, useRouter } from '@/navigation';
 import { useLocale } from 'next-intl';
@@ -25,7 +24,7 @@ export const LangSwitcher = ({ isCollapsed }: LangSwitcherProps) => {
     router.push(pathname, { locale: value });
   };
 
-  const SelectedFlag = localeNames[locale]?.flag;
+  // const SelectedFlag = localeNames[locale]?.flag;
 
   return (
     <Select value={locale} onValueChange={handleSwitchLanguage}>
@@ -37,9 +36,9 @@ export const LangSwitcher = ({ isCollapsed }: LangSwitcherProps) => {
             `border-none shadow-none w-fit space-x-2  ${buttonVariants({ variant: 'outline', size: 'sm' })}`
           )}
         >
-          {SelectedFlag && (
+          {/* {SelectedFlag && (
             <SelectedFlag width={20} height={20} className="w-5 h-5" />
-          )}
+          )} */}
         </SelectTrigger>
       ) : (
         <SelectTrigger
@@ -48,14 +47,14 @@ export const LangSwitcher = ({ isCollapsed }: LangSwitcherProps) => {
             `w-fit space-x-2  ${buttonVariants({ variant: 'outline', size: 'sm' })}`
           )}
         >
-          {SelectedFlag && (
+          {/* {SelectedFlag && (
             <SelectedFlag width={20} height={20} className="w-5 h-5" />
-          )}
+          )} */}
         </SelectTrigger>
       )}
 
       <SelectContent side="right" sideOffset={0.5} className="min-w-[7rem]">
-        {Object.keys(localeNames).map((key: string) => {
+        {/* {Object.keys(localeNames).map((key: string) => {
           const { name, flag: Flag } = localeNames[key];
           return (
             <SelectItem
@@ -70,7 +69,7 @@ export const LangSwitcher = ({ isCollapsed }: LangSwitcherProps) => {
               </Container.Div>
             </SelectItem>
           );
-        })}
+        })} */}
       </SelectContent>
     </Select>
   );

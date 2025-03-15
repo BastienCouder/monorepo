@@ -14,7 +14,6 @@ import { useTranslations } from 'next-intl';
 
 export function ModeToggle() {
   const { setTheme } = useTheme();
-  const t = useTranslations('navbar.mode_toggle');
 
   return (
     <DropdownMenu>
@@ -28,17 +27,17 @@ export function ModeToggle() {
             size={17}
             className="absolute rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100"
           />
-          <span className="sr-only">{t('toggle_theme')}</span>
+          <span className="sr-only">toggle</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuItem onClick={() => setTheme('light')}>
           <Icons.sun className="mr-2 size-4" />
-          <span>{t('light')}</span>
+          <span>light</span>
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => setTheme('dark')}>
           <Icons.moon className="mr-2 size-4" />
-          <span>{t('dark')}</span>
+          <span>dark</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

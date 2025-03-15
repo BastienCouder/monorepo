@@ -69,8 +69,6 @@ export const {
         session.user.name = token.name;
         session.user.email = token.email as string;
         session.user.isOAuth = token.isOAuth as boolean;
-        session.user.storageUsed = token.storageUsed as number;
-        session.user.storageLimit = token.storageLimit as number;
       }
 
       return session;
@@ -87,8 +85,6 @@ export const {
       token.isOAuth = !!existingAccount;
       token.name = existingUser.name;
       token.email = existingUser.email;
-      token.storageUsed = existingUser.storageUsed;
-      token.storageLimit = existingUser.storageLimit;
       token.role = existingUser.role;
       token.isTwoFactorEnabled = existingUser.isTwoFactorEnabled;
 
