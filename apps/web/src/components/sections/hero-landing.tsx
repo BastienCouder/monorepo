@@ -17,7 +17,7 @@ export default async function HeroLanding(): Promise<JSX.Element> {
       }),
       // data will revalidate every hour
       next: { revalidate: 3600 },
-    }
+    },
   )
     .then((res) => res.json())
     .catch((e) => console.log(e));
@@ -29,7 +29,7 @@ export default async function HeroLanding(): Promise<JSX.Element> {
           href="https://twitter.com/miickasmt/status/1810465801649938857"
           className={cn(
             buttonVariants({ variant: "outline", size: "sm", rounded: "full" }),
-            "px-4"
+            "px-4",
           )}
           target="_blank"
         >
@@ -62,7 +62,7 @@ export default async function HeroLanding(): Promise<JSX.Element> {
             prefetch={true}
             className={cn(
               buttonVariants({ size: "lg", rounded: "full" }),
-              "gap-2"
+              "gap-2",
             )}
           >
             <span>Go Pricing</span>
@@ -78,7 +78,7 @@ export default async function HeroLanding(): Promise<JSX.Element> {
                 size: "lg",
                 rounded: "full",
               }),
-              "px-5"
+              "px-5",
             )}
           >
             <Icons.gitHub className="mr-2 size-4" />

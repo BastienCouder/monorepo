@@ -1,22 +1,22 @@
 version: '3.8'
 
 services:
-  nextjs-site:
+  web:
     build:
       context: .
-      dockerfile: apps/nextjs-site/Dockerfile
+      dockerfile: apps/web/Dockerfile
     ports:
       - "3000:3000"
     volumes:
-      - ./apps/nextjs-site:/app
+      - ./apps/web:/app
       - /app/node_modules
 
-  react-vite-app:
+  software:
     build:
       context: .
-      dockerfile: apps/react-vite-app/Dockerfile
+      dockerfile: apps/software/Dockerfile
     ports:
       - "3001:3001"
     volumes:
-      - ./apps/react-vite-app:/app
+      - ./apps/software:/app
       - /app/node_modules

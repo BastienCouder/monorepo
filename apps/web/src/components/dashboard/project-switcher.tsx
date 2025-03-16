@@ -62,7 +62,7 @@ export default function ProjectSwitcher({
                 <span
                   className={cn(
                     "inline-block truncate text-sm font-medium xl:max-w-[120px]",
-                    large ? "w-full" : "max-w-[80px]"
+                    large ? "w-full" : "max-w-[80px]",
                   )}
                 >
                   {selected.slug}
@@ -103,7 +103,7 @@ function ProjectList({
           key={slug}
           className={cn(
             buttonVariants({ variant: "ghost" }),
-            "relative flex h-9 items-center gap-3 p-3 text-muted-foreground hover:text-foreground"
+            "relative flex h-9 items-center gap-3 p-3 text-muted-foreground hover:text-foreground",
           )}
           href="#"
           onClick={() => setOpenPopover(false)}

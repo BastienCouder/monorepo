@@ -1,5 +1,3 @@
-# apps/react-vite-app/Dockerfile
-
 # Étape 1 : Build de l'application
 FROM node:18 as builder
 
@@ -22,14 +20,18 @@ FROM node:18-alpine
 
 WORKDIR /app
 
-# Installer serve pour servir les fichiers statiques
-RUN yarn global add serve
+# Copier les fichiers de dépendances
+COPY package.json yarn.lock ./
+
+# Installer uniquement les dépendances de production
+RUN yarn install --production
 
 # Copier les fichiers construits depuis l'étape builder
-COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/public ./public
 
 # Exposer le port
-EXPOSE 3001
+EXPOSE 3000
 
 # Démarrer l'application
-CMD ["serve", "-s", "dist", "-l", "3001"]
+CMD ["yarn", "start"]

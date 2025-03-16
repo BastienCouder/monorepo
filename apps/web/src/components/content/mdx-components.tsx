@@ -14,7 +14,7 @@ const components = {
     <h1
       className={cn(
         "mt-2 scroll-m-20 text-4xl font-bold tracking-tight",
-        className
+        className,
       )}
       {...props}
     />
@@ -23,7 +23,7 @@ const components = {
     <h2
       className={cn(
         "mt-10 scroll-m-20 border-b pb-1 text-2xl font-semibold tracking-tight first:mt-0",
-        className
+        className,
       )}
       {...props}
     />
@@ -32,7 +32,7 @@ const components = {
     <h3
       className={cn(
         "mt-8 scroll-m-20 text-xl font-semibold tracking-tight",
-        className
+        className,
       )}
       {...props}
     />
@@ -41,7 +41,7 @@ const components = {
     <h4
       className={cn(
         "mt-8 scroll-m-20 text-lg font-semibold tracking-tight",
-        className
+        className,
       )}
       {...props}
     />
@@ -50,7 +50,7 @@ const components = {
     <h5
       className={cn(
         "mt-8 scroll-m-20 text-lg font-semibold tracking-tight",
-        className
+        className,
       )}
       {...props}
     />
@@ -59,7 +59,7 @@ const components = {
     <h6
       className={cn(
         "mt-8 scroll-m-20 text-base font-semibold tracking-tight",
-        className
+        className,
       )}
       {...props}
     />
@@ -89,7 +89,7 @@ const components = {
     <blockquote
       className={cn(
         "mt-6 border-l-2 pl-6 italic [&>*]:text-muted-foreground",
-        className
+        className,
       )}
       {...props}
     />
@@ -118,7 +118,7 @@ const components = {
     <th
       className={cn(
         "border px-4 py-2 text-left font-bold [&[align=center]]:text-center [&[align=right]]:text-right",
-        className
+        className,
       )}
       {...props}
     />
@@ -127,7 +127,7 @@ const components = {
     <td
       className={cn(
         "border px-4 py-2 text-left [&[align=center]]:text-center [&[align=right]]:text-right",
-        className
+        className,
       )}
       {...props}
     />
@@ -141,7 +141,7 @@ const components = {
       <pre
         className={cn(
           "max-h-[650px] overflow-x-auto rounded-lg border bg-zinc-900 py-4 dark:bg-zinc-900",
-          className
+          className,
         )}
         {...props}
       />
@@ -150,7 +150,7 @@ const components = {
           value={__rawString__}
           className={cn(
             "absolute right-4 top-4 z-20",
-            "duration-250 opacity-0 transition-all group-hover:opacity-100"
+            "duration-250 opacity-0 transition-all group-hover:opacity-100",
           )}
         />
       )}
@@ -160,7 +160,7 @@ const components = {
     <code
       className={cn(
         "relative rounded-md border bg-muted px-[0.4rem] py-1 font-mono text-sm text-foreground",
-        className
+        className,
       )}
       {...props}
     />
@@ -171,7 +171,7 @@ const components = {
     <h3
       className={cn(
         "mt-8 scroll-m-20 font-heading text-xl font-semibold tracking-tight",
-        className
+        className,
       )}
       {...props}
     />
@@ -192,7 +192,7 @@ const components = {
     <Link
       className={cn(
         "flex w-full flex-col items-center rounded-xl border bg-card p-6 text-card-foreground shadow transition-colors hover:bg-muted/50 sm:p-10",
-        className
+        className,
       )}
       {...props}
     />
@@ -210,7 +210,7 @@ export function Mdx({ code, images }: MdxProps) {
   const MDXImage = (props: any) => {
     if (!images) return null;
     const blurDataURL = images.find(
-      (image) => image.src === props.src
+      (image) => image.src === props.src,
     )?.blurDataURL;
 
     return (

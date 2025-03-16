@@ -1,13 +1,13 @@
-'use server';
+"use server";
 
-import * as z from 'zod';
-import bcrypt from 'bcryptjs';
-import crypto from 'crypto';
-import { getUserByEmail } from '@/lib/auth/user';
-import { db } from '@/lib/prisma';
-import { currentUser } from '@/lib/auth';
-import { getTranslations } from 'next-intl/server';
-import { createUserSchema, deleteUserSchema } from '@/models/user';
+import * as z from "zod";
+import bcrypt from "bcryptjs";
+import crypto from "crypto";
+import { getUserByEmail } from "@/lib/auth/user";
+import { db } from "@/lib/prisma";
+import { currentUser } from "@/lib/auth";
+import { getTranslations } from "next-intl/server";
+import { createUserSchema, deleteUserSchema } from "@/models/user";
 
 type Response = {
   error?: string;
@@ -15,17 +15,17 @@ type Response = {
 };
 
 const hashId = (id: string): string => {
-  return crypto.createHash('sha256').update(id).digest('hex');
+  return crypto.createHash("sha256").update(id).digest("hex");
 };
 
 export const createUser = async (
-  values: z.infer<typeof createUserSchema>
+  values: z.infer<typeof createUserSchema>,
 ): Promise<Response> => {
-  const t = await getTranslations('auth.server');
+  const t = await getTranslations("auth.server");
   const validatedFields = createUserSchema.safeParse(values);
 
   if (!validatedFields.success) {
-    return { error: t('invalid_fields') };
+    return { error: t("invalid_fields") };
   }
 
   const { email, password, name, role } = validatedFields.data;
@@ -34,7 +34,7 @@ export const createUser = async (
   const existingUser = await getUserByEmail(email);
 
   if (existingUser) {
-    return { error: t('email_in_use') };
+    return { error: t("email_in_use") };
   }
 
   await db.user.create({
@@ -46,15 +46,15 @@ export const createUser = async (
     },
   });
 
-  return { success: t('user_created') };
+  return { success: t("user_created") };
 };
 
 export const deleteUser = async (values: z.infer<typeof deleteUserSchema>) => {
-  const t = await getTranslations('auth.server');
+  const t = await getTranslations("auth.server");
   const validatedFields = deleteUserSchema.safeParse(values);
 
   if (!validatedFields.success) {
-    return { error: t('invalid_fields') };
+    return { error: t("invalid_fields") };
   }
 
   const { id } = validatedFields.data;
@@ -62,7 +62,7 @@ export const deleteUser = async (values: z.infer<typeof deleteUserSchema>) => {
   // Validation
   const user = await currentUser();
   if (id === user?.id) {
-    return { error: t('cannot_delete_own_user') };
+    return { error: t("cannot_delete_own_user") };
   }
 
   const userToDelete = await db.user.findUnique({
@@ -70,7 +70,7 @@ export const deleteUser = async (values: z.infer<typeof deleteUserSchema>) => {
   });
 
   if (!userToDelete) {
-    return { error: t('user_not_found') };
+    return { error: t("user_not_found") };
   }
 
   // Hash the user's ID
@@ -97,5 +97,5 @@ export const deleteUser = async (values: z.infer<typeof deleteUserSchema>) => {
     },
   });
 
-  return { success: t('user_deleted') };
+  return { success: t("user_deleted") };
 };

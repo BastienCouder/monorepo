@@ -19,7 +19,7 @@ const themeSlice = createSlice({
     },
     setSidebarOpen: (
       state,
-      action: PayloadAction<IAppStateSlice["sidebarOpen"]>
+      action: PayloadAction<IAppStateSlice["sidebarOpen"]>,
     ) => {
       state.sidebarOpen = action.payload;
     },

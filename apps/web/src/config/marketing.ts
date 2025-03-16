@@ -1,12 +1,12 @@
 export const marketingConfig: any = {
   mainNav: [
     {
-      title: 'Pricing',
-      href: '/pricing',
+      title: "Pricing",
+      href: "/pricing",
     },
     {
-      title: 'Documentation',
-      href: '/docs',
+      title: "Documentation",
+      href: "/docs",
     },
   ],
 };

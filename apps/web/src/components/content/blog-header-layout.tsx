@@ -59,7 +59,10 @@ export function BlogHeaderLayout() {
           <List className="size-[18px]" />
           <p className="ml-2.5 text-sm font-medium">Categories</p>
         </Drawer.Trigger>
-        <Drawer.Overlay className="fixed inset-0 z-40 bg-background/80 backdrop-blur-sm" onClick={closeDrawer} />
+        <Drawer.Overlay
+          className="fixed inset-0 z-40 bg-background/80 backdrop-blur-sm"
+          onClick={closeDrawer}
+        />
         <Drawer.Portal>
           <Drawer.Content className="fixed inset-x-0 bottom-0 z-50 mt-24 overflow-hidden rounded-t-[10px] border bg-background">
             <div className="sticky top-0 z-20 flex w-full items-center justify-center bg-inherit">

@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: react-vite-app
+  name: software
   namespace: saas-apps
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: react-vite-app
+      app: software
   template:
     metadata:
       labels:
-        app: react-vite-app
+        app: software
     spec:
       containers:
-        - name: react-vite-app
-          image: your-dockerhub-username/react-vite-app:latest
+        - name: software
+          image: your-dockerhub-username/software:latest
           ports:
             - containerPort: 3001

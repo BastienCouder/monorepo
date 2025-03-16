@@ -1,0 +1,20 @@
+Utiliser Docker en développement
+
+Construire les images Docker :
+docker build -t nextjs-dev -f apps/web/Dockerfile .
+docker build -t react-vite-dev -f apps/software/Dockerfile .
+
+Démarrer les conteneurs :
+docker run -p 3000:3000 nextjs-dev
+docker run -p 3001:3001 react-vite-dev
+
+Pour la production
+
+Construire les images Docker pour la production
+Construire les images :
+docker build -t your-dockerhub-username/web:latest -f apps/web/Dockerfile .
+docker build -t your-dockerhub-username/software:latest -f apps/software/Dockerfile .
+
+Pousser les images vers Docker Hub :
+docker push your-dockerhub-username/web:latest
+docker push your-dockerhub-username/software:latest

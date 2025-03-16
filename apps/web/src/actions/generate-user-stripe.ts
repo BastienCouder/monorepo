@@ -15,7 +15,7 @@ export type responseAction = {
 const billingUrl = absoluteUrl("/pricing");
 
 export async function generateUserStripe(
-  priceId: string
+  priceId: string,
 ): Promise<responseAction> {
   let redirectUrl: string = "";
 

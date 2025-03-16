@@ -27,7 +27,7 @@ export default function RootLayout({ children }: RootLayoutProps): JSX.Element {
           fontSans.variable,
           fontUrban.variable,
           fontHeading.variable,
-          fontGeist.variable
+          fontGeist.variable,
         )}
       >
         {/* <Provider> */}

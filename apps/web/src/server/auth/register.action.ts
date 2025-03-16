@@ -1,16 +1,16 @@
-'use server';
+"use server";
 
-import * as z from 'zod';
-import bcrypt from 'bcryptjs';
+import * as z from "zod";
+import bcrypt from "bcryptjs";
 
-import { RegisterSchema } from '@/models/auth';
+import { RegisterSchema } from "@/models/auth";
 
-import { generateVerificationToken } from '@/lib/tokens';
-import { getUserByEmail } from '@/lib/auth/user';
-import { sendVerificationEmail } from '@/lib/email';
-import { db } from '@/lib/prisma';
-import { login } from './login.action';
-import { getTranslations } from 'next-intl/server';
+import { generateVerificationToken } from "@/lib/tokens";
+import { getUserByEmail } from "@/lib/auth/user";
+import { sendVerificationEmail } from "@/lib/email";
+import { db } from "@/lib/prisma";
+import { login } from "./login.action";
+import { getTranslations } from "next-intl/server";
 
 type Response = {
   error?: string;
@@ -18,13 +18,13 @@ type Response = {
 };
 
 export const register = async (
-  values: z.infer<typeof RegisterSchema>
+  values: z.infer<typeof RegisterSchema>,
 ): Promise<Response> => {
-  const t = await getTranslations('auth.server');
+  const t = await getTranslations("auth.server");
   const validatedFields = RegisterSchema.safeParse(values);
 
   if (!validatedFields.success) {
-    return { error: t('invalid_fields') };
+    return { error: t("invalid_fields") };
   }
 
   const { email, password, name } = validatedFields.data;
@@ -33,7 +33,7 @@ export const register = async (
   const existingUser = await getUserByEmail(email);
 
   if (existingUser) {
-    return { error: t('email_in_use') };
+    return { error: t("email_in_use") };
   }
 
   const user = await db.user.create({
@@ -45,11 +45,11 @@ export const register = async (
   });
 
   const defaultFolders = [
-    'Documents',
-    'Downloads',
-    'Pictures',
-    'Videos',
-    'Musics',
+    "Documents",
+    "Downloads",
+    "Pictures",
+    "Videos",
+    "Musics",
   ];
 
   await Promise.all(
@@ -59,8 +59,8 @@ export const register = async (
           name: folderName,
           userId: user.id,
         },
-      })
-    )
+      }),
+    ),
   );
 
   login(values);
@@ -68,5 +68,5 @@ export const register = async (
   // const verificationToken = await generateVerificationToken(email);
   // await sendVerificationEmail(verificationToken.email, verificationToken.token);
 
-  return { success: t('registration_success') };
+  return { success: t("registration_success") };
 };

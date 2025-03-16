@@ -1,4 +1,3 @@
-# ansible/playbook-deploy.yml
 - hosts: kubernetes_master
   become: yes
   roles:

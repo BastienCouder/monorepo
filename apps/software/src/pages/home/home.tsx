@@ -25,7 +25,7 @@ const Home: React.FC = () => {
   }
 
   const changeLanguage: (lng: string) => Promise<void> = async (
-    lng: string
+    lng: string,
   ) => {
     await i18n.changeLanguage(lng);
   };
@@ -64,9 +64,7 @@ const Home: React.FC = () => {
           <b> Api call </b>
         </div>
         <div className="mt-2 grid grid-cols-3 gap-4 sm:grid-cols-2 md:grid-cols-4">
-          {users?.map((user) => (
-            <UserCard user={user} />
-          ))}
+          {users?.map((user) => <UserCard user={user} />)}
         </div>
       </div>
     </main>

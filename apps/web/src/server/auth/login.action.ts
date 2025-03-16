@@ -1,21 +1,21 @@
-'use server';
+"use server";
 
-import * as z from 'zod';
-import { AuthError } from 'next-auth';
+import * as z from "zod";
+import { AuthError } from "next-auth";
 
-import { signIn } from '@/auth';
-import { LoginSchema } from '@/models/auth';
-import { getUserByEmail } from '@/lib/auth/user';
-import { getTwoFactorTokenByEmail } from '@/lib/auth/two-factor-token';
-import { DEFAULT_LOGIN_REDIRECT } from '@/routes';
-import { getTwoFactorConfirmationByUserId } from '@/lib/auth/two-factor-confirmation';
-import { db } from '@/lib/prisma';
+import { signIn } from "@/auth";
+import { LoginSchema } from "@/models/auth";
+import { getUserByEmail } from "@/lib/auth/user";
+import { getTwoFactorTokenByEmail } from "@/lib/auth/two-factor-token";
+import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
+import { getTwoFactorConfirmationByUserId } from "@/lib/auth/two-factor-confirmation";
+import { db } from "@/lib/prisma";
 import {
   generateTwoFactorToken,
   generateVerificationToken,
-} from '@/lib/tokens';
-import { sendTwoFactorTokenEmail, sendVerificationEmail } from '@/lib/email';
-import { getTranslations } from 'next-intl/server';
+} from "@/lib/tokens";
+import { sendTwoFactorTokenEmail, sendVerificationEmail } from "@/lib/email";
+import { getTranslations } from "next-intl/server";
 
 type Response = {
   error?: string;
@@ -25,13 +25,13 @@ type Response = {
 
 export const login = async (
   values: z.infer<typeof LoginSchema>,
-  callbackUrl?: string | null
+  callbackUrl?: string | null,
 ): Promise<Response | undefined> => {
-  const t = await getTranslations('auth.server');
+  const t = await getTranslations("auth.server");
   const validatedFields = LoginSchema.safeParse(values);
 
   if (!validatedFields.success) {
-    return { error: t('invalid_fields') };
+    return { error: t("invalid_fields") };
   }
 
   const { email, password, code } = validatedFields.data;
@@ -39,7 +39,7 @@ export const login = async (
   const existingUser = await getUserByEmail(email);
 
   if (!existingUser || !existingUser.email || !existingUser.password) {
-    return { error: t('email_not_exist') };
+    return { error: t("email_not_exist") };
   }
 
   // if (!existingUser.emailVerified) {
@@ -60,17 +60,17 @@ export const login = async (
       const twoFactorToken = await getTwoFactorTokenByEmail(existingUser.email);
 
       if (!twoFactorToken) {
-        return { error: t('invalid_code') };
+        return { error: t("invalid_code") };
       }
 
       if (twoFactorToken.token !== code) {
-        return { error: t('invalid_code') };
+        return { error: t("invalid_code") };
       }
 
       const hasExpired = new Date(twoFactorToken.expires) < new Date();
 
       if (hasExpired) {
-        return { error: t('code_expired') };
+        return { error: t("code_expired") };
       }
 
       await db.twoFactorToken.delete({
@@ -78,7 +78,7 @@ export const login = async (
       });
 
       const existingConfirmation = await getTwoFactorConfirmationByUserId(
-        existingUser.id
+        existingUser.id,
       );
 
       if (existingConfirmation) {
@@ -101,7 +101,7 @@ export const login = async (
   }
 
   try {
-    await signIn('credentials', {
+    await signIn("credentials", {
       email,
       password,
       redirectTo: callbackUrl || DEFAULT_LOGIN_REDIRECT,
@@ -109,10 +109,10 @@ export const login = async (
   } catch (error: any) {
     if (error instanceof AuthError) {
       switch (error.type) {
-        case 'CredentialsSignin':
-          return { error: t('invalid_credentials') };
+        case "CredentialsSignin":
+          return { error: t("invalid_credentials") };
         default:
-          return { error: t('something_went_wrong') };
+          return { error: t("something_went_wrong") };
       }
     }
 

@@ -1,12 +1,17 @@
 {
-  "name": "my-turborepo",
+  "name": "saas",
   "private": true,
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "check-types": "turbo run check-types"
+    "check-types": "turbo run check-types",
+    "ansible:setup": "ansible-playbook -i ansible/inventory.ini ansible/playbook-deploy.yml --tags kubernetes-setup",
+    "ansible:deploy": "ansible-playbook -i ansible/inventory.ini ansible/playbook-deploy.yml --tags app-deploy",
+    "docker:build": "docker build -t your-dockerhub-username/nextjs-site:latest -f apps/nextjs-site/Dockerfile . && docker build -t your-dockerhub-username/react-vite-app:latest -f apps/react-vite-app/Dockerfile .",
+    "docker:push": "docker push your-dockerhub-username/nextjs-site:latest && docker push your-dockerhub-username/react-vite-app:latest",
+    "deploy": "bun run docker:build && bun run docker:push && bun run ansible:deploy"
   },
   "devDependencies": {
     "prettier": "^3.5.3",

@@ -46,7 +46,7 @@ export function UserAuthForm({ className, type, ...props }: UserAuthFormProps) {
 
     if (!signInResult?.ok) {
       return toast.error("Something went wrong.", {
-        description: "Your sign in request failed. Please try again."
+        description: "Your sign in request failed. Please try again.",
       });
     }
 

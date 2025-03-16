@@ -1,5 +1,5 @@
-'use client';
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+"use client";
+import React, { createContext, useContext, useState, ReactNode } from "react";
 
 type RouteParamContextType = {
   param: string | null;
@@ -7,7 +7,7 @@ type RouteParamContextType = {
 };
 
 const RouteParamContext = createContext<RouteParamContextType | undefined>(
-  undefined
+  undefined,
 );
 
 export const RouteParamProvider: React.FC<{ children: ReactNode }> = ({
@@ -25,7 +25,7 @@ export const RouteParamProvider: React.FC<{ children: ReactNode }> = ({
 export const useRouteParam = (): RouteParamContextType => {
   const context = useContext(RouteParamContext);
   if (context === undefined) {
-    throw new Error('useRouteParam must be used within a RouteParamProvider');
+    throw new Error("useRouteParam must be used within a RouteParamProvider");
   }
   return context;
 };

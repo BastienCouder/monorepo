@@ -14,7 +14,7 @@ export type responseAction = {
 const billingUrl = absoluteUrl("/dashboard/billing");
 
 export async function openCustomerPortal(
-  userStripeId: string
+  userStripeId: string,
 ): Promise<responseAction> {
   let redirectUrl: string = "";
 

@@ -19,7 +19,7 @@ export default function LoginPage(): JSX.Element {
         href="/"
         className={cn(
           buttonVariants({ variant: "outline", size: "sm" }),
-          "absolute left-4 top-4 md:left-8 md:top-8"
+          "absolute left-4 top-4 md:left-8 md:top-8",
         )}
       >
         <>

@@ -8,19 +8,19 @@
 - name: Deploy Next.js application
   k8s:
     state: present
-    definition: "{{ lookup('file', 'k8s/nextjs-deployment.yaml') }}"
+    definition: "{{ lookup('file', 'k8s/web-deployment.yaml') }}"
 
 - name: Deploy React Vite application
   k8s:
     state: present
-    definition: "{{ lookup('file', 'k8s/react-vite-deployment.yaml') }}"
+    definition: "{{ lookup('file', 'k8s/software-deployment.yaml') }}"
 
 - name: Expose Next.js service
   k8s:
     state: present
-    definition: "{{ lookup('file', 'k8s/nextjs-service.yaml') }}"
+    definition: "{{ lookup('file', 'k8s/web-service.yaml') }}"
 
 - name: Expose React Vite service
   k8s:
     state: present
-    definition: "{{ lookup('file', 'k8s/react-vite-service.yaml') }}"
+    definition: "{{ lookup('file', 'k8s/software-service.yaml') }}"

@@ -1,8 +1,8 @@
-'use server';
+"use server";
 
-import { currentRole } from '@/lib/auth';
-import { UserRole } from '@prisma/client';
-import { getTranslations } from 'next-intl/server';
+import { currentRole } from "@/lib/auth";
+import { UserRole } from "@prisma/client";
+import { getTranslations } from "next-intl/server";
 
 type Response = {
   error?: string;
@@ -10,12 +10,12 @@ type Response = {
 };
 
 export const admin = async (): Promise<Response> => {
-  const t = await getTranslations('auth.server');
+  const t = await getTranslations("auth.server");
   const role = await currentRole();
 
   if (role === UserRole.ADMINISTRATOR) {
-    return { success: t('authorized') };
+    return { success: t("authorized") };
   }
 
-  return { error: t('unauthorized') };
+  return { error: t("unauthorized") };
 };

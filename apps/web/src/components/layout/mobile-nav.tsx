@@ -43,7 +43,7 @@ export function NavMobile() {
         onClick={() => setOpen(!open)}
         className={cn(
           "fixed right-2 top-2.5 z-50 rounded-full p-2 transition-colors duration-200 hover:bg-muted focus:outline-none active:bg-muted md:hidden",
-          open && "hover:bg-muted active:bg-muted"
+          open && "hover:bg-muted active:bg-muted",
         )}
       >
         {open ? (
@@ -56,7 +56,7 @@ export function NavMobile() {
       <nav
         className={cn(
           "fixed inset-0 z-20 hidden w-full overflow-auto bg-background px-5 py-16 lg:hidden",
-          open && "block"
+          open && "block",
         )}
       >
         <ul className="grid divide-y divide-muted">

@@ -1,13 +1,13 @@
-'use server';
+"use server";
 
-import * as z from 'zod';
-import bcrypt from 'bcryptjs';
+import * as z from "zod";
+import bcrypt from "bcryptjs";
 
-import { NewPasswordSchema } from '@/models/auth';
-import { getPasswordResetTokenByToken } from '@/lib/auth/password-reset-token';
-import { getUserByEmail } from '@/lib/auth/user';
-import { db } from '@/lib/prisma';
-import { getTranslations } from 'next-intl/server';
+import { NewPasswordSchema } from "@/models/auth";
+import { getPasswordResetTokenByToken } from "@/lib/auth/password-reset-token";
+import { getUserByEmail } from "@/lib/auth/user";
+import { db } from "@/lib/prisma";
+import { getTranslations } from "next-intl/server";
 type Response = {
   error?: string;
   success?: string;
@@ -15,18 +15,18 @@ type Response = {
 
 export const newPassword = async (
   values: z.infer<typeof NewPasswordSchema>,
-  token?: string | null
+  token?: string | null,
 ): Promise<Response> => {
-  const t = await getTranslations('auth.server');
+  const t = await getTranslations("auth.server");
 
   if (!token) {
-    return { error: t('missing_token') };
+    return { error: t("missing_token") };
   }
 
   const validatedFields = NewPasswordSchema.safeParse(values);
 
   if (!validatedFields.success) {
-    return { error: t('invalid_fields') };
+    return { error: t("invalid_fields") };
   }
 
   const { password } = validatedFields.data;
@@ -34,19 +34,19 @@ export const newPassword = async (
   const existingToken = await getPasswordResetTokenByToken(token);
 
   if (!existingToken) {
-    return { error: t('invalid_token') };
+    return { error: t("invalid_token") };
   }
 
   const hasExpired = new Date(existingToken.expires) < new Date();
 
   if (hasExpired) {
-    return { error: t('token_expired') };
+    return { error: t("token_expired") };
   }
 
   const existingUser = await getUserByEmail(existingToken.email);
 
   if (!existingUser) {
-    return { error: t('email_not_exist') };
+    return { error: t("email_not_exist") };
   }
 
   const hashedPassword = await bcrypt.hash(password, 10);
@@ -60,5 +60,5 @@ export const newPassword = async (
     where: { id: existingToken.id },
   });
 
-  return { success: t('password_updated') };
+  return { success: t("password_updated") };
 };
