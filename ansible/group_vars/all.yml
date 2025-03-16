@@ -1,0 +1,3 @@
+master_ip: 192.168.1.10
+token: "your-join-token"
+ca_cert_hash: "your-ca-cert-hash"

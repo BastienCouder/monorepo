@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nextjs-site
+  namespace: saas-apps
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nextjs-site
+  template:
+    metadata:
+      labels:
+        app: nextjs-site
+    spec:
+      containers:
+        - name: nextjs-site
+          image: your-dockerhub-username/nextjs-site:latest
+          ports:
+            - containerPort: 3000
