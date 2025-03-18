@@ -16,6 +16,14 @@
     "dev": {
       "cache": false,
       "persistent": true
+    },
+    "web": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**"]
+    },
+    "software": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**"]
     }
   }
 }

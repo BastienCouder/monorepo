@@ -3,97 +3,29 @@ name: CI/CD Pipeline
 on:
   push:
     branches:
-      - main # Déclenche le pipeline lors d'un push sur la branche main
+      - main
   pull_request:
     branches:
-      - main # Déclenche le pipeline lors d'une pull request vers la branche main
+      - main
 
 jobs:
-  build-and-test:
+  deploy-with-ansible:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 16
-
-      - name: Install dependencies (Next.js)
+      - name: Install Ansible
         run: |
-          cd apps/nextjs-site
-          yarn install
+          sudo apt-get update
+          sudo apt-get install -y ansible
 
-      - name: Install dependencies (React Vite)
+      - name: Configure SSH access
         run: |
-          cd apps/react-vite-app
-          yarn install
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" | tr -d '\r' > ~/.ssh/id_rsa
 
-      - name: Run tests (Next.js)
+      - name: Run Ansible playbook
         run: |
-          cd apps/nextjs-site
-          yarn test
-
-      - name: Run tests (React Vite)
-        run: |
-          cd apps/react-vite-app
-          yarn test
-
-      - name: Build Next.js
-        run: |
-          cd apps/nextjs-site
-          yarn build
-
-      - name: Build React Vite
-        run: |
-          cd apps/react-vite-app
-          yarn build
-
-  docker-build-and-push:
-    runs-on: ubuntu-latest
-    needs: build-and-test
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKER_HUB_USERNAME }}
-          password: ${{ secrets.DOCKER_HUB_TOKEN }}
-
-      - name: Build and push Next.js image
-        run: |
-          docker build -t your-dockerhub-username/nextjs-site:latest -f apps/nextjs-site/Dockerfile .
-          docker push your-dockerhub-username/nextjs-site:latest
-
-      - name: Build and push React Vite image
-        run: |
-          docker build -t your-dockerhub-username/react-vite-app:latest -f apps/react-vite-app/Dockerfile .
-          docker push your-dockerhub-username/react-vite-app:latest
-
-  deploy-to-kubernetes:
-    runs-on: ubuntu-latest
-    needs: docker-build-and-push
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Install kubectl
-        uses: azure/setup-kubectl@v3
-
-      - name: Configure Kubernetes context
-        run: |
-          echo "${{ secrets.KUBE_CONFIG }}" > kubeconfig.yaml
-          export KUBECONFIG=kubeconfig.yaml
-
-      - name: Deploy Next.js
-        run: |
-          kubectl apply -f k8s/nextjs-deployment.yaml
-          kubectl apply -f k8s/nextjs-service.yaml
-
-      - name: Deploy React Vite
-        run: |
-          kubectl apply -f k8s/react-vite-deployment.yaml
-          kubectl apply -f k8s/react-vite-service.yaml
+          ansible-playbook -i inventory.ini playbook-deploy.yml

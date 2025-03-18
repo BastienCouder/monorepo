@@ -1,5 +1,5 @@
 {
-  "name": "vite-starter",
+  "name": "software",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -18,10 +18,10 @@
     "test:e2e": "playwright test",
     "test:e2e:report": "playwright show-report",
     "build": "tsc && vite build",
-    "preview": "vite preview",
+    "start": "vite preview --host",
     "commitlint": "commitlint --edit",
     "commitizen": "exec < /dev/tty && git cz --hook || true",
-    "prepare": "husky"
+    "prepare": "husky docker-compose -f docker-compose.dev.yml up"
   },
   "dependencies": {
     "@radix-ui/react-avatar": "^1.1.1",
@@ -93,7 +93,7 @@
     "tailwindcss": "^3.4.13",
     "typescript": "^5.5.3",
     "typescript-eslint": "^8.0.1",
-    "vite": "^5.4.1"
+    "vite": "^6.2.2"
   },
   "eslintConfig": {
     "extends": [

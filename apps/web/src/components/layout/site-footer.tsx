@@ -1,18 +1,29 @@
-import * as React from "react";
 import Link from "next/link";
 
 import { footerLinks, siteConfig } from "@/config/site";
+
+interface FooterLink {
+  title: string;
+  href: string;
+}
+
+interface FooterSection {
+  title: string;
+  items?: FooterLink[];
+}
 import { cn } from "@/lib/utils";
 import { ModeToggle } from "@/components/layout/mode-toggle";
 
 import { NewsletterForm } from "../forms/newsletter-form";
 import { Icons } from "../shared/icons";
 
-export function SiteFooter({ className }: React.HTMLAttributes<HTMLElement>) {
+export function SiteFooter({
+  className,
+}: React.HTMLAttributes<HTMLElement>): JSX.Element {
   return (
     <footer className={cn("border-t", className)}>
       <div className="container grid max-w-6xl grid-cols-2 gap-6 py-14 md:grid-cols-5">
-        {footerLinks.map((section) => (
+        {footerLinks.map((section: FooterSection) => (
           <div key={section.title}>
             <span className="text-sm font-medium text-foreground">
               {section.title}

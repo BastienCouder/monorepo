@@ -1,5 +1,4 @@
-import { db } from "../lib/prisma";
-import { MetadataRoute } from "next";
+import type { MetadataRoute } from "next";
 
 const URL = `${process.env.NEXT_PUBLIC_APP_URL}`;
 

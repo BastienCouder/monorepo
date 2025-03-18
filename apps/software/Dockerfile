@@ -1,35 +1,44 @@
-# apps/react-vite-app/Dockerfile
+# Base
+FROM oven/bun:latest AS base
+WORKDIR /usr/src/app
 
-# Étape 1 : Build de l'application
-FROM node:18 as builder
+# Installation des dépendances
+FROM base AS install
+RUN mkdir -p /temp/dev
+COPY package.json bun.lock turbo.json /temp/dev/
+COPY apps/software/package.json /temp/dev/apps/software/package.json
+COPY packages/ /temp/dev/packages/
+RUN cd /temp/dev && bun install
 
-WORKDIR /app
+# Installation des dépendances de production
+RUN mkdir -p /temp/prod
+COPY package.json bun.lock turbo.json /temp/prod/
+COPY apps/software/package.json /temp/prod/apps/software/package.json
+COPY packages/ /temp/prod/packages/
+RUN cd /temp/prod
+RUN bun init
+RUN bun install --production --frozen-lockfile
 
-# Copier les fichiers de dépendances
-COPY package.json yarn.lock ./
-
-# Installer les dépendances
-RUN yarn install
-
-# Copier le code source
+# Préparation du build
+FROM base AS prerelease
+COPY --from=install /temp/dev/node_modules node_modules
 COPY . .
 
-# Construire l'application
-RUN yarn build
+# Exécution des tests et du build
+ENV NODE_ENV=production
+RUN bunx turbo build --filter=software
 
-# Étape 2 : Environnement de production
-FROM node:18-alpine
+# Image finale
+FROM nginx:1-alpine-slim AS release
+# Copier les fichiers de build
+COPY --from=prerelease /usr/src/app/apps/software/dist /usr/share/nginx/html
+# Copier la configuration Nginx
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Exposer le port 80
+CMD ["nginx", "-g", "daemon off;"]
 
-WORKDIR /app
-
-# Installer serve pour servir les fichiers statiques
-RUN yarn global add serve
-
-# Copier les fichiers construits depuis l'étape builder
-COPY --from=builder /app/dist ./dist
-
-# Exposer le port
-EXPOSE 3001
-
-# Démarrer l'application
-CMD ["serve", "-s", "dist", "-l", "3001"]
+# // Commandes
+# # Créer l'image Docker
+# docker build -t bastiencdr/software:latest -f apps/software/Dockerfile .
+# # Lancer le conteneur Docker
+# docker run -p 8080:80 bastiencdr/software:latest

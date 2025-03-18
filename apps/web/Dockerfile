@@ -1,37 +1,40 @@
-# Étape 1 : Build de l'application
-FROM node:18 as builder
+# Étape 1 : Base
+FROM oven/bun:1 AS base
+WORKDIR /usr/src/app
 
-WORKDIR /app
+# Étape 2 : Installation des dépendances
+FROM base AS install
+RUN mkdir -p /temp/dev
+COPY package.json bun.lock turbo.json /temp/dev/
+COPY apps/web/package.json /temp/dev/apps/web/package.json
+COPY packages/ /temp/dev/packages/
+RUN cd /temp/dev && bun install
 
-# Copier les fichiers de dépendances
-COPY package.json yarn.lock ./
+# Installation des dépendances de production
+RUN mkdir -p /temp/prod
+COPY package.json bun.lock turbo.json /temp/prod/
+COPY apps/web/package.json /temp/prod/apps/web/package.json
+COPY packages/ /temp/prod/packages/
+COPY bun.lock /temp/prod/bun.lock 
+RUN cd /temp/prod && bun install
 
-# Installer les dépendances
-RUN yarn install
-
-# Copier le code source
+# Étape 3 : Préparation du build
+FROM base AS prerelease
+COPY --from=install /temp/dev/node_modules node_modules
 COPY . .
 
-# Construire l'application
-RUN yarn build
+# Exécution des tests et du build
+ENV NODE_ENV=production
+RUN bunx turbo build --filter=web
 
-# Étape 2 : Environnement de production
-FROM node:18-alpine
+# Étape 4 : Image finale
+FROM base AS release
+COPY --from=install /temp/prod/node_modules node_modules
+COPY --from=prerelease /usr/src/app/apps/web/dist ./dist
+COPY --from=prerelease /usr/src/app/apps/web/public ./public
+COPY --from=prerelease /usr/src/app/apps/web/package.json .
 
-WORKDIR /app
-
-# Copier les fichiers de dépendances
-COPY package.json yarn.lock ./
-
-# Installer uniquement les dépendances de production
-RUN yarn install --production
-
-# Copier les fichiers construits depuis l'étape builder
-COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/public ./public
-
-# Exposer le port
-EXPOSE 3000
-
-# Démarrer l'application
-CMD ["yarn", "start"]
+# Exécution de l'application
+USER bun
+EXPOSE 3000/tcp
+ENTRYPOINT [ "bun", "run", "start" ]

@@ -22,9 +22,9 @@ interface NavBarProps {
   large?: boolean;
 }
 
-export function NavBar({ scroll = false }: NavBarProps) {
+export function NavBar({ scroll = false }: NavBarProps): JSX.Element {
   const scrolled = useScroll(50);
-  const { data: session, status } = useSession();
+  // const { data: session, status } = useSession();
   const { setShowSignInModal } = useContext(ModalContext);
 
   const selectedLayout = useSelectedLayoutSegment();
@@ -35,7 +35,9 @@ export function NavBar({ scroll = false }: NavBarProps) {
   };
 
   const links =
-    (selectedLayout && configMap[selectedLayout]) || marketingConfig.mainNav;
+    (selectedLayout && selectedLayout in configMap
+      ? configMap[selectedLayout as keyof typeof configMap]
+      : null) || marketingConfig.mainNav;
 
   return (
     <header
@@ -57,22 +59,24 @@ export function NavBar({ scroll = false }: NavBarProps) {
 
           {links && links.length > 0 ? (
             <nav className="hidden gap-6 md:flex">
-              {links.map((item, index) => (
-                <Link
-                  key={index}
-                  href={item.disabled ? "#" : item.href}
-                  prefetch={true}
-                  className={cn(
-                    "flex items-center text-lg font-medium transition-colors hover:text-foreground/80 sm:text-sm",
-                    item.href.startsWith(`/${selectedLayout}`)
-                      ? "text-foreground"
-                      : "text-foreground/60",
-                    item.disabled && "cursor-not-allowed opacity-80",
-                  )}
-                >
-                  {item.title}
-                </Link>
-              ))}
+              {links.map(
+                (item: { title: string; href: string; disabled?: boolean }) => (
+                  <Link
+                    key={item.href}
+                    href={item.disabled ? "#" : item.href}
+                    prefetch={true}
+                    className={cn(
+                      "flex items-center text-lg font-medium transition-colors hover:text-foreground/80 sm:text-sm",
+                      item.href.startsWith(`/${selectedLayout}`)
+                        ? "text-foreground"
+                        : "text-foreground/60",
+                      item.disabled && "cursor-not-allowed opacity-80"
+                    )}
+                  >
+                    {item.title}
+                  </Link>
+                )
+              )}
             </nav>
           ) : null}
         </div>
@@ -100,7 +104,7 @@ export function NavBar({ scroll = false }: NavBarProps) {
             </div>
           ) : null}
 
-          {session ? (
+          {/* {session ? (
             <Link
               href={session.user.role === "ADMIN" ? "/admin" : "/dashboard"}
               className="hidden md:block"
@@ -127,7 +131,7 @@ export function NavBar({ scroll = false }: NavBarProps) {
             </Button>
           ) : (
             <Skeleton className="hidden h-9 w-28 rounded-full lg:flex" />
-          )}
+          )} */}
         </div>
       </MaxWidthWrapper>
     </header>

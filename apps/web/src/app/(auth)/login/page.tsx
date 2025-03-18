@@ -1,5 +1,4 @@
-import { Suspense } from "react";
-import { Metadata } from "next";
+import type { Metadata } from "next";
 import Link from "next/link";
 
 import { cn } from "@/lib/utils";
@@ -19,7 +18,7 @@ export default function LoginPage(): JSX.Element {
         href="/"
         className={cn(
           buttonVariants({ variant: "outline", size: "sm" }),
-          "absolute left-4 top-4 md:left-8 md:top-8",
+          "absolute left-4 top-4 md:left-8 md:top-8"
         )}
       >
         <>
@@ -37,9 +36,7 @@ export default function LoginPage(): JSX.Element {
             Enter your email to sign in to your account
           </p>
         </div>
-        <Suspense>
-          <UserAuthForm />
-        </Suspense>
+        <UserAuthForm />
         <p className="px-8 text-center text-sm text-muted-foreground">
           <Link
             href="/register"

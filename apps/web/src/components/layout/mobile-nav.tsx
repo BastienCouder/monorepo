@@ -15,8 +15,8 @@ import { Icons } from "@/components/shared/icons";
 
 import { ModeToggle } from "./mode-toggle";
 
-export function NavMobile() {
-  const { data: session } = useSession();
+export function NavMobile(): JSX.Element {
+  // const { data: session } = useSession();
   const [open, setOpen] = useState(false);
   const selectedLayout = useSelectedLayoutSegment();
   const documentation = selectedLayout === "docs";
@@ -26,7 +26,9 @@ export function NavMobile() {
   };
 
   const links =
-    (selectedLayout && configMap[selectedLayout]) || marketingConfig.mainNav;
+    (selectedLayout && selectedLayout in configMap
+      ? configMap[selectedLayout as keyof typeof configMap]
+      : null) || marketingConfig.mainNav;
 
   // prevent body scroll when modal is open
   useEffect(() => {
@@ -40,10 +42,11 @@ export function NavMobile() {
   return (
     <>
       <button
+        type="button"
         onClick={() => setOpen(!open)}
         className={cn(
           "fixed right-2 top-2.5 z-50 rounded-full p-2 transition-colors duration-200 hover:bg-muted focus:outline-none active:bg-muted md:hidden",
-          open && "hover:bg-muted active:bg-muted",
+          open && "hover:bg-muted active:bg-muted"
         )}
       >
         {open ? (
@@ -56,13 +59,13 @@ export function NavMobile() {
       <nav
         className={cn(
           "fixed inset-0 z-20 hidden w-full overflow-auto bg-background px-5 py-16 lg:hidden",
-          open && "block",
+          open && "block"
         )}
       >
         <ul className="grid divide-y divide-muted">
           {links &&
             links.length > 0 &&
-            links.map(({ title, href }) => (
+            links.map(({ title, href }: { title: string; href: string }) => (
               <li key={href} className="py-3">
                 <Link
                   href={href}
@@ -74,7 +77,7 @@ export function NavMobile() {
               </li>
             ))}
 
-          {session ? (
+          {/* {session ? (
             <>
               {session.user.role === "ADMIN" ? (
                 <li className="py-3">
@@ -120,7 +123,7 @@ export function NavMobile() {
                 </Link>
               </li>
             </>
-          )}
+          )} */}
         </ul>
 
         {documentation ? (
