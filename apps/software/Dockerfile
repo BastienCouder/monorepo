@@ -16,8 +16,7 @@ COPY package.json bun.lock turbo.json /temp/prod/
 COPY apps/software/package.json /temp/prod/apps/software/package.json
 COPY packages/ /temp/prod/packages/
 RUN cd /temp/prod
-RUN bun init
-RUN bun install --production --frozen-lockfile
+RUN bun init && bun install --production --frozen-lockfile
 
 # Préparation du build
 FROM base AS prerelease
@@ -30,11 +29,8 @@ RUN bunx turbo build --filter=software
 
 # Image finale
 FROM nginx:1-alpine-slim AS release
-# Copier les fichiers de build
 COPY --from=prerelease /usr/src/app/apps/software/dist /usr/share/nginx/html
-# Copier la configuration Nginx
 COPY nginx.conf /etc/nginx/conf.d/default.conf
-# Exposer le port 80
 CMD ["nginx", "-g", "daemon off;"]
 
 # // Commandes

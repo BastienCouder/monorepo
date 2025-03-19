@@ -1,8 +1,8 @@
-# Étape 1 : Base
-FROM oven/bun:1 AS base
+# Base
+FROM oven/bun:latest AS base
 WORKDIR /usr/src/app
 
-# Étape 2 : Installation des dépendances
+# Installation des dépendances
 FROM base AS install
 RUN mkdir -p /temp/dev
 COPY package.json bun.lock turbo.json /temp/dev/
@@ -15,10 +15,9 @@ RUN mkdir -p /temp/prod
 COPY package.json bun.lock turbo.json /temp/prod/
 COPY apps/web/package.json /temp/prod/apps/web/package.json
 COPY packages/ /temp/prod/packages/
-COPY bun.lock /temp/prod/bun.lock 
-RUN cd /temp/prod && bun install
+RUN cd /temp/prod && bun init && bun install --production --frozen-lockfile
 
-# Étape 3 : Préparation du build
+# Préparation du build
 FROM base AS prerelease
 COPY --from=install /temp/dev/node_modules node_modules
 COPY . .
@@ -27,14 +26,14 @@ COPY . .
 ENV NODE_ENV=production
 RUN bunx turbo build --filter=web
 
-# Étape 4 : Image finale
-FROM base AS release
-COPY --from=install /temp/prod/node_modules node_modules
-COPY --from=prerelease /usr/src/app/apps/web/dist ./dist
-COPY --from=prerelease /usr/src/app/apps/web/public ./public
-COPY --from=prerelease /usr/src/app/apps/web/package.json .
+# Image finale
+FROM nginx:1-alpine-slim AS release
+COPY --from=prerelease /usr/src/app/apps/web/dist /usr/share/nginx/html
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+CMD ["nginx", "-g", "daemon off;"]
 
-# Exécution de l'application
-USER bun
-EXPOSE 3000/tcp
-ENTRYPOINT [ "bun", "run", "start" ]
+# // Commandes
+# # Créer l'image Docker
+# docker build -t bastiencdr/web:latest -f apps/web/Dockerfile .
+# # Lancer le conteneur Docker
+# docker run -p 8080:80 bastiencdr/web:latest
