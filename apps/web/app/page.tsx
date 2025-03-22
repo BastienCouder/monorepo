@@ -1,5 +1,4 @@
 import Image, { type ImageProps } from "next/image";
-import { Button } from "@repo/ui/button";
 import styles from "./page.module.css";
 
 type Props = Omit<ImageProps, "src"> & {
@@ -18,7 +17,7 @@ const ThemeImage = (props: Props) => {
   );
 };
 
-export default function Home() {
+export default function Home(): JSX.Element {
   return (
     <div className={styles.page}>
       <main className={styles.main}>
@@ -63,9 +62,6 @@ export default function Home() {
             Read our docs
           </a>
         </div>
-        <Button appName="web" className={styles.secondary}>
-          Open alert
-        </Button>
       </main>
       <footer className={styles.footer}>
         <a

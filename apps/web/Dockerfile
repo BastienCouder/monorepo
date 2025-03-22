@@ -1,39 +1,47 @@
-# Base
-FROM oven/bun:latest AS base
+# Étape 1 : Base
+FROM node:18 AS base
 WORKDIR /usr/src/app
 
-# Installation des dépendances
-FROM base AS install
+# Étape 2 : Installation de pnpm globalement
+FROM base AS pnpm-install
+RUN npm install -g pnpm
+
+# Étape 3 : Installation des dépendances
+FROM pnpm-install AS install
 RUN mkdir -p /temp/dev
-COPY package.json bun.lock turbo.json /temp/dev/
+COPY package.json pnpm-lock.yaml turbo.json /temp/dev/
 COPY apps/web/package.json /temp/dev/apps/web/package.json
 COPY packages/ /temp/dev/packages/
-RUN cd /temp/dev && bun install
+RUN cd /temp/dev && pnpm install
 
 # Installation des dépendances de production
 RUN mkdir -p /temp/prod
-COPY package.json bun.lock turbo.json /temp/prod/
+COPY package.json pnpm-lock.yaml turbo.json /temp/prod/
 COPY apps/web/package.json /temp/prod/apps/web/package.json
 COPY packages/ /temp/prod/packages/
-RUN cd /temp/prod && bun init && bun install --production --frozen-lockfile
+RUN cd /temp/prod && pnpm install --prod --frozen-lockfile
 
-# Préparation du build
-FROM base AS prerelease
+# Étape 4 : Build de l'application
+FROM pnpm-install AS prerelease
 COPY --from=install /temp/dev/node_modules node_modules
 COPY . .
-
-# Exécution des tests et du build
 ENV NODE_ENV=production
-RUN bunx turbo build --filter=web
+RUN pnpm turbo build --filter=web && ls -la /usr/src/app/apps/web/.next
 
-# Image finale
-FROM nginx:1-alpine-slim AS release
-COPY --from=prerelease /usr/src/app/apps/web/dist /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-CMD ["nginx", "-g", "daemon off;"]
+# Étape 5 : Démarrage de l'application Next.js
+FROM base AS release
+RUN npm install -g pnpm
+# Copier pnpm depuis l'étape pnpm-install
+COPY --from=pnpm-install /usr/local/bin/pnpm /usr/local/bin/pnpm
+# Copier les fichiers nécessaires
+COPY --from=prerelease /usr/src/app/node_modules ./node_modules
+COPY --from=prerelease /usr/src/app/apps/web ./apps/web
+COPY --from=prerelease /usr/src/app/package.json ./
+COPY --from=prerelease /usr/src/app/pnpm-lock.yaml ./
+COPY --from=prerelease /usr/src/app/turbo.json ./
 
-# // Commandes
-# # Créer l'image Docker
-# docker build -t bastiencdr/web:latest -f apps/web/Dockerfile .
-# # Lancer le conteneur Docker
-# docker run -p 8080:80 bastiencdr/web:latest
+# Exposer le port 3000 (port par défaut de Next.js)
+EXPOSE 3000
+
+# Démarrer l'application Next.js
+CMD ["pnpm", "start"]
