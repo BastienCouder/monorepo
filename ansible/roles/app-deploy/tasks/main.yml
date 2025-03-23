@@ -1,26 +1,28 @@
-- name: Ensure namespace exists
-  k8s:
-    api_version: v1
-    kind: Namespace
-    name: saas-apps
-    state: present
+---
+- name: Construire l'image Docker
+  docker_image:
+    name: "{{ docker_image_name }}"
+    build:
+      path: ../
+      dockerfile: apps/web/Dockerfile
+      args:
+        HELLO_WORLD: "{{ hello_world_arg }}"
+    source: build
 
-- name: Deploy Next.js application
-  k8s:
-    state: present
-    definition: "{{ lookup('file', 'k8s/web-deployment.yaml') }}"
+- name: Démarrer le conteneur Docker
+  docker_container:
+    name: "{{ docker_container_name }}"
+    image: "{{ docker_image_name }}"
+    state: started
+    ports:
+      - "{{ docker_port }}:3000"
+    restart_policy: always
 
-- name: Deploy React Vite application
-  k8s:
-    state: present
-    definition: "{{ lookup('file', 'k8s/software-deployment.yaml') }}"
+- name: Vérifier que le conteneur est en cours d'exécution
+  docker_container_info:
+    name: "web_app"
+  register: container_info
 
-- name: Expose Next.js service
-  k8s:
-    state: present
-    definition: "{{ lookup('file', 'k8s/web-service.yaml') }}"
-
-- name: Expose React Vite service
-  k8s:
-    state: present
-    definition: "{{ lookup('file', 'k8s/software-service.yaml') }}"
+- name: Afficher l'état du conteneur
+  debug:
+    var: container_info.container.State.Status

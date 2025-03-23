@@ -1,0 +1,53 @@
+---
+- name: Installer les paquets système requis
+  apt:
+    pkg:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - software-properties-common
+      - python3-pip
+      - virtualenv
+      - python3-setuptools
+    state: latest
+    update_cache: yes
+    
+- name: Ajouter la clé GPG officielle de Docker
+  ansible.builtin.get_url:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    dest: /etc/apt/trusted.gpg.d/docker.asc
+    mode: '0644'
+    force: yes
+
+- name: Ajouter le dépôt officiel de Docker
+  ansible.builtin.apt_repository:
+    repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
+    state: present
+    filename: docker
+
+- name: Mettre à jour apt et installer Docker CE
+  apt:
+    name: docker-ce
+    state: latest
+    update_cache: yes
+
+- name: Installer le module Docker pour Python
+  pip:
+    name: docker
+
+- name: Démarrer et activer le service Docker
+  service:
+    name: docker
+    state: started
+    enabled: yes
+  when: "'ACT' not in ansible_env"
+
+- name: Ajouter l'utilisateur actuel au groupe Docker
+  user:
+    name: "{{ ansible_user | default('ubuntu') }}"
+    groups: docker
+    append: yes
+
+- name: Notifier l'utilisateur de se reconnecter pour appliquer les changements
+  debug:
+    msg: "L'utilisateur {{ ansible_user | default('ubuntu') }} a été ajouté au groupe Docker. Déconnectez-vous et reconnectez-vous pour appliquer les changements."

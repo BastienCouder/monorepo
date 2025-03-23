@@ -1,0 +1,11 @@
+- hosts: kubernetes_master
+  become: yes
+  roles:
+    - role: kubernetes-setup
+      tags: kubernetes-setup
+
+- hosts: kubernetes_master
+  become: yes
+  roles:
+    - role: app-deploy
+      tags: app-deploy

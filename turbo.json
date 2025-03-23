@@ -19,7 +19,7 @@
     },
     "web": {
       "dependsOn": ["^build"],
-      "outputs": ["dist/**"]
+      "outputs": [".next/**"]
     },
     "software": {
       "dependsOn": ["^build"],

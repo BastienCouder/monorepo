@@ -18,3 +18,13 @@ services:
     volumes:
       - ./apps/software:/app
       - /app/node_modules
+  #     services:
+  # app:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   image: chengpeiquan.com:latest
+  #   container_name: chengpeiquan.com
+  #   ports:
+  #     - '4936:4936'
+  #   restart: always

@@ -35,3 +35,9 @@ FROM nginx:1-alpine-slim AS release
 COPY --from=prerelease /usr/src/app/apps/software/dist /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 CMD ["nginx", "-g", "daemon off;"]
+
+# Commandes
+# Créer l'image Docker
+# docker build -t software:latest -f apps/software/Dockerfile .
+# Lancer le conteneur Docker
+# docker run -p 80:80 software:latest

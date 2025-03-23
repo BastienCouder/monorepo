@@ -1,0 +1,87 @@
+---
+- name: Créer un réseau Docker pour le reverse proxy
+  docker_network:
+    name: web
+    state: present
+
+- name: Déployer le reverse proxy Nginx
+  docker_container:
+    name: nginx-proxy
+    image: nginx:latest
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /etc/nginx/conf.d:/etc/nginx/conf.d
+      - /var/log/nginx:/var/log/nginx
+    networks:
+      - name: web
+    restart_policy: always
+
+- name: Configurer Nginx pour le domaine
+  copy:
+    dest: /etc/nginx/conf.d/{{ domain_name }}.conf
+    content: |
+      server {
+          listen 80;
+          server_name {{ domain_name }};
+
+          location / {
+              proxy_pass http://{{ docker_container_name }}:{{ docker_port }};
+              proxy_set_header Host $host;
+              proxy_set_header X-Real-IP $remote_addr;
+              proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+              proxy_set_header X-Forwarded-Proto $scheme;
+          }
+      }
+
+- name: Redémarrer le conteneur Nginx
+  docker_container:
+    name: nginx-proxy
+    state: started
+
+- name: Installer Certbot pour HTTPS
+  apt:
+    name:
+      - certbot
+      - python3-certbot-nginx
+    state: present
+    update_cache: yes
+
+- name: Obtenir un certificat SSL avec Certbot
+  command: >
+    certbot --nginx -d {{ domain_name }}
+    --non-interactive --agree-tos --email {{ certbot_email }}
+  args:
+    creates: /etc/letsencrypt/live/{{ domain_name }}/fullchain.pem
+
+- name: Mettre à jour la configuration Nginx pour HTTPS
+  copy:
+    dest: /etc/nginx/conf.d/{{ domain_name }}.conf
+    content: |
+      server {
+          listen 80;
+          server_name {{ domain_name }};
+          return 301 https://$host$request_uri;
+      }
+
+      server {
+          listen 443 ssl;
+          server_name {{ domain_name }};
+
+          ssl_certificate /etc/letsencrypt/live/{{ domain_name }}/fullchain.pem;
+          ssl_certificate_key /etc/letsencrypt/live/{{ domain_name }}/privkey.pem;
+
+          location / {
+              proxy_pass http://{{ docker_container_name }}:{{ docker_port }};
+              proxy_set_header Host $host;
+              proxy_set_header X-Real-IP $remote_addr;
+              proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+              proxy_set_header X-Forwarded-Proto $scheme;
+          }
+      }
+
+- name: Redémarrer le conteneur Nginx après la configuration HTTPS
+  docker_container:
+    name: nginx-proxy
+    state: restarted

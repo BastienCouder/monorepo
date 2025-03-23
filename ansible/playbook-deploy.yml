@@ -1,11 +1,33 @@
-- hosts: kubernetes_master
-  become: yes
+---
+- name: Configurer Docker sur les hôtes maîtres
+  hosts: docker_master
+  connection: local
+  become: yes 
+  vars_files:
+    - vars/defaults.yml
+    - vars/secrets.yml
   roles:
-    - role: kubernetes-setup
-      tags: kubernetes-setup
+    - role: docker-setup
+      tags: docker-setup
 
-- hosts: kubernetes_master
-  become: yes
+- name: Déployer l'application sur les hôtes maîtres
+  hosts: docker_master
+  connection: local
+  become: yes 
+  vars_files:
+    - vars/defaults.yml
+    - vars/secrets.yml
   roles:
     - role: app-deploy
       tags: app-deploy
+
+- name: Configurer le reverse proxy et le nom de domaine
+  hosts: docker_master
+  connection: local
+  become: yes
+  vars_files:
+    - vars/defaults.yml
+    - vars/secrets.yml
+  roles:
+    - role: reverse-proxy
+      tags: reverse-proxy

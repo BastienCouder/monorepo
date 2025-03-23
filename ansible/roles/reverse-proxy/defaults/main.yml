@@ -1,0 +1,5 @@
+---
+domain_name: "devops.bastiencouder.com"
+certbot_email: "couderbastien@gmail.com"
+docker_container_name: "web_app"
+docker_port: 3000 
