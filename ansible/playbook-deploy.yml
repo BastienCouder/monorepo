@@ -10,6 +10,18 @@
     - role: docker-setup
       tags: docker-setup
 
+
+# - name: Configurer le firewall
+#   hosts: docker_master
+#   connection: ssh
+#   become: yes
+#   vars_files:
+#     - vars/defaults.yml
+#     - vars/secrets.yml
+#   roles:
+#     - role: firewall
+#       tags: firewall
+      
 - name: Déployer l'application sur les hôtes maîtres
   hosts: docker_master
   connection: local
@@ -21,7 +33,7 @@
     - role: app-deploy
       tags: app-deploy
 
-- name: Configurer le reverse proxy et le nom de domaine
+- name: Configurer nginx
   hosts: docker_master
   connection: local
   become: yes
@@ -29,5 +41,17 @@
     - vars/defaults.yml
     - vars/secrets.yml
   roles:
-    - role: reverse-proxy
-      tags: reverse-proxy
+    - role: nginx-config
+      tags: nginx-config
+
+- name: Configurer certbot
+  hosts: docker_master
+  connection: local
+  become: yes
+  vars_files:
+    - vars/defaults.yml
+    - vars/secrets.yml
+  roles:
+    - role: certbot
+      tags: certbot
+

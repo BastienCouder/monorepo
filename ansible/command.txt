@@ -4,6 +4,9 @@ ansible-playbook -i inventory.ini playbook-deploy.yml
 // ansible playbook with vault
 ansible-playbook -i inventory.ini playbook-deploy.yml --vault-password-file .vault_pass.txt --ask-become-pass
 
+# Lancer le playbook en dry-run
+ansible-playbook playbook.yml --check --diff
+
 // create file
 ansible-vault create vars/secrets.yml
 

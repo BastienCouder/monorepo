@@ -1,2 +1,4 @@
-docker_version: "20.10.7"
-docker_user: "ansible"
+domain_name: "devops.bastiencouder.com"
+certbot_email: "couderbastien@gmail.com"
+docker_port: 3000  
+ansible_distribution_release: "focal"

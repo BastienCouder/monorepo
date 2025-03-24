@@ -1,0 +1,35 @@
+---
+- name: Installer Nginx
+  apt:
+    name: nginx
+    state: latest
+
+- name: Configurer le site Nginx
+  template:
+    src: templates/nginx-app.conf.j2
+    dest: /etc/nginx/sites-available/{{ domain_name }}.conf
+  notify: Reload Nginx
+
+- name: Activer le site
+  file:
+    src: /etc/nginx/sites-available/{{ domain_name }}.conf
+    dest: /etc/nginx/sites-enabled/{{ domain_name }}.conf
+    state: link
+    force: yes
+
+- name: Supprimer le site par défaut
+  file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+
+- name: Vérifier la configuration Nginx
+  command: nginx -t
+  register: nginx_test
+  changed_when: false
+  notify: Restart Nginx
+
+- name: Redémarrer Nginx si configuration valide
+  service:
+    name: nginx
+    state: restarted
+  when: nginx_test.rc == 0
