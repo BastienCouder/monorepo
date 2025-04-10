@@ -15,8 +15,7 @@ Il propose un système de déploiement **automatisé via Ansible** pour :
 ```bash
 monorepo/ 
 ├── apps/ 
-│ ├── web/ 
-│ │ # App Next.js/Node
+│ ├── web/ # App Next.js/Node
 │ └── software/ # App React
 ├── packages/ # Librairies partagées (utils, config, etc.) 
 ├── ansible/ # Déploiement infra 
