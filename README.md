@@ -51,21 +51,15 @@ En prod, le vrai certbot est exécuté (mode --nginx ou --webroot)
 
 ### 🔒 HTTPS avec Certbot
 En prod : certbot --nginx (Let’s Encrypt)
-
 En local : mock via echo
-
 Dossier ACME utilisé : /var/www/certbot
-
 Certificats déposés dans /etc/letsencrypt/live/<domain>
 
 ### 🧰 Stack technique
 Ansible — Orchestration, configuration
 
-Docker — Conteneurisation app par app
-
-Nginx — Reverse proxy HTTP/HTTPS
-
-Certbot — Certificats SSL gratuits
-
-act — Exécution locale de GitHub Actions pour tests CI
+- Docker — Conteneurisation app par app
+- Nginx — Reverse proxy HTTP/HTTPS
+- Certbot — Certificats SSL gratuits
+- act — Exécution locale de GitHub Actions pour tests CI
 
