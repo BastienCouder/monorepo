@@ -33,7 +33,7 @@ RUN pnpm turbo build --filter=software
 # Image finale
 FROM nginx:1-alpine-slim AS release
 COPY --from=prerelease /usr/src/app/apps/software/dist /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY apps/software/nginx.conf /etc/nginx/conf.d/default.conf
 CMD ["nginx", "-g", "daemon off;"]
 
 # Commandes

@@ -1,0 +1,31 @@
+- name: Créer le dossier ACME pour les challenges
+  file:
+    path: /var/www/html/.well-known/acme-challenge
+    state: directory
+    mode: '0755'
+    owner: www-data
+    group: www-data
+  become: yes
+
+- name: Déployer la configuration temporaire Nginx pour ACME
+  template:
+    src: acme-nginx.conf.j2
+    dest: /etc/nginx/sites-enabled/acme.conf
+  notify: restart nginx
+  become: yes
+
+- name: Lancer la demande de certificat avec Certbot
+  command: >
+    certbot --nginx --noninteractive --agree-tos --redirect
+    --email {{ letsencrypt_email }}
+    -d {{ letsencrypt_domain }}
+  become: yes
+  register: certbot_result
+  failed_when: certbot_result.rc != 0 and "Certificate not yet due for renewal" not in certbot_result.stdout
+
+- name: Supprimer la config temporaire ACME après succès
+  file:
+    path: /etc/nginx/sites-enabled/acme.conf
+    state: absent
+  notify: restart nginx
+  become: yes

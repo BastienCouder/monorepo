@@ -1,0 +1,11 @@
+---
+
+- name: restart nginx
+  become: true
+  systemd:
+    name: nginx
+    state: restarted
+    enabled: true
+  when:
+    - nginx_installed.stat.exists
+    - ansible_env.ACT is not defined or ansible_env.ACT != "true"

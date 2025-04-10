@@ -1,0 +1,6 @@
+---
+# Parameters used when creating new Certbot certs.
+
+web_server: nginx
+letsencrypt_email: 
+letsencrypt_domain: 

@@ -1,31 +1,8 @@
 ---
-- name: Activer le dépôt Universe
-  apt_repository:
-    repo: "deb http://archive.ubuntu.com/ubuntu {{ ansible_distribution_release }} universe"
-    state: present
-  tags: certbot
+- import_tasks: install.yml
+- import_tasks: certificate.yml
 
-- name: Mettre à jour le cache APT
-  apt:
-    update_cache: yes
-  tags: certbot
-
-- name: Installer les paquets Certbot
-  apt:
-    name:
-      - certbot
-      - python3-certbot-nginx
-    state: latest
-  tags: certbot
-
-- name: Exécuter Certbot
-  command: >
-    certbot --nginx -d {{ domain_name }}
-    --non-interactive
-    --agree-tos
-    -m {{ certbot_email }}
-    --redirect
-    --keep-until-expiring
-  register: certbot_result
-  changed_when: "'No certificates were received' not in certbot_result.stdout"
-  tags: certbot
+- name: Vérifier si nginx est installé
+  stat:
+    path: /etc/init.d/nginx
+  register: nginx_installed

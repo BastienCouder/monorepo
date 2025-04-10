@@ -7,20 +7,8 @@
     - vars/defaults.yml
     - vars/secrets.yml
   roles:
-    - role: docker-setup
-      tags: docker-setup
-
-
-# - name: Configurer le firewall
-#   hosts: docker_master
-#   connection: ssh
-#   become: yes
-#   vars_files:
-#     - vars/defaults.yml
-#     - vars/secrets.yml
-#   roles:
-#     - role: firewall
-#       tags: firewall
+    - role: docker
+      tags: docker
       
 - name: Déployer l'application sur les hôtes maîtres
   hosts: docker_master
@@ -41,8 +29,8 @@
     - vars/defaults.yml
     - vars/secrets.yml
   roles:
-    - role: nginx-config
-      tags: nginx-config
+    - role: nginx
+      tags: nginx
 
 - name: Configurer certbot
   hosts: docker_master

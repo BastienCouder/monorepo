@@ -1,0 +1,16 @@
+---
+- name: Installer Certbot et le plugin Nginx
+  package:
+    name:
+      - certbot
+      - python3-certbot-nginx
+    state: present
+
+- name: Vérifier l'installation
+  command: certbot --version
+  register: certbot_version
+  changed_when: false
+
+- name: Afficher la version installée
+  debug:
+    msg: "Certbot {{ certbot_version.stdout }} installé avec succès"
