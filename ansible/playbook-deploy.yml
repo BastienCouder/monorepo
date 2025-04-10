@@ -1,45 +1,13 @@
 ---
-- name: Configurer Docker sur les hôtes maîtres
-  hosts: docker_master
-  connection: local
-  become: yes 
-  vars_files:
-    - vars/defaults.yml
-    - vars/secrets.yml
-  roles:
-    - role: docker
-      tags: docker
       
 - name: Déployer l'application sur les hôtes maîtres
   hosts: docker_master
   connection: local
-  become: yes 
-  vars_files:
-    - vars/defaults.yml
-    - vars/secrets.yml
-  roles:
-    - role: app-deploy
-      tags: app-deploy
-
-- name: Configurer nginx
-  hosts: docker_master
-  connection: local
   become: yes
   vars_files:
     - vars/defaults.yml
-    - vars/secrets.yml
   roles:
-    - role: nginx
-      tags: nginx
-
-- name: Configurer certbot
-  hosts: docker_master
-  connection: local
-  become: yes
-  vars_files:
-    - vars/defaults.yml
-    - vars/secrets.yml
-  roles:
-    - role: certbot
-      tags: certbot
-
+    - { role: docker, tags: [docker] }
+    - { role: app-deploy, tags: [app-deploy] }
+    - { role: nginx, tags: [nginx] }
+    - { role: certbot, tags: [certbot] }

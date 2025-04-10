@@ -1,28 +1,42 @@
----
-- name: Construire l'image Docker
+- name: Supprimer les anciens conteneurs
+  docker_container:
+    name: "{{ item.container }}"
+    state: absent
+    container_default_behavior: compatibility
+  loop: "{{ apps }}"
+
+
+- name: Construire les images Docker
   docker_image:
-    name: "{{ docker_image_name }}"
+    name: "{{ item.image }}"
     build:
       path: ../
-      dockerfile: apps/web/Dockerfile
+      dockerfile: "{{ item.dockerfile }}"
       args:
         HELLO_WORLD: "{{ hello_world_arg }}"
+      pull: yes
     source: build
+  loop: "{{ apps }}"
 
-- name: Démarrer le conteneur Docker
+- name: Démarrer les conteneurs
   docker_container:
-    name: "{{ docker_container_name }}"
-    image: "{{ docker_image_name }}"
+    name: "{{ item.container }}"
+    image: "{{ item.image }}"
     state: started
+    recreate: yes
     ports:
-      - "{{ docker_port }}:3000"
+      - "{{ item.port }}:{{ item.internal_port }}"
     restart_policy: always
+    container_default_behavior: compatibility
+  loop: "{{ apps }}"
 
-- name: Vérifier que le conteneur est en cours d'exécution
+- name: Vérifier que les conteneurs sont en cours d'exécution
   docker_container_info:
-    name: "web_app"
+    name: "{{ item.container }}"
   register: container_info
+  loop: "{{ apps }}"
 
-- name: Afficher l'état du conteneur
+- name: Afficher l'état des conteneurs
   debug:
-    var: container_info.container.State.Status
+    msg: "{{ item.item.name }} → {{ item.container.State.Status }}"
+  loop: "{{ container_info.results }}"

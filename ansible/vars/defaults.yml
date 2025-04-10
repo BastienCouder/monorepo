@@ -1,4 +1,3 @@
 domain_name: "devops.bastiencouder.com"
 certbot_email: "couderbastien@gmail.com"
-docker_port: 3000  
 ansible_distribution_release: "focal"

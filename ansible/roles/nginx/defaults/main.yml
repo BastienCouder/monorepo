@@ -1,7 +1,7 @@
-letsencrypt_email: admin@mondomaine.com
-
 apps:
   - name: web
     domain_name: web.mondomaine.com
+    docker_port: 3000
   - name: software
     domain_name: software.mondomaine.com
+    docker_port: 80

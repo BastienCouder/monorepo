@@ -1,0 +1,17 @@
+- name: Certbot réel avec nginx (prod)
+  command: >
+    certbot --nginx --noninteractive --agree-tos --redirect
+    --email {{ letsencrypt_email }}
+    -d {{ app.domain_name }}
+  when: ansible_env.ACT is not defined
+  register: certbot_result
+  failed_when: certbot_result.rc != 0 and
+               "Certificate not yet due for renewal" not in certbot_result.stdout
+  become: true
+
+- name: Simulation certbot pour {{ app.domain_name }} (act)
+  command: >
+    echo "Simulating certbot for {{ app.domain_name }}"
+  when: ansible_env.ACT is defined
+  register: certbot_result
+  changed_when: false

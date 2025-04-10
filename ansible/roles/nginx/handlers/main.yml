@@ -1,9 +1,11 @@
-- name: Reload Nginx
+- name: reload nginx
   service:
     name: nginx
     state: reloaded
+  when: ansible_env.ACT is not defined
 
-- name: Restart Nginx
+- name: restart nginx
   service:
     name: nginx
     state: restarted
+  when: ansible_env.ACT is not defined

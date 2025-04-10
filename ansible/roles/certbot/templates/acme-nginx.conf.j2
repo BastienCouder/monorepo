@@ -3,7 +3,7 @@ server {
     server_name {{ letsencrypt_domain }};
 
     location /.well-known/acme-challenge/ {
-        root /var/www/html;
+        root /var/www/certbot;
     }
 
     location / {

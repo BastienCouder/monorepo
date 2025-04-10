@@ -1,21 +1,35 @@
----
 - name: Installer Nginx
   apt:
     name: nginx
     state: latest
+  when: ansible_env.ACT is not defined
 
-- name: Configurer le site Nginx
+- name: Créer les dossiers Nginx nécessaires
+  file:
+    path: "/etc/nginx/sites-available"
+    state: directory
+    mode: "0755"
+
+- name: Créer les liens Nginx nécessaires
+  file:
+    path: "/etc/nginx/sites-enabled"
+    state: directory
+    mode: "0755"
+
+- name: Configurer les sites Nginx pour chaque app
   template:
     src: templates/nginx-app.conf.j2
-    dest: /etc/nginx/sites-available/{{ domain_name }}.conf
-  notify: Reload Nginx
+    dest: "/etc/nginx/sites-available/{{ item.domain_name }}.conf"
+  notify: reload nginx
+  loop: "{{ apps }}"
 
-- name: Activer le site
+- name: Activer les sites
   file:
-    src: /etc/nginx/sites-available/{{ domain_name }}.conf
-    dest: /etc/nginx/sites-enabled/{{ domain_name }}.conf
+    src: "/etc/nginx/sites-available/{{ item.domain_name }}.conf"
+    dest: "/etc/nginx/sites-enabled/{{ item.domain_name }}.conf"
     state: link
     force: yes
+  loop: "{{ apps }}"
 
 - name: Supprimer le site par défaut
   file:
@@ -26,10 +40,11 @@
   command: nginx -t
   register: nginx_test
   changed_when: false
-  notify: Restart Nginx
+  when: ansible_env.ACT is not defined
+  notify: restart nginx
 
 - name: Redémarrer Nginx si configuration valide
   service:
     name: nginx
     state: restarted
-  when: nginx_test.rc == 0
+  when: (nginx_test.rc | default(1)) == 0 and (ansible_env.ACT is not defined)

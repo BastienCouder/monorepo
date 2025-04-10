@@ -1,4 +1,11 @@
 ---
+- name: Vérifier que l'e-mail Let’s Encrypt est défini
+  assert:
+    that:
+      - letsencrypt_email is defined
+      - letsencrypt_email | length > 3
+    fail_msg: "⚠️ Variable letsencrypt_email est manquante ou invalide."
+
 - name: Installer Certbot et le plugin Nginx
   package:
     name:
@@ -6,7 +13,7 @@
       - python3-certbot-nginx
     state: present
 
-- name: Vérifier l'installation
+- name: Vérifier l'installation de certbot
   command: certbot --version
   register: certbot_version
   changed_when: false

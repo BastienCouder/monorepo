@@ -1,15 +1,15 @@
 server {
     listen 80;
-    server_name {{ domain_name }};
+    server_name {{ item.domain_name }};
 
-    location / {
-        proxy_pass http://localhost:{{ docker_port }};
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-    }
-    
     location ^~ /.well-known/acme-challenge/ {
         root /var/www/certbot;
         allow all;
+    }
+
+    location / {
+        proxy_pass http://localhost:{{ item.docker_port }};
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
     }
 }
