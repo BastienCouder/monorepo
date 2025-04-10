@@ -12,6 +12,7 @@ Il propose un système de déploiement **automatisé via Ansible** pour :
 
 ## 🗂️ Structure du projet
 
+```bash
 monorepo/ 
 ├── apps/ 
 │ ├── web/ 
@@ -29,6 +30,7 @@ monorepo/
 │ │ └── docker/ 
 │ └── inventory.ini 
 └──── vault_pass.txt 
+```
 
 ## 🚀 Déploiement
 
