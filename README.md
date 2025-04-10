@@ -1,84 +1,70 @@
-# Turborepo starter
+# 🧩 Monorepo Node.js — Déploiement Ansible + Docker + Nginx + Certbot
 
-This Turborepo starter is maintained by the Turborepo core team.
+Ce projet est un **monorepo** regroupant plusieurs applications (ex. `web`, `software`, etc.) et des packages partagés.  
+Il propose un système de déploiement **automatisé via Ansible** pour :
 
-## Using this example
+- Builder et lancer chaque app dans un conteneur Docker
+- Configurer **Nginx** comme reverse proxy
+- Obtenir des **certificats SSL Let's Encrypt** avec **Certbot**
+- Simuler tout ça en CI/local avec [act](https://github.com/nektos/act)
 
-Run the following command:
+---
 
-```sh
-npx create-turbo@latest
+## 🗂️ Structure du projet
+
+monorepo/ 
+├── apps/ 
+│ ├── web/ 
+│ │ # App Next.js/Node
+│ └── software/ # App React
+├── packages/ # Librairies partagées (utils, config, etc.) 
+├── ansible/ # Déploiement infra 
+│ ├── playbook.yml 
+│ ├── vars/
+│ │ ├── defaults.yml 
+│ ├── roles/
+│ │ ├── app-deploy/ 
+│ │ ├── nginx/
+│ │ ├── certbot/ 
+│ │ └── docker/ 
+│ └── inventory.ini 
+└──── vault_pass.txt 
+
+## 🚀 Déploiement
+
+en production
+
+```bash
+cd ansible
+ansible-playbook -i inventory.ini playbook-deploy.yml
+```
+En local (CI/CD ou dev) avec act
+
+```bash
+cd ansible
+act
 ```
 
-## What's inside?
+En local via act, Certbot est automatiquement mocké (echo)
+En prod, le vrai certbot est exécuté (mode --nginx ou --webroot)
 
-This Turborepo includes the following packages/apps:
+### 🔒 HTTPS avec Certbot
+En prod : certbot --nginx (Let’s Encrypt)
 
-### Apps and Packages
+En local : mock via echo
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+Dossier ACME utilisé : /var/www/certbot
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+Certificats déposés dans /etc/letsencrypt/live/<domain>
 
-### Utilities
+### 🧰 Stack technique
+Ansible — Orchestration, configuration
 
-This Turborepo has some additional tools already setup for you:
+Docker — Conteneurisation app par app
 
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
+Nginx — Reverse proxy HTTP/HTTPS
 
-### Build
+Certbot — Certificats SSL gratuits
 
-To build all apps and packages, run the following command:
+act — Exécution locale de GitHub Actions pour tests CI
 
-```
-cd my-turborepo
-pnpm build
-```
-
-### Develop
-
-To develop all apps and packages, run the following command:
-
-```
-cd my-turborepo
-pnpm dev
-```
-
-### Remote Caching
-
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
-
-Turborepo can use a technique known as [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
-
-```
-cd my-turborepo
-npx turbo login
-```
-
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-```
-npx turbo link
-```
-
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turbo.build/repo/docs/core-concepts/monorepos/running-tasks)
-- [Caching](https://turbo.build/repo/docs/core-concepts/caching)
-- [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching)
-- [Filtering](https://turbo.build/repo/docs/core-concepts/monorepos/filtering)
-- [Configuration Options](https://turbo.build/repo/docs/reference/configuration)
-- [CLI Usage](https://turbo.build/repo/docs/reference/command-line-reference)
