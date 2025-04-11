@@ -19,9 +19,9 @@ services:
     depends_on:
       - postgres_exporter
 
-  stats:
+  node_exporter:
     image: prom/node-exporter
-    container_name: stats
+    container_name: node_exporter
     ports:
       - "9100:9100"
 

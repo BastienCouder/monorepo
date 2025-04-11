@@ -5,9 +5,9 @@ scrape_configs:
   - job_name: 'postgres-exporter'
     static_configs:
       - targets: ['postgres_exporter:9187']
-  - job_name: 'stats'
+  - job_name: 'node-exporter'
     static_configs:
-      - targets: ['stats:9100']
+      - targets: ['node_exporter:9100']
   - job_name: 'blackbox-http'
     metrics_path: /probe
     params:
