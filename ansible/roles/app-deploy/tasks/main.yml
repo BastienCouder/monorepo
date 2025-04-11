@@ -5,7 +5,8 @@
     container_default_behavior: compatibility
   loop: "{{ apps }}"
 
-- name: Construire les images Docker (sauf pour les images officielles)
+- name: Construire les images Docker
+
   docker_image:
     name: "{{ item.image }}"
     build:

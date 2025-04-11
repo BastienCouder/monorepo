@@ -1,0 +1,67 @@
+{
+  "id": null,
+  "uid": "blackbox-monitoring",
+  "title": "Blackbox Monitoring",
+  "timezone": "browser",
+  "schemaVersion": 36,
+  "version": 1,
+  "refresh": "30s",
+  "panels": [
+    {
+      "type": "stat",
+      "title": "Localhost:3000 Status",
+      "gridPos": { "x": 0, "y": 0, "w": 6, "h": 4 },
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "probe_success{instance=\"http://host.docker.internal:3000\"}",
+          "legendFormat": "localhost:3000"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "red", "value": 0 },
+              { "color": "green", "value": 1 }
+            ]
+          },
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "0": { "text": "DOWN" },
+                "1": { "text": "UP" }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "graph",
+      "title": "Response Time (ms)",
+      "gridPos": { "x": 6, "y": 0, "w": 12, "h": 8 },
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "probe_duration_seconds{instance=\"http://host.docker.internal:3000\"}",
+          "legendFormat": "Duration",
+          "refId": "A"
+        }
+      ],
+      "yaxes": [
+        {
+          "format": "ms",
+          "label": "Duration",
+          "logBase": 1,
+          "show": true
+        },
+        {
+          "show": false
+        }
+      ]
+    }
+  ]
+}

@@ -1,10 +1,5 @@
 name: Deploy
 
-on:
-  push:
-    branches: [main]
-  workflow_dispatch:
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -57,7 +52,7 @@ jobs:
         if: ${{ !env.ACT }}
         run: |
           ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_IP_SERVER }} <<'EOF'
-          cd /var/www/crowdfunding
+          cd /var/www/monorepo
           php artisan --version
           php artisan config:clear
           EOF

@@ -13,3 +13,10 @@ apps:
     dockerfile: ""
     port: 5432
     internal_port: 5432
+    
+  - name: software
+    image: software:latest
+    container: software
+    dockerfile: apps/software/Dockerfile
+    port: 3010
+    internal_port: 3000
