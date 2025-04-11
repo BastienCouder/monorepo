@@ -1,22 +1,23 @@
 services:
   traefik:
-    image: traefik:v3.0
-    container_name: traefik
+    image: traefik:v2.10
     command:
-      - "--api.dashboard=true"
+      - "--api.insecure=true"
       - "--providers.docker=true"
       - "--entrypoints.web.address=:80"
       - "--entrypoints.websecure.address=:443"
-      - "--certificatesresolvers.myresolver.acme.httpchallenge=true"
-      - "--certificatesresolvers.myresolver.acme.httpchallenge.entrypoint=web"
-      - "--certificatesresolvers.myresolver.acme.email=couderbastien@gmail.com"
+      - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
+      - "--certificatesresolvers.myresolver.acme.email=email"
+      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
     ports:
       - "80:80"
       - "443:443"
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "./letsencrypt:/letsencrypt"
     networks:
-      - traefik
+      - traefik-net
+
 
   web:
     build:
@@ -31,17 +32,11 @@ services:
       - "3011:3000"
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.app.rule=Host(`web.bastiencouder.com`)"
-      - "traefik.http.routers.app.entrypoints=web"
-      - "traefik.http.routers.app.middlewares=redirect-to-https"
-      - "traefik.http.routers.app-secure.rule=Host(`web.bastiencouder.com`)"
-      - "traefik.http.routers.app-secure.entrypoints=websecure"
-      - "traefik.http.routers.app-secure.tls=true"
-      - "traefik.http.routers.app-secure.tls.certresolver=myresolver"
-      - "traefik.http.services.app.loadbalancer.server.port=3000"
-      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+      - "traefik.http.routers.web.rule=Host(`web.bastiencouder.com`)"
+      - "traefik.http.routers.web.entrypoints=websecure"
+      - "traefik.http.routers.web.tls.certresolver=myresolver"
     networks:
-      - traefik
+      - traefik-net
 
   postgres:
     image: postgres:16-alpine
@@ -64,13 +59,12 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '0.5'
-          memory: 512M
+          cpus: '1'
+          memory: 1G
 
 volumes:
   postgres_data:
-  traefik_letsencrypt:
-
+  
 networks:
-  traefik:
-    external: false
+  traefik-net:
+    driver: bridge
