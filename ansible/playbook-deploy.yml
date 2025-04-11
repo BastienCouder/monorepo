@@ -7,7 +7,6 @@
   vars_files:
     - vars/defaults.yml
   roles:
-    - { role: docker, tags: [docker] }
     - { role: app-deploy, tags: [app-deploy] }
     - { role: nginx, tags: [nginx] }
     - { role: certbot, tags: [certbot] }
