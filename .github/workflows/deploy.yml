@@ -1,23 +1,63 @@
-name: Deploy Application with Ansible
+name: Deploy
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
+  workflow_dispatch:
 
 jobs:
   deploy:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - name: Install Ansible
+      - name: Start SSH agent
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Add SSH Host to Known Hosts
+        run: ssh-keyscan -H ${{ secrets.SSH_IP_SERVER }} >> ~/.ssh/known_hosts
+
+      - name: Setup Python 3.11
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install System Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y ansible
+          sudo apt-get install -y lsb-release gnupg curl ca-certificates apt-transport-https python3-apt
+
+      - name: Install Ansible and Vault
+        run: |
+          python -m pip install --upgrade pip
+          pip install ansible-core==2.14.7 ansible-vault
+          ansible --version
 
       - name: Run Ansible Playbook
+        env:
+          VAULT_PASS: ${{ secrets.ANSIBLE_VAULT_PASSWORD }}
         run: |
-           ansible-playbook -i ./ansible/inventory.ini ./ansible/playbook-deploy.yml --vault-password-file ./ansible/vault_pass.txt
+          VAULT_TMP=$(mktemp)
+          echo "$VAULT_PASS" > "$VAULT_TMP"
+          chmod 600 "$VAULT_TMP"
+
+          ansible-playbook \
+            -i ansible/inventory.ini \
+            --vault-password-file "$VAULT_TMP" \
+            ansible/playbook-deploy.yml \
+
+          shred -u "$VAULT_TMP"
+
+      - name: Post-Deployment Laravel Check
+        if: ${{ !env.ACT }}
+        run: |
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_IP_SERVER }} <<'EOF'
+          cd /var/www/crowdfunding
+          php artisan --version
+          php artisan config:clear
+          EOF

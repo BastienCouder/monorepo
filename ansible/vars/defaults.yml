@@ -1,3 +1,0 @@
-domain_name: "devops.bastiencouder.com"
-certbot_email: "couderbastien@gmail.com"
-ansible_distribution_release: "focal"

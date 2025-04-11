@@ -11,8 +11,6 @@
     build:
       path: ../
       dockerfile: "{{ item.dockerfile }}"
-      args:
-        HELLO_WORLD: "{{ hello_world_arg }}"
       pull: yes
     source: build
   when: item.dockerfile != ""

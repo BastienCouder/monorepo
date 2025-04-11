@@ -1,7 +1,7 @@
-letsencrypt_email: admin@mondomaine.com
+letsencrypt_email: couderbastien@gmail.com
 
 apps:
   - name: web
-    domain_name: web.mondomaine.com
+    domain_name: web.bastiencouder.com
   - name: software
-    domain_name: software.mondomaine.com
+    domain_name: software.bastiencouder.com

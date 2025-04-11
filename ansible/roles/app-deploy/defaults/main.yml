@@ -13,13 +13,3 @@ apps:
     dockerfile: ""
     port: 5432
     internal_port: 5432
-
-  - name: software
-    image: software
-    container: software_app
-    dockerfile: apps/software/Dockerfile
-    port: 3010
-    internal_port: 80
-
-email: contact@mondomaine.com
-hello_world_arg: "Hello depuis vars"
