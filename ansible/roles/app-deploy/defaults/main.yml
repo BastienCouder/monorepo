@@ -1,21 +1,25 @@
 ---
-# Parameters used when deploying the app.
 apps:
+  - name: web
+    image: web:latest
+    container: web
+    dockerfile: apps/web/Dockerfile
+    port: 3011
+    internal_port: 3000
+
+  - name: postgres
+    image: postgres:16-alpine
+    container: postgres
+    dockerfile: ""
+    port: 5432
+    internal_port: 5432
+
   - name: software
     image: software
     container: software_app
     dockerfile: apps/software/Dockerfile
     port: 3010
     internal_port: 80
-    domain: web.mondomaine.com
-  - name: web
-    image: web
-    container: web_app
-    dockerfile: apps/web/Dockerfile
-    port: 3011
-    internal_port: 3000
-    domain: web.mondomaine.com
-
 
 email: contact@mondomaine.com
 hello_world_arg: "Hello depuis vars"

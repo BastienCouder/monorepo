@@ -1,0 +1,8 @@
+services:
+  software:
+    build:
+      context: ../..
+      dockerfile: apps/software/Dockerfile
+    container_name: software
+    ports:
+      - "3010:80"
