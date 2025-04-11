@@ -16,8 +16,6 @@ RUN pnpm install --frozen-lockfile
 # Build de l'application
 FROM dependencies AS build
 COPY . .
-ARG HELLO_WORLD
-RUN echo "HELLO_WORLD=${HELLO_WORLD}" >> .env
 ENV NODE_ENV=production
 RUN pnpm turbo --filter=web build
 
