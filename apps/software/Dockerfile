@@ -1,43 +1,40 @@
-# Base
-FROM node:latest AS base
-WORKDIR /usr/src/app
+# Base avec pnpm
+FROM node:22-alpine AS base
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+WORKDIR /app
 
-# Installation de pnpm globalement
-FROM base AS pnpm-install
-RUN npm install -g pnpm
+RUN corepack enable && corepack prepare pnpm@latest --activate
 
-# Installation des dépendances
-FROM pnpm-install AS install
-RUN mkdir -p /temp/dev
-COPY package.json pnpm-lock.yaml turbo.json /temp/dev/
-COPY apps/software/package.json /temp/dev/apps/software/package.json
-COPY packages/ /temp/dev/packages/
-RUN cd /temp/dev && pnpm install
+# Étape 2 : Install des dépendances
+FROM base AS deps
+COPY package.json pnpm-lock.yaml turbo.json ./
+COPY apps/software/package.json ./apps/software/package.json
+COPY packages ./packages
+RUN pnpm install --prod --frozen-lockfile
 
-# Installation des dépendances de production
-RUN mkdir -p /temp/prod
-COPY package.json pnpm-lock.yaml turbo.json /temp/prod/
-COPY apps/software/package.json /temp/prod/apps/software/package.json
-COPY packages/ /temp/prod/packages/
-RUN cd /temp/prod && pnpm install --prod --frozen-lockfile
-
-# Préparation du build
-FROM pnpm-install AS prerelease
-COPY --from=install /temp/dev/node_modules node_modules
+# Build de l’app React
+FROM base AS build
+COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-
-# Exécution des tests et du build
 ENV NODE_ENV=production
-RUN pnpm turbo build --filter=software
+RUN pnpm turbo run build --filter=software
 
-# Image finale
-FROM nginx:1-alpine-slim AS release
-COPY --from=prerelease /usr/src/app/apps/software/dist /usr/share/nginx/html
-COPY apps/software/nginx.conf /etc/nginx/conf.d/default.conf
-CMD ["nginx", "-g", "daemon off;"]
+# Image finale - serveur statique
+FROM node:22-alpine AS release
+WORKDIR /app
 
-# Commandes
-# Créer l'image Docker
-# docker build -t software:latest -f apps/software/Dockerfile .
-# Lancer le conteneur Docker
-# docker run -p 80:80 software:latest
+# Configurer pnpm global sans setup
+ENV PNPM_HOME="/pnpm"
+ENV PATH="${PNPM_HOME}:${PATH}"
+
+RUN corepack enable && corepack prepare pnpm@latest --activate
+RUN mkdir -p ${PNPM_HOME}
+RUN pnpm add -g http-server
+
+# Copier les fichiers de build
+COPY --from=build /app/apps/software/dist ./dist
+
+EXPOSE 8080
+
+CMD ["http-server", "dist", "-p", "8080"]

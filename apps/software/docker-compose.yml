@@ -5,4 +5,4 @@ services:
       dockerfile: apps/software/Dockerfile
     container_name: software
     ports:
-      - "3010:80"
+      - "3010:8080"

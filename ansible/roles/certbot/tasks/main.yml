@@ -1,8 +1,0 @@
----
-- import_tasks: install.yml
-- import_tasks: certificate.yml
-
-- name: Vérifier si nginx est installé
-  stat:
-    path: /etc/init.d/nginx
-  register: nginx_installed
