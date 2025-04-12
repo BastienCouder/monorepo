@@ -1,0 +1,10 @@
+{
+    "extends": "../typescript-config/base.json",
+    "compilerOptions": {
+      "moduleResolution": "node",
+      "target": "ES2020",
+      "module": "ESNext"
+    },
+    "include": ["index.ts"]
+  }
+  

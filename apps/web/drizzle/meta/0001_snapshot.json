@@ -1,6 +1,6 @@
 {
-  "id": "25c9aac7-75b1-4a2d-859a-8f09942b52fb",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "d4cfb335-c435-49c1-b9e3-e879fc440296",
+  "prevId": "25c9aac7-75b1-4a2d-859a-8f09942b52fb",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -88,6 +88,13 @@
           "type": "varchar(255)",
           "primaryKey": false,
           "notNull": true
+        },
+        "role": {
+          "name": "role",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'user'"
         },
         "created_at": {
           "name": "created_at",
