@@ -3,7 +3,8 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "react": ["node_modules/@types/react"]
+      "react": ["node_modules/@types/react"],
+      "@repo/email": ["../../packages/email"]
     },
     "plugins": [
       {

@@ -3,36 +3,33 @@ services:
     image: prometheuscommunity/postgres-exporter
     container_name: postgres_exporter
     environment:
-      DATA_SOURCE_NAME: "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?sslmode=disable"
-    networks:
-      - traefik-net
+      DATA_SOURCE_NAME: "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}?sslmode=disable"
+    ports:
+      - "9187:9187"
 
   prometheus:
     image: prom/prometheus
     container_name: prometheus
+    ports:
+      - "9090:9090"
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
     extra_hosts:
       - "host.docker.internal:host-gateway"
     depends_on:
       - postgres_exporter
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.prometheus.rule=Host(`prometheus.bastiencouder.com`)"
-      - "traefik.http.routers.prometheus.entrypoints=websecure"
-      - "traefik.http.routers.prometheus.tls.certresolver=myresolver"
-    networks:
-      - traefik-net
 
   node_exporter:
     image: prom/node-exporter
     container_name: node_exporter
-    networks:
-      - traefik-net
+    ports:
+      - "9100:9100"
 
   grafana:
     image: grafana/grafana:10.0.0
     container_name: grafana
+    ports:
+      - "3800:3000"
     environment:
       GF_SECURITY_ADMIN_USER: ${GF_SECURITY_ADMIN_USER}
       GF_SECURITY_ADMIN_PASSWORD: ${GF_SECURITY_ADMIN_PASSWORD}
@@ -42,27 +39,17 @@ services:
       - ./grafana/dashboards:/etc/grafana/dashboards
     depends_on:
       - prometheus
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.grafana.rule=Host(`grafana.bastiencouder.com`)"
-      - "traefik.http.routers.grafana.entrypoints=websecure"
-      - "traefik.http.routers.grafana.tls.certresolver=myresolver"
-    networks:
-      - traefik-net
 
   blackbox:
     image: prom/blackbox-exporter
     container_name: blackbox
+    ports:
+      - "9115:9115"
     command:
       - '--config.file=/etc/blackbox/config.yml'
     volumes:
       - ./blackbox/config.yml:/etc/blackbox/config.yml
-    networks:
-      - traefik-net
+
 
 volumes:
   grafana_data:
-
-networks:
-  traefik-net:
-    external: true

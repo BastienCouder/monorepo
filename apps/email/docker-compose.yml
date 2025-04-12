@@ -1,0 +1,47 @@
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: email-rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
+    networks:
+      - traefik-net
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.rabbitmq.rule=Host(`rabbit.bastiencouder.com`)"
+      - "traefik.http.routers.rabbitmq.entrypoints=websecure"
+      - "traefik.http.routers.rabbitmq.tls.certresolver=myresolver"
+      - "traefik.http.services.rabbitmq.loadbalancer.server.port=15672"
+
+  maildev:
+    image: maildev/maildev
+    container_name: email-maildev
+    networks:
+      - traefik-net
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.maildev.rule=Host(`mail.bastiencouder.com`)"
+      - "traefik.http.routers.maildev.entrypoints=websecure"
+      - "traefik.http.routers.maildev.tls.certresolver=myresolver"
+      - "traefik.http.services.maildev.loadbalancer.server.port=1080"
+
+  worker:
+    build:
+      context: ../..
+      dockerfile: apps/email/Dockerfile
+    container_name: email-worker
+    depends_on:
+      - rabbitmq
+      - maildev
+    environment:
+      SMTP_HOST: ${SMTP_HOST}
+      SMTP_PORT: ${SMTP_PORT}
+      RABBITMQ_URL: ${RABBITMQ_URL}
+    networks:
+      - traefik-net
+    restart: always
+
+networks:
+  traefik-net:
+    external: true

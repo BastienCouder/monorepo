@@ -76,7 +76,7 @@ export async function GET(req: Request) {
   const expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 30);
 
   await db.insert(sessionsTable).values({
-    userId: user.id.toString(),
+    userId: user.id,
     refreshToken,
     expiresAt,
   });
