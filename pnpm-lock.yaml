@@ -25,7 +25,7 @@ importers:
         specifier: 5.8.2
         version: 5.8.2
 
-  apps/email-worker:
+  apps/email:
     dependencies:
       '@repo/email':
         specifier: workspace:*
@@ -318,6 +318,9 @@ importers:
 
   packages/auth:
     dependencies:
+      '@repo/web':
+        specifier: workspace:*
+        version: link:../../apps/web
       bcryptjs:
         specifier: ^3.0.2
         version: 3.0.2

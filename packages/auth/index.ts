@@ -2,8 +2,8 @@ import jwt from 'jsonwebtoken';
 import { compare, hash } from 'bcryptjs';
 import { eq } from 'drizzle-orm';
 
-import { db } from '../../apps/web/db';
-import { usersTable, sessionsTable } from '../../apps/web/db/schema';
+import { db } from '@repo/web/db';
+import { usersTable, sessionsTable } from '@repo/web/db/schema';
 
 export const JWT_SECRET = process.env.JWT_SECRET ?? 'dev_secret';
 export const ACCESS_TOKEN_EXPIRY = '15m';

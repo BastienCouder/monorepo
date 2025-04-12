@@ -2,9 +2,8 @@
       
 - name: Déployer l'application sur les hôtes maîtres
   hosts: master
-  become: yes
+  become: true
   vars_files:
     - vars/defaults.yml
   roles:
     - { role: docker, tags: [docker] }
-    - { role: app-deploy, tags: [app-deploy] }
