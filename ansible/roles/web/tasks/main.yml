@@ -1,0 +1,15 @@
+---
+- name: Générer le fichier .env pour Web
+  template:
+    src: templates/web.env.j2
+    dest: "{{ web_path }}/.env"
+    mode: "0600"
+  tags: web
+
+- name: Déployer l'app Web
+  community.docker.docker_compose:
+    project_src: "{{ web_path }}"
+    state: present
+    build: true
+    restarted: true
+  tags: web

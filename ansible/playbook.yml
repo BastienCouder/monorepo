@@ -7,3 +7,8 @@
     - vars/defaults.yml
   roles:
     - { role: docker, tags: [docker] }
+    - { role: global, tags: [global] }
+    - { role: email, tags: [email] }
+    - { role: web, tags: [web] }
+    - { role: software, tags: [software] }
+    - { role: monitoring, tags: [monitoring] }

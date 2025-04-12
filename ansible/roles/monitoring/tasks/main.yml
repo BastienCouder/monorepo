@@ -1,0 +1,14 @@
+---
+- name: Générer le fichier .env pour Monitoring
+  template:
+    src: templates/monitoring.env.j2
+    dest: "{{ monitoring_path }}/.env"
+    mode: "0600"
+  tags: monitoring
+
+- name: Déployer la stack de monitoring (Prometheus, Grafana…)
+  community.docker.docker_compose:
+    project_src: "{{ monitoring_path }}"
+    state: present
+    build: true
+    restarted: true
