@@ -1,5 +1,3 @@
-"use server";
-
 import { registerUser } from '@repo/auth';
 
 export async function POST(req: Request) {

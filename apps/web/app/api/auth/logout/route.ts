@@ -1,5 +1,3 @@
-"use server";
-
 import { cookies } from 'next/headers';
 import { logoutUser } from '@repo/auth';
 

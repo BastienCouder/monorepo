@@ -41,6 +41,8 @@ services:
         limits:
           cpus: '1'
           memory: 1G
+    networks:
+      - traefik-net
 
   web:
     build:

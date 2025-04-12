@@ -1,5 +1,3 @@
-"use server";
-
 import { cookies } from 'next/headers';
 import { loginUser } from '@repo/auth';
 export async function POST(req: Request) {

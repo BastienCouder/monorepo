@@ -34,7 +34,7 @@ export async function loginUser(email: string, password: string) {
   const refreshToken = signRefreshToken();
   const expiresAt = new Date(Date.now() + REFRESH_TOKEN_EXPIRY);
 
-  await db.insert(sessionsTable).values({ userId: user.id.toString(), refreshToken, expiresAt });
+  await db.insert(sessionsTable).values({ userId: user.id, refreshToken, expiresAt });
   return { accessToken, refreshToken };
 }
 
@@ -82,7 +82,7 @@ export async function refreshTokens(oldRefreshToken: string) {
   const newExpiresAt = new Date(Date.now() + REFRESH_TOKEN_EXPIRY);
 
   await db.insert(sessionsTable).values({
-    userId: session.session.userId.toString(),
+    userId: session.session.userId,
     refreshToken: newRefreshToken,
     expiresAt: newExpiresAt,
   });

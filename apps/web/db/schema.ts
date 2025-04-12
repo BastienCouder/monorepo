@@ -11,7 +11,7 @@ export const usersTable = pgTable("users", {
 
 export const sessionsTable = pgTable('sessions', {
   id: uuid('id').defaultRandom().primaryKey(),
-  userId: uuid('user_id').notNull(),
+  userId: integer('user_id').notNull(),
   refreshToken: text('refresh_token').notNull().unique(),
   expiresAt: timestamp('expires_at').notNull(),
 });
