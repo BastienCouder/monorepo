@@ -4,7 +4,7 @@
   "type": "module",
   "exports": {
     ".": "./index.ts",
-    "./templates/register-email": "./templates/register-email.ts"
+    "./templates/send-email": "./templates/send-email.ts"
   },
   "dependencies": {
     "amqplib": "^0.10.3"

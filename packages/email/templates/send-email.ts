@@ -1,4 +1,4 @@
-export function registerEmailTemplate(email: string) {
+export function sendEmailTemplate(email: string) {
     return {
       subject: '👋 Bienvenue sur MyApp !',
       html: `

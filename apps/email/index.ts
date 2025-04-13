@@ -1,12 +1,12 @@
 import { initQueue, consumeEmail } from '@repo/email';
 import { sendMail } from './sendMail';
-import { registerEmailTemplate } from '@repo/email/templates/register-email';
+import { sendEmailTemplate } from '@repo/email/templates/send-email';
 
 (async () => {
   await initQueue();
 
   await consumeEmail(async ({ email }) => {
-    const { subject, html } = registerEmailTemplate(email);
+    const { subject, html } = sendEmailTemplate(email);
     await sendMail(email, subject, html);
   });
 
