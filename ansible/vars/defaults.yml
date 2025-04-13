@@ -1,6 +1,6 @@
 project_root: /var/www/monorepo
 
-app_path: "{{ project_root }}"
+global_path: "{{ project_root }}"
 web_path: "{{ project_root }}/apps/web"
 software_path: "{{ project_root }}/apps/software"
 email_path: "{{ project_root }}/apps/email"

@@ -5,6 +5,7 @@
   become: true
   vars_files:
     - vars/defaults.yml
+    - vars/secrets.yml
   roles:
     - { role: docker, tags: [docker] }
     - { role: global, tags: [global] }

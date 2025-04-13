@@ -7,11 +7,15 @@
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "turbo run check-types",
-    "ansible:setup": "ansible-playbook -i ansible/inventory.ini ansible/playbook-deploy.yml --tags kubernetes-setup",
-    "ansible:deploy": "ansible-playbook -i ansible/inventory.ini ansible/playbook-deploy.yml --tags app-deploy",
-    "docker:build": "docker build -t your-dockerhub-username/nextjs-site:latest -f apps/nextjs-site/Dockerfile . && docker build -t your-dockerhub-username/react-vite-app:latest -f apps/react-vite-app/Dockerfile .",
-    "docker:push": "docker push your-dockerhub-username/nextjs-site:latest && docker push your-dockerhub-username/react-vite-app:latest",
-    "deploy": "bun run docker:build && bun run docker:push && bun run ansible:deploy"
+    "ansible:env": "ansible-playbook ansible/playbook.yml -i ansible/inventory.ini --tags env --ask-vault-pass",
+    "ansible:deploy": "ansible-playbook ansible/playbook.yml -i ansible/inventory.ini --tags deploy --ask-vault-pass",
+    "ansible:web": "ansible-playbook ansible/playbook.yml -i ansible/inventory.ini --tags web --ask-vault-pass",
+    "ansible:software": "ansible-playbook ansible/playbook.yml -i ansible/inventory.ini --tags software --ask-vault-pass",
+    "ansible:email": "ansible-playbook ansible/playbook.yml -i ansible/inventory.ini --tags email --ask-vault-pass",
+    "ansible:global": "ansible-playbook ansible/playbook.yml -i ansible/inventory.ini --tags global --ask-vault-pass",
+    "ansible:monitoring": "ansible-playbook ansible/playbook.yml -i ansible/inventory.ini --tags monitoring",
+    "ansible:vault:encrypt": "ansible-vault encrypt ansible/vars/secrets.yml",
+    "ansible:vault:decrypt": "ansible-vault decrypt ansible/vars/secrets.yml"
   },
   "devDependencies": {
     "prettier": "^3.5.3",

@@ -4,7 +4,7 @@
     src: templates/web.env.j2
     dest: "{{ web_path }}/.env"
     mode: "0600"
-  tags: web
+  tags: [web, env]
 
 - name: Déployer l'app Web
   community.docker.docker_compose:
@@ -12,4 +12,4 @@
     state: present
     build: true
     restarted: true
-  tags: web
+  tags: [web, deploy]
