@@ -14,6 +14,11 @@ services:
       - "traefik.http.routers.rabbitmq.rule=Host(`rabbit.bastiencouder.com`)"
       - "traefik.http.routers.rabbitmq.entrypoints=websecure"
       - "traefik.http.routers.rabbitmq.tls.certresolver=myresolver"
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   maildev:
     image: maildev/maildev
@@ -27,6 +32,11 @@ services:
       - "traefik.http.routers.maildev.rule=Host(`mail.bastiencouder.com`)"
       - "traefik.http.routers.maildev.entrypoints=websecure"
       - "traefik.http.routers.maildev.tls.certresolver=myresolver"
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:1080"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
   worker:
     build:
@@ -43,6 +53,11 @@ services:
     networks:
       - traefik-net
     restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "ps aux | grep index.ts | grep -v grep"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
 networks:
   traefik-net:

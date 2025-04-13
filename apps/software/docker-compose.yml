@@ -13,6 +13,11 @@ services:
       - "traefik.http.routers.software.rule=Host(`software.bastiencouder.com`)"
       - "traefik.http.routers.software.entrypoints=websecure"
       - "traefik.http.routers.software.tls.certresolver=myresolver"
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8080"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
 networks:
   traefik-net:

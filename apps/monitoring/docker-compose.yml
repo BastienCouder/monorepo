@@ -4,8 +4,15 @@ services:
     container_name: postgres_exporter
     environment:
       DATA_SOURCE_NAME: "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?sslmode=disable"
+    ports:
+      - "9187:9187"
     networks:
       - traefik-net
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:9187"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
   prometheus:
     image: prom/prometheus
@@ -25,12 +32,24 @@ services:
       - "traefik.http.routers.prometheus.tls.certresolver=myresolver"
     networks:
       - traefik-net
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:9090"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
   node_exporter:
     image: prom/node-exporter
     container_name: node_exporter
+    ports:
+      - "9100:9100"
     networks:
       - traefik-net
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:9100"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
   grafana:
     image: grafana/grafana:10.0.0
@@ -53,6 +72,11 @@ services:
       - "traefik.http.routers.grafana.tls.certresolver=myresolver"
     networks:
       - traefik-net
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
   blackbox:
     image: prom/blackbox-exporter
@@ -61,6 +85,39 @@ services:
       - '--config.file=/etc/blackbox/config.yml'
     volumes:
       - ./blackbox/config.yml:/etc/blackbox/config.yml
+    ports:
+      - "9115:9115"
+    networks:
+      - traefik-net
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:9115"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+  
+  loki:
+    image: grafana/loki:2.9.4
+    container_name: loki
+    ports:
+      - "3100:3100"
+    command: -config.file=/etc/loki/local-config.yaml
+    networks:
+      - traefik-net
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:3100"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  promtail:
+    image: grafana/promtail:2.9.4
+    container_name: promtail
+    volumes:
+      - /var/log:/var/log
+      - /etc/machine-id:/etc/machine-id
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - ./promtail-config.yml:/etc/promtail/config.yml
+      - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - traefik-net
 
