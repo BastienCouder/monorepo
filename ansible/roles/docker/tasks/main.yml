@@ -51,6 +51,12 @@
     groups: docker
     append: yes
 
+- name: Installer le SDK Docker pour Python via APT
+  become: true
+  apt:
+    name: python3-docker
+    state: present
+
 - name: Afficher un message de post-installation
   debug:
     msg: "L'utilisateur {{ docker_user }} a été ajouté au groupe docker. Déconnecte-toi/reconnecte-toi ou fais un 'newgrp docker'."

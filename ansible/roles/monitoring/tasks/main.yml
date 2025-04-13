@@ -7,9 +7,8 @@
   tags: [monitoring, env]
 
 - name: Déployer la stack de monitoring
-  community.docker.docker_compose:
-    project_src: "{{ monitoring_path }}"
-    state: present
-    build: true
-    restarted: true
+  become: true
+  ansible.builtin.command: docker compose up -d --build
+  args:
+    chdir: "{{ monitoring_path }}"
   tags: [monitoring, deploy]

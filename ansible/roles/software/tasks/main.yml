@@ -7,9 +7,8 @@
   tags: [software, env]
 
 - name: Déployer l'app Software
-  community.docker.docker_compose:
-    project_src: "{{ software_path }}"
-    state: present
-    build: true
-    restarted: true
+  become: true
+  ansible.builtin.command: docker compose up -d --build
+  args:
+    chdir: "{{ software_path }}"
   tags: [software, deploy]

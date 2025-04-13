@@ -318,9 +318,6 @@ importers:
 
   packages/auth:
     dependencies:
-      '@repo/web':
-        specifier: workspace:*
-        version: link:../../apps/web
       bcryptjs:
         specifier: ^3.0.2
         version: 3.0.2

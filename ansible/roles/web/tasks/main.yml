@@ -7,9 +7,8 @@
   tags: [web, env]
 
 - name: Déployer l'app Web
-  community.docker.docker_compose:
-    project_src: "{{ web_path }}"
-    state: present
-    build: true
-    restarted: true
+  become: true
+  ansible.builtin.command: docker compose up -d --build
+  args:
+    chdir: "{{ web_path }}"
   tags: [web, deploy]

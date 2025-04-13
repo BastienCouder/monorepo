@@ -6,3 +6,14 @@ services:
     container_name: software
     ports:
       - "3010:8080"
+    networks:
+      - traefik-net
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.software.rule=Host(`software.bastiencouder.com`)"
+      - "traefik.http.routers.software.entrypoints=websecure"
+      - "traefik.http.routers.software.tls.certresolver=myresolver"
+
+networks:
+  traefik-net:
+    external: true

@@ -14,9 +14,8 @@
   tags: [email, env]
 
 - name: Déployer le worker email
-  community.docker.docker_compose:
-    project_src: "{{ email_path }}"
-    state: present
-    build: true
-    restarted: true
+  become: true
+  ansible.builtin.command: docker compose up -d --build
+  args:
+    chdir: "{{ email_path }}"
   tags: [email, deploy]

@@ -16,6 +16,8 @@ services:
       - "host.docker.internal:host-gateway"
     depends_on:
       - postgres_exporter
+    ports:
+      - "9090:9090"
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.prometheus.rule=Host(`prometheus.bastiencouder.com`)"
@@ -42,6 +44,8 @@ services:
       - ./grafana/dashboards:/etc/grafana/dashboards
     depends_on:
       - prometheus
+    ports:
+      - "3800:3000"
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.grafana.rule=Host(`grafana.bastiencouder.com`)"
