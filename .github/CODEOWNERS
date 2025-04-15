@@ -1,0 +1,12 @@
+# apps
+/apps/web/ @team-web
+/apps/email/ @team-email
+/apps/monitoring/ @team-infra
+/apps/software/ @team-software
+
+# packages
+/packages/email/ @team-email
+/packages/auth/ @team-software @team-web
+
+# ansible
+/ansible/ @team-infra

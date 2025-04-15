@@ -1,0 +1,93 @@
+name: Secure access validation
+
+on:
+  pull_request:
+    paths:
+      - 'apps/**'
+      - 'packages/**'
+      - 'access-control.json'
+      - '.github/workflows/**'
+      - '.github/security/**'
+
+jobs:
+  validate-access:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Install tools
+        run: |
+          sudo apt-get install -y jq
+          pip install pyyaml
+
+      - name: Fetch base branch
+        run: git fetch origin main
+
+      - name: Detect changed files
+        run: git diff --name-only origin/main...HEAD > files.txt
+
+      - name: Load admins (YAML or secret)
+        id: admins
+        run: |
+          ADMINS_FROM_SECRET="${{ secrets.ADMIN_USERS }}"
+          if [ -f .github/security/access-config.yaml ]; then
+            echo "✅ Chargement des admins depuis YAML"
+            ADMINS=$(python3 -c "import yaml; print(','.join(yaml.safe_load(open('.github/security/access-config.yaml'))['admins']))")
+          elif [ -n "$ADMINS_FROM_SECRET" ]; then
+            echo "✅ Chargement des admins depuis le secret GitHub"
+            ADMINS="$ADMINS_FROM_SECRET"
+          else
+            echo "❌ Aucun admin défini (ni fichier YAML ni secret)."
+            exit 1
+          fi
+          echo "admins=$ADMINS" >> $GITHUB_OUTPUT
+
+      - name: Validate access rights
+        run: |
+          ACTOR="${{ github.actor }}"
+          echo "🔍 PR ouverte par : $ACTOR"
+
+          IFS=',' read -r -a ADMIN_USERS <<< "${{ steps.admins.outputs.admins }}"
+          ACCESS_RULES=$(cat access-control.json)
+          VIOLATION=0
+
+          while read FILE; do
+            if [[ "$FILE" == "access-control.json" || "$FILE" == .github/workflows/* || "$FILE" == .github/security/* ]]; then
+              echo "🔒 $ACTOR tente de modifier un fichier protégé : $FILE"
+              if [[ ! " ${ADMIN_USERS[@]} " =~ " ${ACTOR} " ]]; then
+                echo "⛔️ Non autorisé à modifier $FILE"
+                VIOLATION=1
+              else
+                echo "✅ $ACTOR est autorisé à modifier $FILE"
+              fi
+              continue
+            fi
+
+            DIR=$(echo "$FILE" | grep -E '^(apps|packages)/' | cut -d/ -f1-2)
+            if [ -z "$DIR" ]; then
+              continue
+            fi
+
+            ALLOWED=$(echo "$ACCESS_RULES" | jq -r --arg dir "$DIR" '.[$dir] // empty | @csv' | tr -d '"')
+
+            if [ -z "$ALLOWED" ]; then
+              echo "⚠️ Aucun droit défini pour $DIR — PR bloquée"
+              VIOLATION=1
+            elif [[ ! ",$ALLOWED," =~ ",$ACTOR," ]]; then
+              echo "🚫 $ACTOR n'est pas autorisé à modifier $DIR"
+              VIOLATION=1
+            else
+              echo "✅ $ACTOR est autorisé à modifier $DIR"
+            fi
+          done < files.txt
+
+          if [ $VIOLATION -ne 0 ]; then
+            echo "❌ Accès refusé — PR bloquée."
+            exit 1
+          else
+            echo "✅ Tous les fichiers sont conformes aux règles."
+          fi

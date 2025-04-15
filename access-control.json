@@ -1,0 +1,10 @@
+{
+    "apps/email": [],
+    "apps/web": [],
+    "apps/monitoring": [],
+    "apps/software": [],
+    "ansible": [],
+    "packages/email": [],
+    "packages/auth": []
+  }
+  

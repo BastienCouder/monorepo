@@ -48,7 +48,7 @@ jobs:
 
           shred -u "$VAULT_TMP"
 
-      - name: Post-Deployment Laravel Check
+      - name: Post-Deployment Check
         if: ${{ !env.ACT }}
         run: |
           ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_IP_SERVER }} <<'EOF'
