@@ -16,9 +16,11 @@
     "ansible:global": "ansible-playbook ansible/playbook.yml -i ansible/inventory.ini --tags global --ask-vault-pass",
     "ansible:monitoring": "ansible-playbook ansible/playbook.yml -i ansible/inventory.ini --tags monitoring --ask-vault-pass",
     "ansible:vault:encrypt": "ansible-vault encrypt ansible/vars/secrets.yml",
-    "ansible:vault:decrypt": "ansible-vault decrypt ansible/vars/secrets.yml"
+    "ansible:vault:decrypt": "ansible-vault decrypt ansible/vars/secrets.yml",
+    "prepare": "husky"
   },
   "devDependencies": {
+    "husky": "^9.1.6",
     "prettier": "^3.5.3",
     "turbo": "^2.4.4",
     "typescript": "5.8.2"
