@@ -29,7 +29,7 @@ scrape_configs:
       module: [icmp_ping]
     static_configs:
       - targets:
-          - 8.8.8.8
+          - 8.8.8.0
           - tonsiteperso.fr
     relabel_configs:
       - source_labels: [__address__]
