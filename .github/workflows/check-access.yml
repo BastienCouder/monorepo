@@ -55,15 +55,17 @@ jobs:
           ACCESS_RULES=$(cat access-control.json)
           VIOLATION=0
 
+          # Si admin, tout est autorisé, on skippe les checks
+          if [[ " ${ADMIN_USERS[@]} " =~ " ${ACTOR} " ]]; then
+            echo "👑 $ACTOR est admin — accès complet autorisé ✅"
+            exit 0
+          fi
+
           while read FILE; do
             if [[ "$FILE" == "access-control.json" || "$FILE" == .github/workflows/* || "$FILE" == .github/security/* ]]; then
               echo "🔒 $ACTOR tente de modifier un fichier protégé : $FILE"
-              if [[ ! " ${ADMIN_USERS[@]} " =~ " ${ACTOR} " ]]; then
-                echo "⛔️ Non autorisé à modifier $FILE"
-                VIOLATION=1
-              else
-                echo "✅ $ACTOR est autorisé à modifier $FILE"
-              fi
+              echo "⛔️ Non autorisé à modifier $FILE"
+              VIOLATION=1
               continue
             fi
 
