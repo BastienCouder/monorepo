@@ -1,6 +1,6 @@
-import { initQueue, consumeEmail } from '@repo/email';
-import { sendMail } from './sendMail';
-import { sendEmailTemplate } from '@repo/email/templates/send-email';
+import { initQueue, consumeEmail } from "@repo/email";
+import { sendMail } from "./sendMail";
+import { sendEmailTemplate } from "@repo/email/templates/send-email";
 
 (async () => {
   await initQueue();
@@ -10,5 +10,5 @@ import { sendEmailTemplate } from '@repo/email/templates/send-email';
     await sendMail(email, subject, html);
   });
 
-  console.log('Email worker listening on RabbitMQ...');
+  console.log("Email worker listening on RabbitMQ...");
 })();

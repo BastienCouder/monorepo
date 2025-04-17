@@ -1,6 +1,6 @@
 {
     "apps/email": [],
-    "apps/web": ["bob"],
+    "apps/web": [],
     "apps/monitoring": [],
     "apps/software": [],
     "ansible": [],

@@ -1,12 +1,12 @@
-import jwt from 'jsonwebtoken';
-import { compare, hash } from 'bcryptjs';
-import { eq } from 'drizzle-orm';
+import jwt from "jsonwebtoken";
+import { compare, hash } from "bcryptjs";
+import { eq } from "drizzle-orm";
 
-import { db } from '../../apps/web/db';
-import { usersTable, sessionsTable } from '../../apps/web/db/schema';
+import { db } from "../../apps/web/db";
+import { usersTable, sessionsTable } from "../../apps/web/db/schema";
 
-export const JWT_SECRET = process.env.JWT_SECRET ?? 'dev_secret';
-export const ACCESS_TOKEN_EXPIRY = '15m';
+export const JWT_SECRET = process.env.JWT_SECRET ?? "dev_secret";
+export const ACCESS_TOKEN_EXPIRY = "15m";
 export const REFRESH_TOKEN_EXPIRY = 60 * 60 * 24 * 30 * 1000;
 
 export interface AuthPayload {
@@ -25,21 +25,29 @@ export async function registerUser(email: string, password: string) {
 }
 
 export async function loginUser(email: string, password: string) {
-  const user = await db.select().from(usersTable).where(eq(usersTable.email, email)).then(r => r[0]);
+  const user = await db
+    .select()
+    .from(usersTable)
+    .where(eq(usersTable.email, email))
+    .then((r) => r[0]);
   if (!user || !(await compare(password, user.password))) {
-    return { error: 'Invalid credentials' };
+    return { error: "Invalid credentials" };
   }
-  if (!user.role) return { error: 'User has no role' };
+  if (!user.role) return { error: "User has no role" };
   const accessToken = signAccessToken({ userId: user.id, roles: [user.role] });
   const refreshToken = signRefreshToken();
   const expiresAt = new Date(Date.now() + REFRESH_TOKEN_EXPIRY);
 
-  await db.insert(sessionsTable).values({ userId: user.id, refreshToken, expiresAt });
+  await db
+    .insert(sessionsTable)
+    .values({ userId: user.id, refreshToken, expiresAt });
   return { accessToken, refreshToken };
 }
 
 export async function logoutUser(refreshToken: string) {
-  await db.delete(sessionsTable).where(eq(sessionsTable.refreshToken, refreshToken));
+  await db
+    .delete(sessionsTable)
+    .where(eq(sessionsTable.refreshToken, refreshToken));
   return { success: true };
 }
 
@@ -70,13 +78,15 @@ export async function refreshTokens(oldRefreshToken: string) {
     .from(sessionsTable)
     .innerJoin(usersTable, eq(sessionsTable.userId, usersTable.id))
     .where(eq(sessionsTable.refreshToken, oldRefreshToken))
-    .then(r => r[0]);
+    .then((r) => r[0]);
 
   if (!session || new Date(session.session.expiresAt) < new Date()) return null;
 
   if (!session.userRole) return null;
 
-  await db.delete(sessionsTable).where(eq(sessionsTable.refreshToken, oldRefreshToken));
+  await db
+    .delete(sessionsTable)
+    .where(eq(sessionsTable.refreshToken, oldRefreshToken));
 
   const newRefreshToken = signRefreshToken();
   const newExpiresAt = new Date(Date.now() + REFRESH_TOKEN_EXPIRY);

@@ -35,6 +35,7 @@ monorepo/
 ```
 
 ## 🚀 Démarrage
+
 Pour une app spécifique
 Depuis le dossier de l'app :
 
@@ -42,6 +43,7 @@ Depuis le dossier de l'app :
 cd apps/web
 docker compose up --build
 ```
+
 Chaque app est indépendante et peut être testée ou déployée seule.
 
 Pour la stack de monitoring
@@ -52,6 +54,7 @@ docker compose up -d
 ```
 
 ## 🌐 Reverse Proxy avec Traefik
+
 Aucun Nginx ni Certbot utilisé
 
 Configuration via fichiers YAML + labels dans docker-compose.yml

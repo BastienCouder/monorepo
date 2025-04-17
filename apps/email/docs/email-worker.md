@@ -36,11 +36,11 @@ RabbitMQ est un **serveur de messages** (queue), comme un tampon entre :
 
 ## 💥 Que se passe-t-il si...
 
-| Scénario                       | Comportement attendu                          |
-|-------------------------------|-----------------------------------------------|
-| 🧑‍💻 Worker down               | Email non envoyé (le message attend dans la queue) |
-| 🐇 RabbitMQ down              | `publishUserRegistered()` échoue             |
-| ✉️ Maildev down               | Le worker échoue à envoyer l’email           |
+| Scénario         | Comportement attendu                               |
+| ---------------- | -------------------------------------------------- |
+| 🧑‍💻 Worker down   | Email non envoyé (le message attend dans la queue) |
+| 🐇 RabbitMQ down | `publishUserRegistered()` échoue                   |
+| ✉️ Maildev down  | Le worker échoue à envoyer l’email                 |
 
 ---
 
@@ -64,3 +64,4 @@ pnpm tsx scripts/test-publish.ts
 
 # 3. Lancer le worker
 docker compose up -d worker
+```
